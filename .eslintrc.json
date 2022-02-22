@@ -29,13 +29,11 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:import/errors",
     "plugin:import/typescript",
-    "plugin:import/warnings",
-    "plugin:react/recommended"
+    "plugin:import/warnings"
   ],
   "plugins": [
     "@typescript-eslint",
     "import",
-    "react",
     "jest",
     "tsc"
   ],
@@ -82,8 +80,6 @@
         "configFile": "./tsconfig.json"
       }
     ],
-    "react/prop-types": "off",
-    "react/no-children-prop": "off",
     "jest/no-disabled-tests": "warn",
     "jest/no-focused-tests": "error",
     "jest/no-identical-title": "error",
