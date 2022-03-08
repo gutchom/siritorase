@@ -1,0 +1,88 @@
+.container {
+  width: 320px;
+  padding: 24px 0;
+  margin: auto;
+}
+
+.canvas {
+  display: block;
+  width: 300px;
+  height: 300px;
+  margin: auto;
+  touch-action: none;
+  border: 6px solid #ea6;
+  border-radius: 8px;
+}
+
+.title {
+  display: block;
+  width: 160px;
+  height: 24px;
+  margin: 12px auto;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  border: 3px solid #ea6;
+}
+
+.pallet {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: row wrap;
+  width: 220px;
+  padding: 4px;
+  margin: 12px auto;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.color {
+  box-sizing: border-box;
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 5px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 16px;
+}
+
+.buttons {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-around;
+  margin: auto;
+}
+
+.brushes {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 0 2px;
+  margin: 0 auto 4px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.brush {
+  padding: 6px;
+  font-size: 18px;
+  color: #664;
+}
+
+.history {
+  box-sizing: border-box;
+  display: flex;
+  margin-right: auto;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.history-button {
+  margin: 6px 4px 0;
+  font-size: 16px;
+  color: #664;
+  background: transparent;
+  border: none;
+}
