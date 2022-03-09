@@ -30,7 +30,7 @@ export type StrokeWidth = typeof widths[number];
 
 export const strokeWidthState = atom<StrokeWidth>({
   key: 'strokeWidthState',
-  default: 8,
+  default: 24,
 });
 
 export type StrokeType = 'pen' | 'eraser';
