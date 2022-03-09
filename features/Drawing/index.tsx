@@ -14,37 +14,6 @@ import type { StrokeColor, StrokeWidth } from './atoms';
 import { colors, strokeColorsState, strokeWidthState, widths } from './atoms';
 import styles from './styles.module.css';
 
-function getCheckmarkColor(color: StrokeColor): 'white' | 'black' {
-  switch (color) {
-    case 'lightgray':
-      return 'black';
-    case 'red':
-      return 'white';
-    case 'pink':
-      return 'white';
-    case 'yellow':
-      return 'black';
-    case 'lightgreen':
-      return 'white';
-    case 'cyan':
-      return 'white';
-    case 'black':
-      return 'white';
-    case 'gray':
-      return 'white';
-    case 'brown':
-      return 'white';
-    case 'purple':
-      return 'white';
-    case 'orange':
-      return 'white';
-    case 'green':
-      return 'white';
-    case 'blue':
-      return 'white';
-  }
-}
-
 export function Pallet() {
   const { undo, redo } = useStroke();
   const [strokeColor, setStrokeColor] = useRecoilState(strokeColorsState);
