@@ -24,13 +24,13 @@ export const strokeColorsState = atom<StrokeColor>({
   default: 'black',
 });
 
-export const widths = [5, 15, 30] as const;
+export const widths = [8, 24, 48] as const;
 
 export type StrokeWidth = typeof widths[number];
 
 export const strokeWidthState = atom<StrokeWidth>({
   key: 'strokeWidthState',
-  default: 5,
+  default: 8,
 });
 
 export type StrokeType = 'pen' | 'eraser';
