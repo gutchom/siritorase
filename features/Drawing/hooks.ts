@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import type { Stroke } from './atoms';
 import {
   canceledStrokesState,
-  strokeColorsState,
+  strokeColorState,
   strokeTypeState,
   strokeWidthState,
   strokesState,
@@ -49,7 +49,7 @@ export function useDrawing(ref: RefObject<HTMLCanvasElement>): {
   const { strokes, setStroke } = useStroke();
   const type = useRecoilValue(strokeTypeState);
   const width = useRecoilValue(strokeWidthState);
-  const color = useRecoilValue(strokeColorsState);
+  const color = useRecoilValue(strokeColorState);
   const [points, setPoints] = useState<Point[]>([]);
   const [context, setContext] = useState<CanvasRenderingContext2D>();
   const [canvasWidth, setCanvasWidth] = useState(0);
