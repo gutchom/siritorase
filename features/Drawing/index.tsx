@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   FaBrush,
+  FaCheck,
   FaEraser,
   FaPaintBrush,
   FaPenNib,
@@ -13,18 +14,61 @@ import type { StrokeColor, StrokeWidth } from './atoms';
 import { colors, strokeColorsState, strokeWidthState, widths } from './atoms';
 import styles from './styles.module.css';
 
+function getCheckmarkColor(color: StrokeColor): 'white' | 'black' {
+  switch (color) {
+    case 'lightgray':
+      return 'black';
+    case 'red':
+      return 'white';
+    case 'pink':
+      return 'white';
+    case 'yellow':
+      return 'black';
+    case 'lightgreen':
+      return 'white';
+    case 'cyan':
+      return 'white';
+    case 'black':
+      return 'white';
+    case 'gray':
+      return 'white';
+    case 'brown':
+      return 'white';
+    case 'purple':
+      return 'white';
+    case 'orange':
+      return 'white';
+    case 'green':
+      return 'white';
+    case 'blue':
+      return 'white';
+  }
+}
+
 export function Pallet() {
   const { undo, redo } = useStroke();
   const [strokeColor, setStrokeColor] = useRecoilState(strokeColorsState);
   const [strokeWidth, setStrokeWidth] = useRecoilState(strokeWidthState);
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div className={styles.tools}>
       <ul className={styles.pallet}>
         {colors.map((color) => (
           <li key={color}>
-            <label className={styles.color} style={{ background: color }}>
+            <label
+              className={styles.color}
+              style={{
+                background:
+                  color === 'white' && strokeColor === 'white' ? 'gray' : color,
+                color:
+                  color === 'white' && strokeColor !== 'white'
+                    ? '#664'
+                    : 'white',
+                fontSize: color === 'white' ? '14px' : '10px',
+              }}
+            >
               {color === 'white' && <FaEraser />}
+              {color !== 'white' && color === strokeColor && <FaCheck />}
               <input
                 style={{ display: 'none' }}
                 type="radio"
@@ -39,21 +83,29 @@ export function Pallet() {
         ))}
       </ul>
       <div className={styles.buttons}>
+        <div className={styles.history}>
+          <button className={styles['history-button']} onClick={undo}>
+            <FaUndo />
+          </button>
+          <button className={styles['history-button']} onClick={redo}>
+            <FaRedo />
+          </button>
+        </div>
         <ul className={styles.brushes}>
           {widths.map((width) => (
             <li key={width}>
               <label
                 className={styles.brush}
                 style={{
-                  boxSizing: 'border-box',
-                  display: 'block',
-                  width: '100%',
-                  height: '100%',
+                  color: width === strokeWidth ? 'white' : '#664',
+                  background: width === strokeWidth ? 'gray' : 'white',
                 }}
               >
-                {width === 5 && <FaPenNib />}
-                {width === 15 && <FaPaintBrush />}
-                {width === 30 && <FaBrush />}
+                {width === 8 && <FaPenNib />}
+                {width === 24 && <FaPaintBrush />}
+                {width === 48 && (
+                  <FaBrush style={{ transform: 'rotate(225deg)' }} />
+                )}
                 <input
                   style={{ display: 'none' }}
                   type="radio"
@@ -67,14 +119,6 @@ export function Pallet() {
             </li>
           ))}
         </ul>
-        <div className={styles.history}>
-          <button className={styles['history-button']} onClick={undo}>
-            <FaUndo />
-          </button>
-          <button className={styles['history-button']} onClick={redo}>
-            <FaRedo />
-          </button>
-        </div>
       </div>
     </div>
   );
@@ -89,8 +133,8 @@ export default function Drawing() {
     <div className={styles.container}>
       <canvas
         className={styles.canvas}
-        width={900}
-        height={900}
+        width={960}
+        height={960}
         ref={canvasRef}
         onPointerDown={(e) => {
           start(e.nativeEvent.offsetX * 3, e.nativeEvent.offsetY * 3);
