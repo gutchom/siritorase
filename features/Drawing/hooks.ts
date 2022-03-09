@@ -1,7 +1,8 @@
-import { RefObject, useCallback, useEffect, useState } from 'react';
+import type { RefObject } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import type { Stroke } from './atoms';
 import {
-  Stroke,
   canceledStrokesState,
   strokeColorsState,
   strokeTypeState,
@@ -46,13 +47,13 @@ export function useDrawing(ref: RefObject<HTMLCanvasElement>): {
   end(): void;
 } {
   const { strokes, setStroke } = useStroke();
+  const type = useRecoilValue(strokeTypeState);
   const width = useRecoilValue(strokeWidthState);
   const color = useRecoilValue(strokeColorsState);
-  const type = useRecoilValue(strokeTypeState);
-  const [canvasWidth, setCanvasWidth] = useState(0);
-  const [canvasHeight, setCanvasHeight] = useState(0);
   const [points, setPoints] = useState<Point[]>([]);
   const [context, setContext] = useState<CanvasRenderingContext2D>();
+  const [canvasWidth, setCanvasWidth] = useState(0);
+  const [canvasHeight, setCanvasHeight] = useState(0);
   const [isDrawing, setIsDrawing] = useState(false);
 
   const beginStroke = useCallback(
