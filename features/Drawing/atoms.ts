@@ -19,8 +19,8 @@ export const colors = [
 
 export type StrokeColor = typeof colors[number];
 
-export const strokeColorsState = atom<StrokeColor>({
-  key: 'strokeColorsState',
+export const strokeColorState = atom<StrokeColor>({
+  key: 'strokeColorState',
   default: 'black',
 });
 

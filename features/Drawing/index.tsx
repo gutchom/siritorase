@@ -11,12 +11,12 @@ import {
 } from 'react-icons/fa';
 import { useDrawing, useStroke } from './hooks';
 import type { StrokeColor, StrokeWidth } from './atoms';
-import { colors, strokeColorsState, strokeWidthState, widths } from './atoms';
+import { colors, strokeColorState, strokeWidthState, widths } from './atoms';
 import styles from './styles.module.css';
 
 export function Pallet() {
   const { undo, redo } = useStroke();
-  const [strokeColor, setStrokeColor] = useRecoilState(strokeColorsState);
+  const [strokeColor, setStrokeColor] = useRecoilState(strokeColorState);
   const [strokeWidth, setStrokeWidth] = useRecoilState(strokeWidthState);
 
   return (
