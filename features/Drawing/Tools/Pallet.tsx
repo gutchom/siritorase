@@ -2,7 +2,7 @@ import { FaCheck, FaEraser } from 'react-icons/fa';
 import { useRecoilState } from 'recoil';
 import type { StrokeColor } from '../atoms';
 import { colors, strokeColorState } from '../atoms';
-import styles from './pallet.module.css';
+import styles from './Pallet.module.css';
 
 export function Pallet() {
   const [strokeColor, setStrokeColor] = useRecoilState(strokeColorState);

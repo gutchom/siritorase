@@ -2,7 +2,7 @@ import { FaBrush, FaPaintBrush, FaPenNib } from 'react-icons/fa';
 import { useRecoilState } from 'recoil';
 import type { StrokeWidth } from '../atoms';
 import { strokeWidthState, widths } from '../atoms';
-import styles from './brushes.module.css';
+import styles from './Brushes.module.css';
 
 export function Brushes() {
   const [strokeWidth, setStrokeWidth] = useRecoilState(strokeWidthState);
