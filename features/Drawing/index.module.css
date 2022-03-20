@@ -16,7 +16,7 @@
 .title {
   display: block;
   width: 180px;
-  height: 24px;
+  height: 32px;
   margin: 12px auto;
   font-size: 18px;
   font-weight: bold;
@@ -25,76 +25,6 @@
 }
 
 .tools {
-  display: flex;
-  justify-content: space-around;
   max-width: 360px;
   margin: auto;
-}
-
-.pallet {
-  box-sizing: border-box;
-  display: flex;
-  flex-flow: row wrap;
-  width: 220px;
-  padding: 4px;
-  margin: 12px auto;
-  background: #fff;
-  border-radius: 12px;
-}
-
-.color {
-  box-sizing: border-box;
-  display: block;
-  width: 20px;
-  height: 20px;
-  margin: 5px;
-  line-height: 24px;
-  text-align: center;
-  border-radius: 16px;
-}
-
-.buttons {
-  box-sizing: border-box;
-  display: flex;
-  flex-flow: column;
-  justify-content: space-around;
-  margin: auto;
-}
-
-.brushes {
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  padding: 0 2px;
-  margin: 4px auto 0;
-  background: #fff;
-  border-radius: 8px;
-}
-
-.brush {
-  box-sizing: border-box;
-  display: block;
-  width: 24px;
-  height: 24px;
-  padding: 5px;
-  margin: 4px;
-  font-size: 14px;
-  border-radius: 50%;
-}
-
-.history {
-  box-sizing: border-box;
-  display: flex;
-  margin-right: auto;
-  background: #fff;
-  border-radius: 8px;
-}
-
-.history-button {
-  padding: 2px 9px 0;
-  margin: 6px 0 4px;
-  font-size: 16px;
-  color: #664;
-  background: transparent;
-  border: none;
 }

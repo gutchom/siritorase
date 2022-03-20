@@ -1,0 +1,14 @@
+.container {
+  width: fit-content;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.button {
+  padding: 2px 9px 0;
+  margin: 6px 0 4px;
+  font-size: 16px;
+  color: #664;
+  background: transparent;
+  border: none;
+}
