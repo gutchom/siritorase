@@ -37,7 +37,7 @@ const Answer: NextPage<Props> = (props) => {
         .map((ref) => ref.current)
         .filter((image) => image !== null) as HTMLImageElement[],
     );
-  }, [ref.current]);
+  }, [ref]);
 
   const [id, setId] = useState('');
   const [title, setTitle] = useState('');
