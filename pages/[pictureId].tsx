@@ -43,7 +43,7 @@ const Answer: NextPage<Props> = (props) => {
   const isDrawing =
     id.length === 0 || title.length === 0 || picture === undefined;
   const history = parents
-    .slice(-5, -1)
+    .slice(-4)
     .map(({ title }) => title)
     .concat('？？？')
     .join('→');
