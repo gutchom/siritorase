@@ -1,0 +1,41 @@
+.parents {
+  position: relative;
+  display: flex;
+  height: 145px;
+  margin: auto;
+  overflow-x: scroll;
+  overflow-y: visible;
+}
+
+.picture {
+  position: relative;
+  margin: 0 12px;
+}
+
+.picture:last-child::after {
+  position: absolute;
+  top: calc(100px + 1.5rem);
+  left: calc(50px - .5rem);
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  margin: auto;
+  color: #f00;
+  content: '▼︎';
+}
+
+.picture::before {
+  position: absolute;
+  top: calc(50px - .5rem);
+  left: -1.25rem;
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  margin: auto;
+  color: #f00;
+  content: '▶︎';
+}
+
+.picture:first-child::before {
+  display: none;
+}
