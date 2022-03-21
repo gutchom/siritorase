@@ -3,8 +3,6 @@ import { getFirebaseDb } from 'lib/firebase/browser';
 import { uploadMedia } from 'lib/firebase/utils';
 import type { PicturePost, Point } from './types';
 
-const db = getFirebaseDb();
-
 function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
@@ -85,6 +83,7 @@ export async function complete(
   parentImages: HTMLImageElement[],
 ): Promise<[id: string, picture: Blob]> {
   const blob = await canvasToBlob(picture);
+  const db = getFirebaseDb();
   const docRef = await addDoc(collection(db, 'pictures'), {
     title,
     parents,
