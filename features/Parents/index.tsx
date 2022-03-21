@@ -1,17 +1,18 @@
 import type { RefObject } from 'react';
 import { forwardRef, useEffect, useRef } from 'react';
+import { getMediaURL } from 'lib/firebase/utils';
+import type { PicturePost } from 'features/Drawing/types';
 import { Picture } from './Picture';
 import styles from './index.module.css';
-import type { PictureType } from 'features/Drawing/types';
 
 type Props = {
-  pictures: PictureType[];
+  parents: PicturePost[];
   isTitleVisible: boolean;
 };
 
 export const Parents = forwardRef<RefObject<HTMLImageElement>[], Props>(
   function Parents(props, ref) {
-    const { pictures, isTitleVisible } = props;
+    const { parents, isTitleVisible } = props;
     const listRef = useRef<HTMLUListElement>(null);
 
     useEffect(() => {
@@ -26,11 +27,11 @@ export const Parents = forwardRef<RefObject<HTMLImageElement>[], Props>(
 
     return (
       <ul className={styles.parents} ref={listRef}>
-        {pictures.map(({ url, title }, index) => (
-          <li key={url} className={styles.picture}>
+        {parents.map(({ id, title }, index) => (
+          <li key={id} className={styles.picture}>
             <Picture
               ref={ref && 'current' in ref ? ref.current?.[index] : null}
-              url={url}
+              url={getMediaURL(id)}
               title={isTitleVisible ? title : '？？？'}
             />
           </li>

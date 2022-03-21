@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react';
-import type { AnswerType } from './types';
+import type { PicturePost } from './types';
 import { useDrawing } from './hooks/useDrawing';
 import { complete } from './utils';
 import { Tools } from './Tools';
 import styles from './index.module.css';
 
 type Props = {
-  parents: AnswerType[];
+  parents: PicturePost[];
   images: HTMLImageElement[];
   onComplete(id: string, title: string, picture: Blob): void;
 };

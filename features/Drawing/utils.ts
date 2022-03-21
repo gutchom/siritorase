@@ -1,7 +1,7 @@
 import { addDoc, collection, deleteDoc } from '@firebase/firestore';
 import { getFirebaseDb } from 'lib/firebase/browser';
 import { uploadMedia } from 'lib/firebase/utils';
-import type { AnswerType, Point } from './types';
+import type { PicturePost, Point } from './types';
 
 const db = getFirebaseDb();
 
@@ -80,7 +80,7 @@ function createOGP(
 
 export async function complete(
   title: string,
-  parents: AnswerType[],
+  parents: PicturePost[],
   picture: HTMLCanvasElement,
   parentImages: HTMLImageElement[],
 ): Promise<[id: string, picture: Blob]> {

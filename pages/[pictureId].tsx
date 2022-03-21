@@ -7,26 +7,21 @@ import { db } from 'lib/firebase/server';
 import { Parents } from 'features/Parents';
 import { Result } from 'features/Result';
 import { Drawing } from 'features/Drawing';
-import type {
-  AnswerType,
-  PictureDoc,
-  PictureType,
-} from 'features/Drawing/types';
+import type { PictureDoc, PicturePost } from 'features/Drawing/types';
 import styles from 'styles/Home.module.css';
 
 type Props = {
-  parents: AnswerType[];
-  pictures: PictureType[];
+  parents: PicturePost[];
 };
 
 const Answer: NextPage<Props> = (props) => {
-  const { parents, pictures } = props;
+  const { parents } = props;
 
   const router = useRouter();
   const { pictureId } = router.query;
 
   const ref = useRef(
-    Array(pictures.length)
+    Array(parents.length)
       .fill(null)
       .map(() => createRef<HTMLImageElement>()),
   );
@@ -73,7 +68,7 @@ const Answer: NextPage<Props> = (props) => {
       </Head>
 
       <main className={styles.main}>
-        <Parents ref={ref} pictures={pictures} isTitleVisible={!isDrawing} />
+        <Parents ref={ref} parents={parents} isTitleVisible={!isDrawing} />
 
         {isDrawing ? (
           <Drawing
@@ -95,10 +90,10 @@ const Answer: NextPage<Props> = (props) => {
 
 export default Answer;
 
-async function getParents(id: string): Promise<AnswerType[]> {
+async function getParents(id: string): Promise<PicturePost[]> {
   const docRef = db.collection('pictures').doc(id);
   const snapshot = await docRef.get();
-  const { parents, title } = snapshot.data() as PictureDoc;
+  const { title, parents } = snapshot.data() as PictureDoc;
 
   return [...parents, { id, title }];
 }
@@ -115,12 +110,8 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   }
   const { pictureId } = context.params;
   const parents = await getParents(pictureId);
-  const pictures = parents.map(({ id, title }) => ({
-    url: getMediaURL(`picture/${id}.png`),
-    title,
-  }));
 
   return {
-    props: { parents, pictures },
+    props: { parents },
   };
 };
