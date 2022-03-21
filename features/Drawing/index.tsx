@@ -13,7 +13,6 @@ type Props = {
 
 export function Drawing(props: Props) {
   const { parents, images, onComplete } = props;
-  console.log(images);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { start, draw, end } = useDrawing(canvasRef);
   const [title, setTitle] = useState('');
