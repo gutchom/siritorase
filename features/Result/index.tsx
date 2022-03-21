@@ -1,27 +1,19 @@
-import { useEffect, useState } from 'react';
 import styles from './index.module.css';
-
-const HOST_DOMAIN = 'https://siritorase.vercel.app';
 
 type Props = {
   id: string;
   title: string;
-  picture: Blob;
+  picture: string;
   history: string;
 };
 
 export function Result(props: Props) {
   const { id, title, picture, history } = props;
-  const [url, setUrl] = useState(URL.createObjectURL(picture));
-
-  useEffect(() => {
-    setUrl(URL.createObjectURL(picture));
-  }, [picture]);
 
   return (
     <div className={styles.container}>
       <figure>
-        <img className={styles.picture} src={url} alt={title} />
+        <img className={styles.picture} src={picture} alt={title} />
         <figcaption className={styles.caption}>{title}</figcaption>
       </figure>
 
@@ -31,7 +23,7 @@ export function Result(props: Props) {
       >
         結果をツイートする
       </a>
-      <a className={styles.download} href={url} download={`${title}.png`}>
+      <a className={styles.download} href={picture} download={`${title}.png`}>
         画像をダウンロードする
       </a>
     </div>
@@ -45,7 +37,7 @@ function createTweetIntentURL(
 ): string {
   const url = new URL('https://twitter.com/intent/tweet');
   url.searchParams.set('text', `絵しりとりを描いたよ！\n\n${history}\n\n`);
-  url.searchParams.set('url', `${HOST_DOMAIN}/${id}`);
+  url.searchParams.set('url', `https://siritorase.vercel.app/${id}`);
   url.searchParams.set('hashtags', 'しりとり,絵しりとり');
 
   return url.href;

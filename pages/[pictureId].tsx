@@ -81,7 +81,12 @@ const Answer: NextPage<Props> = (props) => {
             }}
           />
         ) : (
-          <Result id={id} title={title} picture={picture} history={history} />
+          <Result
+            id={id}
+            title={title}
+            picture={URL.createObjectURL(picture)}
+            history={history}
+          />
         )}
       </main>
     </>
