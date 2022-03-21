@@ -24,7 +24,7 @@ export const strokeColorState = atom<StrokeColor>({
   default: 'black',
 });
 
-export const widths = [8, 24, 48] as const;
+export const widths = [8, 24, 64] as const;
 
 export type StrokeWidth = typeof widths[number];
 
