@@ -1,3 +1,4 @@
+import type { RefObject } from 'react';
 import { createRef, useEffect, useRef, useState } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
@@ -20,12 +21,11 @@ const Answer: NextPage<Props> = (props) => {
   const router = useRouter();
   const { pictureId } = router.query;
 
-  const ref = useRef(
-    Array(parents.length)
-      .fill(null)
-      .map(() => createRef<HTMLImageElement>()),
+  const ref = useRef<RefObject<HTMLImageElement>[]>(
+    Array(parents.length).fill(createRef<HTMLImageElement>()),
   );
   const [images, setImages] = useState<HTMLImageElement[]>([]);
+
   useEffect(() => {
     setImages(
       ref.current
