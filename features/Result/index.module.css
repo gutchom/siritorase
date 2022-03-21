@@ -1,0 +1,59 @@
+.container {
+  margin: auto;
+}
+
+.picture {
+  display: block;
+  width: 320px;
+  height: 320px;
+  margin: auto;
+  border: 6px solid #ea6;
+  border-radius: 8px;
+}
+
+.caption {
+  box-sizing: border-box;
+  display: block;
+  width: 180px;
+  height: 40px;
+  padding: 8px 0;
+  margin: 12px auto;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  background: #fff;
+  border: 3px solid #ea6;
+}
+
+.tweet {
+  box-sizing: border-box;
+  display: block;
+  width: 240px;
+  height: 48px;
+  padding: 12px 0;
+  margin: 24px auto;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  background: #1d96e7;
+  border: none;
+  border-radius: 8px;
+}
+
+.download {
+  box-sizing: border-box;
+  display: block;
+  width: 280px;
+  height: 48px;
+  padding: 12px 0;
+  margin: 24px auto;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  background: #ea6;
+  border-radius: 8px;
+}
