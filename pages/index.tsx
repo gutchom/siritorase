@@ -32,7 +32,12 @@ const Home: NextPage = () => {
             }}
           />
         ) : (
-          <Result id={id} title={title} picture={picture} history={[]} />
+          <Result
+            id={id}
+            title={title}
+            picture={URL.createObjectURL(picture)}
+            history={''}
+          />
         )}
       </main>
     </>
