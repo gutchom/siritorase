@@ -51,26 +51,25 @@ function createOGP(
   ctx.fillRect(0, 0, 1200, 630);
 
   // 枠付きの回答画像を描画
-  drawRoundSquare(660 - 6, 60 - 6, 480 + 12, 480 + 12, 8, '#ea6', ctx);
+  drawRoundSquare(660 - 6, 60 - 6, 480 + 12, 480 + 12, 9, '#ea6', ctx);
   ctx.drawImage(picture, 660, 60, 480, 480);
 
-  const points: Point[] = [
-    { x: 60 + 32, y: 60 + 32 },
-    { x: 60 + 32 + 192 + 32, y: 60 + 32 },
-    { x: 60 + 32, y: 60 + 32 + 192 + 32 },
-    { x: 60 + 32 + 192 + 32, y: 60 + 32 + 192 + 32 },
+  const size = 240;
+  const positions: Point[] = [
+    { x: 48, y: 240 + 6 + 60 - 120 - 4 },
+    { x: 48 + size + 48 + 16, y: 240 + 6 + 60 - 120 - 4 },
   ];
-  parents.slice(-4).forEach((image, index) => {
+  parents.slice(-2).forEach((image, index) => {
     drawRoundSquare(
-      points[index].x - 3,
-      points[index].y - 3,
-      480 + 6,
-      480 + 6,
-      4,
+      positions[index].x - 4,
+      positions[index].y - 4,
+      size + 8,
+      size + 8,
+      6,
       '#ea6',
       ctx,
     );
-    ctx.drawImage(image, points[index].x, points[index].y, 192, 192);
+    ctx.drawImage(image, positions[index].x, positions[index].y, size, size);
   });
 
   return canvasToBlob(ogp);
