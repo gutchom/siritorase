@@ -22,7 +22,9 @@ const Answer: NextPage<Props> = (props) => {
   const { pictureId } = router.query;
 
   const ref = useRef<RefObject<HTMLImageElement>[]>(
-    Array(parents.length).fill(createRef<HTMLImageElement>()),
+    Array(parents.length)
+      .fill(null)
+      .map(() => createRef<HTMLImageElement>()),
   );
   const [images, setImages] = useState<HTMLImageElement[]>([]);
 
