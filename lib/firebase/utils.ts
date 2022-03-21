@@ -1,4 +1,5 @@
-import { UploadResult, ref, uploadBytes } from 'firebase/storage';
+import type { UploadResult } from 'firebase/storage';
+import { ref, uploadBytes } from 'firebase/storage';
 import { getFirebaseStorage } from 'lib/firebase/browser';
 
 export function getMediaURL(path: string): string {
