@@ -1,6 +1,6 @@
 export type Point = { x: number; y: number };
 
-export type ReplyType = {
+export type AnswerType = {
   id: string;
   title: string;
 };
@@ -12,5 +12,5 @@ export type PictureType = {
 
 export type PictureDoc = {
   title: string;
-  parents: ReplyType[];
+  parents: AnswerType[];
 };
