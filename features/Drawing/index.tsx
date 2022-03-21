@@ -1,9 +1,19 @@
 import { useRef, useState } from 'react';
+import type { AnswerType } from './types';
 import { useDrawing } from './hooks/useDrawing';
+import { complete } from './utils';
 import { Tools } from './Tools';
 import styles from './index.module.css';
 
-export default function Drawing() {
+type Props = {
+  parents: AnswerType[];
+  images: HTMLImageElement[];
+  onComplete(id: string, title: string, picture: Blob): void;
+};
+
+export function Drawing(props: Props) {
+  const { parents, images, onComplete } = props;
+  console.log(images);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { start, draw, end } = useDrawing(canvasRef);
   const [title, setTitle] = useState('');
@@ -37,6 +47,20 @@ export default function Drawing() {
       <div className={styles.tools}>
         <Tools />
       </div>
+      <button
+        className={styles.complete}
+        onClick={async () => {
+          const [id, picture] = await complete(
+            canvasRef,
+            title,
+            parents,
+            images,
+          );
+          onComplete(id, title, picture);
+        }}
+      >
+        絵を投稿する
+      </button>
     </div>
   );
 }
