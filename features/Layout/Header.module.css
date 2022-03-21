@@ -1,0 +1,10 @@
+.header {
+  padding: .75rem;
+  background: #ea6;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+}
