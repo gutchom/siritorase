@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useStroke } from './useStroke';
 import { strokeColorState, strokeTypeState, strokeWidthState } from '../atoms';
-import type { Point } from 'features/Drawing/types';
+import type { Point } from '../types';
 
 export function useDrawing(ref: RefObject<HTMLCanvasElement>): {
   start(x: number, y: number): void;
