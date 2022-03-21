@@ -114,9 +114,8 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
     throw new Error('context.params is not defined.');
   }
   const { pictureId } = context.params;
-  const parents = await getParents(pictureId);
 
   return {
-    props: { parents },
+    props: { parents: await getParents(pictureId) },
   };
 };
