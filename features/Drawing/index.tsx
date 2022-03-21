@@ -49,10 +49,13 @@ export function Drawing(props: Props) {
       <button
         className={styles.complete}
         onClick={async () => {
+          if (canvasRef.current === null) {
+            return;
+          }
           const [id, picture] = await complete(
-            canvasRef,
             title,
             parents,
+            canvasRef.current,
             images,
           );
           onComplete(id, title, picture);
