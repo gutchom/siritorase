@@ -84,13 +84,11 @@ export async function complete(
   picture: HTMLCanvasElement,
   parentImages: HTMLImageElement[],
 ): Promise<[id: string, picture: Blob]> {
-  const [blob, docRef] = await Promise.all([
-    canvasToBlob(picture),
-    addDoc(collection(db, 'pictures'), {
-      title,
-      parents,
-    }),
-  ]);
+  const blob = await canvasToBlob(picture);
+  const docRef = await addDoc(collection(db, 'pictures'), {
+    title,
+    parents,
+  });
   const id = docRef.id;
   await Promise.all([
     uploadMedia(`picture/${id}.png`, blob),
