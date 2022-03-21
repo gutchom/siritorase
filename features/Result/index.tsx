@@ -21,7 +21,7 @@ export function Result(props: Props) {
         className={styles.tweet}
         href={createTweetIntentURL(id, title, history)}
       >
-        結果をツイートする
+        ツイートする
       </a>
       <a className={styles.download} href={picture} download={`${title}.png`}>
         画像をダウンロードする
