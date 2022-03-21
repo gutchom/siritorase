@@ -32,6 +32,7 @@ export function useDrawing(ref: RefObject<HTMLCanvasElement>): {
         return;
       }
       context.lineCap = 'round';
+      context.lineJoin = 'round';
       context.lineWidth = strokeWidth;
       context.strokeStyle = strokeColor;
       switch (strokeType) {
