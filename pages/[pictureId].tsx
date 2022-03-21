@@ -51,7 +51,7 @@ const Answer: NextPage<Props> = (props) => {
       <Head>
         <title>しりとらせ</title>
         <link rel="icon" href="/favicon.ico" />
-        <meta property="og:title" content="絵しりとりの続きを描こう！" />
+        <meta property="og:title" content="みんなでお絵描きしりとりしよう！" />
         <meta property="og:type" content="article" />
         <meta
           property="og:url"
