@@ -16,13 +16,10 @@ export const Parents = forwardRef<RefObject<HTMLImageElement>[], Props>(
     const listRef = useRef<HTMLUListElement>(null);
 
     useEffect(() => {
-      if (listRef.current === null) {
-        return;
-      }
-      const el = listRef.current;
-      const offsetWidth = el.offsetWidth;
-      const scrollWidth = el.scrollWidth;
-      el.scrollTo(scrollWidth - offsetWidth, 0);
+      listRef.current?.scrollTo(
+        listRef.current.scrollWidth - listRef.current.offsetWidth,
+        0,
+      );
     }, [listRef]);
 
     return (
