@@ -28,7 +28,7 @@ export const Parents = forwardRef<RefObject<HTMLImageElement>[], Props>(
           <li key={id} className={styles.picture}>
             <Picture
               ref={ref && 'current' in ref ? ref.current?.[index] : null}
-              url={getMediaURL(id)}
+              url={getMediaURL(`picture/${id}.png`)}
               title={isTitleVisible ? title : '？？？'}
             />
           </li>
