@@ -45,7 +45,10 @@ const Answer: NextPage<Props> = (props) => {
 
   const isDrawing =
     id.length === 0 || title.length === 0 || picture === undefined;
-  const history = parents.map(({ title }) => title);
+  const history = parents
+    .slice(-5)
+    .map(({ title }, index) => (index === 4 ? '？？？' : title))
+    .join('→');
 
   return (
     <>
@@ -64,7 +67,7 @@ const Answer: NextPage<Props> = (props) => {
         />
 
         <meta property="og:site_name" content="しりとらせ" />
-        <meta property="og:description" content={history.join('→')} />
+        <meta property="og:description" content={history} />
 
         <meta name="twitter:card" content="summary_large_image" />
       </Head>

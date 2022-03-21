@@ -7,7 +7,7 @@ type Props = {
   id: string;
   title: string;
   picture: Blob;
-  history: string[];
+  history: string;
 };
 
 export function Result(props: Props) {
@@ -41,13 +41,10 @@ export function Result(props: Props) {
 function createTweetIntentURL(
   id: string,
   title: string,
-  history: string[],
+  history: string,
 ): string {
   const url = new URL('https://twitter.com/intent/tweet');
-  url.searchParams.set(
-    'text',
-    `絵しりとりを描いたよ！\n${history.join('→')}→？？？`,
-  );
+  url.searchParams.set('text', `絵しりとりを描いたよ！\n\n${history}\n\n`);
   url.searchParams.set('url', `${HOST_DOMAIN}/${id}`);
   url.searchParams.set('hashtags', 'しりとり,絵しりとり');
 
