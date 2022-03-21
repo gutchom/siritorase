@@ -41,8 +41,9 @@ const Answer: NextPage<Props> = (props) => {
   const isDrawing =
     id.length === 0 || title.length === 0 || picture === undefined;
   const history = parents
-    .slice(-5)
-    .map(({ title }, index) => (index === 4 ? '？？？' : title))
+    .slice(-5, -1)
+    .map(({ title }) => title)
+    .concat('？？？')
     .join('→');
 
   return (
