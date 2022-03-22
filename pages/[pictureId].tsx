@@ -3,13 +3,13 @@ import { createRef, useEffect, useRef, useState } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { getMediaURL } from 'lib/firebase/utils';
 import { db } from 'lib/firebase/server';
+import { getMediaURL } from 'lib/firebase/utils';
 import { Ancestors } from 'features/Ancestors';
 import { Result } from 'features/Result';
 import { Drawing } from 'features/Drawing';
-import type { PictureDoc, PostType } from 'features/Drawing/types';
 import styles from 'styles/Home.module.css';
+import type { PictureDoc, PostType } from 'features/Drawing/types';
 
 type Props = {
   ancestors: PostType[];
@@ -108,7 +108,7 @@ const Post: NextPage<Props> = (props) => {
 
 export default Post;
 
-async function getAncestors(id: string): Promise<PostType[]> {
+export async function getAncestors(id: string): Promise<PostType[]> {
   const docRef = db.collection('pictures').doc(id);
   const snapshot = await docRef.get();
   const { title, ancestors, created } = snapshot.data() as PictureDoc;
