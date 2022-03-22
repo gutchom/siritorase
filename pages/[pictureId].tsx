@@ -8,7 +8,6 @@ import { getMediaURL } from 'lib/firebase/utils';
 import { Ancestors } from 'features/Ancestors';
 import { Result } from 'features/Result';
 import { Drawing } from 'features/Drawing';
-import styles from 'styles/Home.module.css';
 import type { PictureDoc, PostType } from 'features/Drawing/types';
 
 type Props = {
@@ -76,7 +75,7 @@ const Post: NextPage<Props> = (props) => {
         ></script>
       </Head>
 
-      <main className={styles.main}>
+      <main>
         <Ancestors
           ref={ref}
           ancestors={ancestors}
