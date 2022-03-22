@@ -29,7 +29,11 @@ export const Ancestors = forwardRef<RefObject<HTMLImageElement>[], Props>(
             <Picture
               ref={ref && 'current' in ref ? ref.current?.[index] : null}
               url={getMediaURL(`picture/${id}.png`)}
-              title={isTitleVisible ? title : '？？？'}
+              title={
+                isTitleVisible && index < ancestors.length - 1
+                  ? title
+                  : '？？？'
+              }
             />
           </li>
         ))}
