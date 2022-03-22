@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react';
-import type { AnswerType } from './types';
+import type { PicturePost } from './types';
 import { useDrawing } from './hooks/useDrawing';
 import { complete } from './utils';
 import { Tools } from './Tools';
 import styles from './index.module.css';
 
 type Props = {
-  parents: AnswerType[];
+  parents: PicturePost[];
   images: HTMLImageElement[];
   onComplete(id: string, title: string, picture: Blob): void;
 };
@@ -49,10 +49,13 @@ export function Drawing(props: Props) {
       <button
         className={styles.complete}
         onClick={async () => {
+          if (canvasRef.current === null) {
+            return;
+          }
           const [id, picture] = await complete(
-            canvasRef,
             title,
             parents,
+            canvasRef.current,
             images,
           );
           onComplete(id, title, picture);

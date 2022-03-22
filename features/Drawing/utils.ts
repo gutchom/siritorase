@@ -1,35 +1,14 @@
-import md5 from 'js-md5';
-import { doc, setDoc } from '@firebase/firestore';
-import { ref, uploadBytes } from 'firebase/storage';
-import type { RefObject } from 'react';
-import type { AnswerType, Point } from 'features/Drawing/types';
-import { getFirebaseDb, getFirebaseStorage } from 'lib/firebase/browser';
+import { addDoc, collection, deleteDoc } from '@firebase/firestore';
+import { getFirebaseDb } from 'lib/firebase/browser';
+import { uploadMedia } from 'lib/firebase/utils';
+import type { PicturePost, Point } from './types';
 
-const MIME_TYPE = 'image/png';
-
-async function getId(blob: Blob): Promise<string> {
-  return md5(await blob.arrayBuffer());
-}
-
-async function uploadPicture(blob: Blob, id: string): Promise<void> {
-  const storage = getFirebaseStorage();
-  const pictureRef = ref(storage, `picture/${id}.png`);
-  await uploadBytes(pictureRef, blob, { contentType: MIME_TYPE });
-}
-
-async function uploadOGP(blob: Blob, id: string): Promise<void> {
-  const storage = getFirebaseStorage();
-  const ogpRef = ref(storage, `ogp/${id}.png`);
-  await uploadBytes(ogpRef, blob, { contentType: MIME_TYPE });
-}
-
-async function register(
-  id: string,
-  title: string,
-  parents: AnswerType[],
-): Promise<void> {
-  const db = getFirebaseDb();
-  await setDoc(doc(db, 'pictures', id), { title, parents });
+function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      blob === null ? reject('blob is null') : resolve(blob);
+    });
+  });
 }
 
 function drawRoundSquare(
@@ -56,13 +35,13 @@ function drawRoundSquare(
 }
 
 function createOGP(
-  canvasPic: HTMLCanvasElement,
-  images: HTMLImageElement[],
+  picture: HTMLCanvasElement,
+  parents: HTMLImageElement[],
 ): Promise<Blob> {
-  const canvasOGP = document.createElement('canvas');
-  canvasOGP.width = 1200;
-  canvasOGP.height = 630;
-  const ctx = canvasOGP.getContext('2d');
+  const ogp = document.createElement('canvas');
+  ogp.width = 1200;
+  ogp.height = 630;
+  const ctx = ogp.getContext('2d');
   if (ctx === null) {
     throw new Error('canvas context is not available.');
   }
@@ -72,55 +51,49 @@ function createOGP(
   ctx.fillRect(0, 0, 1200, 630);
 
   // 枠付きの回答画像を描画
-  drawRoundSquare(660 - 6, 60 - 6, 480 + 12, 480 + 12, 8, '#ea6', ctx);
-  ctx.drawImage(canvasPic, 660, 60, 480, 480);
+  drawRoundSquare(660 - 6, 60 - 6, 480 + 12, 480 + 12, 9, '#ea6', ctx);
+  ctx.drawImage(picture, 660, 60, 480, 480);
 
-  const points: Point[] = [
-    { x: 60 + 32, y: 60 + 32 },
-    { x: 60 + 32 + 192 + 32, y: 60 + 32 },
-    { x: 60 + 32, y: 60 + 32 + 192 + 32 },
-    { x: 60 + 32 + 192 + 32, y: 60 + 32 + 192 + 32 },
+  const size = 240;
+  const positions: Point[] = [
+    { x: 48, y: 240 + 6 + 60 - 120 - 4 },
+    { x: 48 + size + 48 + 16, y: 240 + 6 + 60 - 120 - 4 },
   ];
-  images.slice(-4).forEach((image, index) => {
-    ctx.drawImage(image, points[index].x, points[index].y, 192, 192);
+  parents.slice(-2).forEach((image, index) => {
+    drawRoundSquare(
+      positions[index].x - 4,
+      positions[index].y - 4,
+      size + 8,
+      size + 8,
+      6,
+      '#ea6',
+      ctx,
+    );
+    ctx.drawImage(image, positions[index].x, positions[index].y, size, size);
   });
 
-  return new Promise((resolve, reject) => {
-    canvasOGP.toBlob((blob) => {
-      if (blob === null) {
-        reject();
-        return;
-      }
-      resolve(blob);
-    }, MIME_TYPE);
-  });
+  return canvasToBlob(ogp);
 }
 
 export async function complete(
-  canvasRef: RefObject<HTMLCanvasElement>,
   title: string,
-  parents: AnswerType[],
-  images: HTMLImageElement[],
+  parents: PicturePost[],
+  picture: HTMLCanvasElement,
+  parentImages: HTMLImageElement[],
 ): Promise<[id: string, picture: Blob]> {
-  return new Promise((resolve, reject) => {
-    canvasRef.current?.toBlob(async (blob) => {
-      if (blob === null) {
-        reject('blob is null.');
-        return;
-      }
-      if (canvasRef.current === null) {
-        reject('canvasRef is null.');
-        return;
-      }
-
-      const id = await getId(blob);
-      await Promise.all([
-        uploadPicture(blob, id),
-        createOGP(canvasRef.current, images).then((ogp) => uploadOGP(ogp, id)),
-      ]);
-      await register(id, title, parents);
-
-      resolve([id, blob]);
-    }, MIME_TYPE);
+  const blob = await canvasToBlob(picture);
+  const db = getFirebaseDb();
+  const docRef = await addDoc(collection(db, 'pictures'), {
+    title,
+    parents,
   });
+  const id = docRef.id;
+  await Promise.all([
+    uploadMedia(`picture/${id}.png`, blob),
+    createOGP(picture, parentImages).then((ogp) =>
+      uploadMedia(`ogp/${id}.png`, ogp),
+    ),
+  ]).catch(() => deleteDoc(docRef));
+
+  return [id, blob];
 }
