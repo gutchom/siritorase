@@ -102,11 +102,10 @@ const Post: NextPage<Props> = (props) => {
 export default Post;
 
 export async function getAncestors(id: string): Promise<PostType[]> {
-  const docRef = db.collection('pictures').doc(id);
-  const snapshot = await docRef.get();
+  const snapshot = await db.collection('pictures').doc(id).get();
   const { title, ancestors, created } = snapshot.data() as PictureDoc;
 
-  return [...ancestors, { id, title, created }];
+  return [...ancestors, { id, title, created: created.toDate() }];
 }
 
 type Params = {
@@ -122,6 +121,8 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   const { pictureId } = context.params;
 
   return {
-    props: { ancestors: await getAncestors(pictureId) },
+    props: {
+      ancestors: JSON.parse(JSON.stringify(await getAncestors(pictureId))),
+    },
   };
 };
