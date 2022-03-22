@@ -1,7 +1,7 @@
 import { addDoc, collection, deleteDoc } from '@firebase/firestore';
 import { getFirebaseDb } from 'lib/firebase/browser';
 import { uploadMedia } from 'lib/firebase/utils';
-import type { PicturePost, Point } from './types';
+import type { Point, PostType } from './types';
 
 function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
   return new Promise((resolve, reject) => {
@@ -36,7 +36,7 @@ function drawRoundSquare(
 
 function createOGP(
   picture: HTMLCanvasElement,
-  parents: HTMLImageElement[],
+  ancestors: HTMLImageElement[],
 ): Promise<Blob> {
   const ogp = document.createElement('canvas');
   ogp.width = 1200;
@@ -59,7 +59,7 @@ function createOGP(
     { x: 48, y: 240 + 6 + 60 - 120 - 4 },
     { x: 48 + size + 48 + 16, y: 240 + 6 + 60 - 120 - 4 },
   ];
-  parents.slice(-2).forEach((image, index) => {
+  ancestors.slice(-2).forEach((image, index) => {
     drawRoundSquare(
       positions[index].x - 4,
       positions[index].y - 4,
@@ -77,7 +77,7 @@ function createOGP(
 
 export async function complete(
   title: string,
-  parents: PicturePost[],
+  ancestors: PostType[],
   picture: HTMLCanvasElement,
   parentImages: HTMLImageElement[],
 ): Promise<[id: string, picture: Blob]> {

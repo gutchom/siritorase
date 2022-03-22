@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import styles from 'features/Parents/Picture.module.css';
+import styles from 'features/Ancestors/Picture.module.css';
 
 type Props = {
   url: string;

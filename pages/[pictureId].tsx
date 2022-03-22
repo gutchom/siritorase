@@ -5,24 +5,24 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getMediaURL } from 'lib/firebase/utils';
 import { db } from 'lib/firebase/server';
-import { Parents } from 'features/Parents';
+import { Ancestors } from 'features/Ancestors';
 import { Result } from 'features/Result';
 import { Drawing } from 'features/Drawing';
-import type { PictureDoc, PicturePost } from 'features/Drawing/types';
+import type { PictureDoc, PostType } from 'features/Drawing/types';
 import styles from 'styles/Home.module.css';
 
 type Props = {
-  parents: PicturePost[];
+  ancestors: PostType[];
 };
 
-const Answer: NextPage<Props> = (props) => {
-  const { parents } = props;
+const Post: NextPage<Props> = (props) => {
+  const { ancestors } = props;
 
   const router = useRouter();
   const { pictureId } = router.query;
 
   const ref = useRef<RefObject<HTMLImageElement>[]>(
-    Array(parents.length)
+    Array(ancestors.length)
       .fill(null)
       .map(() => createRef<HTMLImageElement>()),
   );
@@ -42,7 +42,7 @@ const Answer: NextPage<Props> = (props) => {
 
   const isDrawing =
     id.length === 0 || title.length === 0 || picture === undefined;
-  const history = parents
+  const history = ancestors
     .slice(-4)
     .map(({ title }) => title)
     .concat('？？？')
@@ -77,11 +77,15 @@ const Answer: NextPage<Props> = (props) => {
       </Head>
 
       <main className={styles.main}>
-        <Parents ref={ref} parents={parents} isTitleVisible={!isDrawing} />
+        <Ancestors
+          ref={ref}
+          ancestors={ancestors}
+          isTitleVisible={!isDrawing}
+        />
 
         {isDrawing ? (
           <Drawing
-            parents={parents}
+            ancestors={ancestors}
             images={images}
             onComplete={(id, title, picture) => {
               setId(id);
@@ -102,14 +106,14 @@ const Answer: NextPage<Props> = (props) => {
   );
 };
 
-export default Answer;
+export default Post;
 
-async function getParents(id: string): Promise<PicturePost[]> {
+async function getAncestors(id: string): Promise<PostType[]> {
   const docRef = db.collection('pictures').doc(id);
   const snapshot = await docRef.get();
-  const { title, parents } = snapshot.data() as PictureDoc;
+  const { title, ancestors, createdAt } = snapshot.data() as PictureDoc;
 
-  return [...parents, { id, title }];
+  return [...ancestors, { id, title, createdAt }];
 }
 
 type Params = {
@@ -125,6 +129,6 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   const { pictureId } = context.params;
 
   return {
-    props: { parents: await getParents(pictureId) },
+    props: { ancestors: await getAncestors(pictureId) },
   };
 };

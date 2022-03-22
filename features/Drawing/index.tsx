@@ -1,18 +1,18 @@
 import { useRef, useState } from 'react';
-import type { PicturePost } from './types';
+import type { PostType } from './types';
 import { useDrawing } from './hooks/useDrawing';
 import { complete } from './utils';
 import { Tools } from './Tools';
 import styles from './index.module.css';
 
 type Props = {
-  parents: PicturePost[];
+  ancestors: PostType[];
   images: HTMLImageElement[];
   onComplete(id: string, title: string, picture: Blob): void;
 };
 
 export function Drawing(props: Props) {
-  const { parents, images, onComplete } = props;
+  const { ancestors, images, onComplete } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { start, draw, end } = useDrawing(canvasRef);
   const [title, setTitle] = useState('');
@@ -54,7 +54,7 @@ export function Drawing(props: Props) {
           }
           const [id, picture] = await complete(
             title,
-            parents,
+            ancestors,
             canvasRef.current,
             images,
           );
