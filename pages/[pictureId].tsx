@@ -111,9 +111,9 @@ export default Post;
 async function getAncestors(id: string): Promise<PostType[]> {
   const docRef = db.collection('pictures').doc(id);
   const snapshot = await docRef.get();
-  const { title, ancestors, createdAt } = snapshot.data() as PictureDoc;
+  const { title, ancestors, created } = snapshot.data() as PictureDoc;
 
-  return [...ancestors, { id, title, createdAt }];
+  return [...ancestors, { id, title, created }];
 }
 
 type Params = {

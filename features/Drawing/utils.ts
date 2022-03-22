@@ -75,6 +75,17 @@ function createOGP(
   return canvasToBlob(ogp);
 }
 
+async function register(title: string, ancestors: PostType[]) {
+  const db = getFirebaseDb();
+  const docRef = await addDoc(collection(db, 'pictures'), {
+    title,
+    ancestors,
+    created: new Date(),
+  });
+
+  return docRef;
+}
+
 export async function complete(
   title: string,
   ancestors: PostType[],
@@ -82,11 +93,7 @@ export async function complete(
   parentImages: HTMLImageElement[],
 ): Promise<[id: string, picture: Blob]> {
   const blob = await canvasToBlob(picture);
-  const db = getFirebaseDb();
-  const docRef = await addDoc(collection(db, 'pictures'), {
-    title,
-    parents,
-  });
+  const docRef = await register(title, ancestors);
   const id = docRef.id;
   await Promise.all([
     uploadMedia(`picture/${id}.png`, blob),
