@@ -4,7 +4,9 @@ import {
   collection,
   deleteDoc,
   doc,
+  increment,
   setDoc,
+  updateDoc,
 } from '@firebase/firestore';
 import { getFirebaseDb } from 'lib/firebase/browser';
 import { uploadMedia } from 'lib/firebase/utils';
@@ -88,11 +90,14 @@ async function register(
 ): Promise<[DocumentReference, DocumentReference]> {
   const [ancestor] = ancestors.slice(-1);
   const created = new Date();
-  const post = { title, ancestors, created };
+  const post = { title, ancestors, created, childrenCount: 0 };
   const db = getFirebaseDb();
   const postRef = await addDoc(collection(db, 'pictures'), post);
   const childRef = doc(db, 'pictures', ancestor.id, 'children', postRef.id);
   await setDoc(childRef, post);
+  await updateDoc(doc(db, 'pictures', ancestor.id), {
+    childrenCount: increment(1),
+  });
 
   return [postRef, childRef];
 }
