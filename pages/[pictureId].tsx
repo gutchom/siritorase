@@ -68,6 +68,12 @@ const Answer: NextPage<Props> = (props) => {
         <meta property="og:description" content={history} />
 
         <meta name="twitter:card" content="summary_large_image" />
+
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9429732150361585"
+          crossOrigin="anonymous"
+        ></script>
       </Head>
 
       <main className={styles.main}>

@@ -18,6 +18,12 @@ const Home: NextPage = () => {
       <Head>
         <title>しりとらせ</title>
         <link rel="icon" href="/favicon.ico" />
+
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9429732150361585"
+          crossOrigin="anonymous"
+        ></script>
       </Head>
 
       <main className={styles.main}>
