@@ -42,7 +42,7 @@ const Post: NextPage<Props> = (props) => {
   const isDrawing =
     id.length === 0 || title.length === 0 || picture === undefined;
   const history = ancestors
-    .slice(-4)
+    .slice(-3, -1)
     .map(({ title }) => title)
     .concat('？？？')
     .join('→');
