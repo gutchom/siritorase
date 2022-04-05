@@ -52,7 +52,7 @@ const Post: NextPage<Props> = (props) => {
       <Head>
         <title>しりとらせ</title>
         <link rel="icon" href="/favicon.ico" />
-        <meta property="og:title" content="みんなでお絵描きしりとりしよう！" />
+        <meta property="og:title" content={history} />
         <meta property="og:type" content="article" />
         <meta
           property="og:url"
