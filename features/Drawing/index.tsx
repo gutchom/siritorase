@@ -34,6 +34,7 @@ export function Drawing(props: Props) {
           end();
         }}
       />
+      {/* TODO: 未入力時に絵を投稿できない場合、注意書きを表示する */}
       <input
         className={styles.title}
         type="text"
