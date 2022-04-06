@@ -3,26 +3,25 @@ import { createRef, useEffect, useRef, useState } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { getMediaURL } from 'lib/firebase/utils';
 import { db } from 'lib/firebase/server';
-import { Parents } from 'features/Parents';
+import { getMediaURL } from 'lib/firebase/utils';
+import { Ancestors } from 'features/Ancestors';
 import { Result } from 'features/Result';
 import { Drawing } from 'features/Drawing';
-import type { PictureDoc, PicturePost } from 'features/Drawing/types';
-import styles from 'styles/Home.module.css';
+import type { PictureDoc, PostType } from 'features/Drawing/types';
 
 type Props = {
-  parents: PicturePost[];
+  ancestors: PostType[];
 };
 
-const Answer: NextPage<Props> = (props) => {
-  const { parents } = props;
+const Post: NextPage<Props> = (props) => {
+  const { ancestors } = props;
 
   const router = useRouter();
   const { pictureId } = router.query;
 
   const ref = useRef<RefObject<HTMLImageElement>[]>(
-    Array(parents.length)
+    Array(ancestors.length)
       .fill(null)
       .map(() => createRef<HTMLImageElement>()),
   );
@@ -42,8 +41,8 @@ const Answer: NextPage<Props> = (props) => {
 
   const isDrawing =
     id.length === 0 || title.length === 0 || picture === undefined;
-  const history = parents
-    .slice(-4)
+  const history = ancestors
+    .slice(-3, -1)
     .map(({ title }) => title)
     .concat('？？？')
     .join('→');
@@ -53,7 +52,7 @@ const Answer: NextPage<Props> = (props) => {
       <Head>
         <title>しりとらせ</title>
         <link rel="icon" href="/favicon.ico" />
-        <meta property="og:title" content="みんなでお絵描きしりとりしよう！" />
+        <meta property="og:title" content={history} />
         <meta property="og:type" content="article" />
         <meta
           property="og:url"
@@ -68,20 +67,18 @@ const Answer: NextPage<Props> = (props) => {
         <meta property="og:description" content={history} />
 
         <meta name="twitter:card" content="summary_large_image" />
-
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9429732150361585"
-          crossOrigin="anonymous"
-        ></script>
       </Head>
 
-      <main className={styles.main}>
-        <Parents ref={ref} parents={parents} isTitleVisible={!isDrawing} />
+      <main>
+        <Ancestors
+          ref={ref}
+          ancestors={ancestors}
+          isTitleVisible={!isDrawing}
+        />
 
         {isDrawing ? (
           <Drawing
-            parents={parents}
+            ancestors={ancestors}
             images={images}
             onComplete={(id, title, picture) => {
               setId(id);
@@ -102,14 +99,13 @@ const Answer: NextPage<Props> = (props) => {
   );
 };
 
-export default Answer;
+export default Post;
 
-async function getParents(id: string): Promise<PicturePost[]> {
-  const docRef = db.collection('pictures').doc(id);
-  const snapshot = await docRef.get();
-  const { title, parents } = snapshot.data() as PictureDoc;
+async function getAncestors(id: string): Promise<PostType[]> {
+  const snapshot = await db.collection('pictures').doc(id).get();
+  const { title, ancestors, created } = snapshot.data() as PictureDoc;
 
-  return [...parents, { id, title }];
+  return [...ancestors, { id, title, created: created.toDate() }];
 }
 
 type Params = {
@@ -125,6 +121,8 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   const { pictureId } = context.params;
 
   return {
-    props: { parents: await getParents(pictureId) },
+    props: {
+      ancestors: JSON.parse(JSON.stringify(await getAncestors(pictureId))),
+    },
   };
 };

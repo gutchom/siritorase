@@ -1,7 +1,16 @@
-import { addDoc, collection, deleteDoc } from '@firebase/firestore';
+import type { DocumentReference } from '@firebase/firestore';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  increment,
+  setDoc,
+  updateDoc,
+} from '@firebase/firestore';
 import { getFirebaseDb } from 'lib/firebase/browser';
 import { uploadMedia } from 'lib/firebase/utils';
-import type { PicturePost, Point } from './types';
+import type { Point, PostType } from './types';
 
 function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
   return new Promise((resolve, reject) => {
@@ -36,7 +45,7 @@ function drawRoundSquare(
 
 function createOGP(
   picture: HTMLCanvasElement,
-  parents: HTMLImageElement[],
+  ancestors: HTMLImageElement[],
 ): Promise<Blob> {
   const ogp = document.createElement('canvas');
   ogp.width = 1200;
@@ -59,7 +68,7 @@ function createOGP(
     { x: 48, y: 240 + 6 + 60 - 120 - 4 },
     { x: 48 + size + 48 + 16, y: 240 + 6 + 60 - 120 - 4 },
   ];
-  parents.slice(-2).forEach((image, index) => {
+  ancestors.slice(-2).forEach((image, index) => {
     drawRoundSquare(
       positions[index].x - 4,
       positions[index].y - 4,
@@ -75,25 +84,42 @@ function createOGP(
   return canvasToBlob(ogp);
 }
 
+async function register(
+  title: string,
+  ancestors: PostType[],
+): Promise<[DocumentReference, DocumentReference]> {
+  const [ancestor] = ancestors.slice(-1);
+  const created = new Date();
+  const post = { title, ancestors, created, childrenCount: 0 };
+  const db = getFirebaseDb();
+  const postRef = await addDoc(collection(db, 'pictures'), post);
+  const childRef = doc(db, 'pictures', ancestor.id, 'children', postRef.id);
+  await setDoc(childRef, post);
+  await updateDoc(doc(db, 'pictures', ancestor.id), {
+    childrenCount: increment(1),
+  });
+
+  return [postRef, childRef];
+}
+
 export async function complete(
   title: string,
-  parents: PicturePost[],
+  ancestors: PostType[],
   picture: HTMLCanvasElement,
   parentImages: HTMLImageElement[],
 ): Promise<[id: string, picture: Blob]> {
   const blob = await canvasToBlob(picture);
-  const db = getFirebaseDb();
-  const docRef = await addDoc(collection(db, 'pictures'), {
-    title,
-    parents,
-  });
-  const id = docRef.id;
+  const [postRef, childRef] = await register(title, ancestors);
+  const id = postRef.id;
   await Promise.all([
     uploadMedia(`picture/${id}.png`, blob),
     createOGP(picture, parentImages).then((ogp) =>
       uploadMedia(`ogp/${id}.png`, ogp),
     ),
-  ]).catch(() => deleteDoc(docRef));
+  ]).catch(() => {
+    deleteDoc(postRef);
+    deleteDoc(childRef);
+  });
 
   return [id, blob];
 }
