@@ -5,9 +5,9 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { db } from 'lib/firebase/server';
 import { getMediaURL } from 'lib/firebase/utils';
-import { Ancestors } from 'features/Ancestors';
-import { Result } from 'features/Result';
-import { Drawing } from 'features/Drawing';
+import Ancestors from 'features/Ancestors';
+import Result from 'features/Result';
+import Drawing from 'features/Drawing';
 import type { PictureDoc, PostType } from 'features/Drawing/types';
 
 type Props = {

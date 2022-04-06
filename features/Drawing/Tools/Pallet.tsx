@@ -4,7 +4,7 @@ import type { StrokeColor } from '../atoms';
 import { colors, strokeColorState } from '../atoms';
 import styles from './Pallet.module.css';
 
-export function Pallet() {
+export default function Pallet() {
   const [strokeColor, setStrokeColor] = useRecoilState(strokeColorState);
 
   return (

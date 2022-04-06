@@ -2,7 +2,7 @@ import type { RefObject } from 'react';
 import { forwardRef, useEffect, useRef } from 'react';
 import { getMediaURL } from 'lib/firebase/utils';
 import type { PostType } from 'features/Drawing/types';
-import { Picture } from './Picture';
+import Picture from './Picture';
 import styles from './index.module.css';
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
   isTitleVisible: boolean;
 };
 
-export const Ancestors = forwardRef<RefObject<HTMLImageElement>[], Props>(
+export default forwardRef<RefObject<HTMLImageElement>[], Props>(
   function Ancestors(props, ref) {
     const { ancestors, isTitleVisible } = props;
     const listRef = useRef<HTMLUListElement>(null);

@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import type { PostType } from './types';
 import { useDrawing } from './hooks/useDrawing';
 import { complete } from './utils';
-import { Tools } from './Tools';
+import Tools from './Tools';
 import styles from './index.module.css';
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
   onComplete(id: string, title: string, picture: Blob): void;
 };
 
-export function Drawing(props: Props) {
+export default function Drawing(props: Props) {
   const { ancestors, images, onComplete } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { start, draw, end } = useDrawing(canvasRef);

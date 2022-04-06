@@ -10,7 +10,7 @@ const icons = [
   <FaBrush key={3} style={{ transform: 'rotate(225deg)' }} />,
 ];
 
-export function Brushes() {
+export default function Brushes() {
   const [strokeWidth, setStrokeWidth] = useRecoilState(strokeWidthState);
 
   return (
