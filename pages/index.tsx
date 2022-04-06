@@ -23,7 +23,6 @@ const Home: NextPage<Props> = (props) => {
 
       <main>
         <section className={styles.intro}>
-          <h2 className={styles.title}>いま、お絵描きしりとりが熱い！！</h2>
           <p>
             しりとらせは不特定多数の人たちとお絵描きしりとりができるWebサービスです。人気のお絵描きしりとりに今すぐ参加しよう！
           </p>
