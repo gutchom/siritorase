@@ -35,7 +35,7 @@ const Home: NextPage<Props> = (props) => {
             {arrivals.map((posts, index) => (
               <li key={index} className={styles.posts}>
                 <Ancestors ancestors={posts} isTitleVisible={false} />
-                <Link href={`/${posts.at(-1)?.id}`}>
+                <Link href={`/${posts[posts.length - 1]?.id}`}>
                   <a className={styles.join}>しりとりに参加する</a>
                 </Link>
               </li>
@@ -59,6 +59,11 @@ async function getArrivals(): Promise<PostType[][]> {
   return snapshot.docs.map((doc) => {
     const id = doc.id;
     const { title, ancestors, created } = doc.data() as PictureDoc;
+
+    // FIXME: DBのスキーマが確定したら取り除く
+    if (!ancestors) {
+      return [];
+    }
 
     return [...ancestors, { id, title, created: created.toDate() }];
   });
