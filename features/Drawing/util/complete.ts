@@ -10,7 +10,7 @@ import {
 } from '@firebase/firestore';
 import { getFirebaseDb } from 'lib/firebase/browser';
 import { uploadMedia } from 'lib/firebase/utils';
-import type { Point, PostType } from './types';
+import type { Point, PostType } from '../types';
 
 function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
   return new Promise((resolve, reject) => {
