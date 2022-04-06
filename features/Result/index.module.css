@@ -18,7 +18,7 @@
   font-weight: bold;
   text-align: center;
   background: #fff;
-  border: 3px solid #ea6;
+  border: 3px solid var(--theme-color-main);
 }
 
 .tweet {
@@ -33,7 +33,7 @@
   color: #fff;
   text-align: center;
   text-decoration: none;
-  background: #1d96e7;
+  background: var(--color-twitter);
   border: none;
   border-radius: 8px;
 }
@@ -50,6 +50,6 @@
   color: #fff;
   text-align: center;
   text-decoration: none;
-  background: #ea6;
+  background: var(--theme-color-main);
   border-radius: 8px;
 }
