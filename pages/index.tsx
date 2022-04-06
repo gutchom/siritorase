@@ -50,20 +50,11 @@ const Home: NextPage<Props> = (props) => {
 export default Home;
 
 async function getArrivals(): Promise<PostType[][]> {
-  const snapshot = await db
-    .collection('pictures')
-    // .orderBy('childrenCount')
-    // .limit(100)
-    .get();
+  const snapshot = await db.collection('pictures').get();
 
   return snapshot.docs.map((doc) => {
     const id = doc.id;
     const { title, ancestors, created } = doc.data() as PictureDoc;
-
-    // FIXME: DBのスキーマが確定したら取り除く
-    if (!ancestors) {
-      return [];
-    }
 
     return [...ancestors, { id, title, created: created.toDate() }];
   });
