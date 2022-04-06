@@ -101,7 +101,7 @@ const Post: NextPage<Props> = (props) => {
 
 export default Post;
 
-export async function getAncestors(id: string): Promise<PostType[]> {
+async function getAncestors(id: string): Promise<PostType[]> {
   const snapshot = await db.collection('pictures').doc(id).get();
   const { title, ancestors, created } = snapshot.data() as PictureDoc;
 
