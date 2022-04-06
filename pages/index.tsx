@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { db } from 'lib/firebase/server';
-import { Ancestors } from 'features/Ancestors';
+import Ancestors from 'features/Ancestors';
 import type { PictureDoc, PostType } from 'features/Drawing/types';
 import styles from 'styles/Home.module.css';
 
