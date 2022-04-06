@@ -20,6 +20,6 @@
   color: #fff;
   text-align: center;
   text-decoration: none;
-  background: #ea6;
+  background: var(--theme-color-accent);
   border-radius: 8px;
 }

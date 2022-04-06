@@ -9,7 +9,7 @@
   height: 320px;
   margin: auto;
   touch-action: none;
-  border: 6px solid #ea6;
+  border: 6px solid var(--theme-color-main);
   border-radius: 8px;
 }
 
@@ -24,7 +24,7 @@
   font-weight: bold;
   text-align: center;
   background: #fff;
-  border: 3px solid #ea6;
+  border: 3px solid var(--theme-color-main);
 }
 
 .tools {
@@ -42,7 +42,7 @@
   font-weight: bold;
   color: #fff;
   text-align: center;
-  background: #ea6;
+  background: var(--theme-color-accent);
   border: none;
   border-radius: 8px;
 }

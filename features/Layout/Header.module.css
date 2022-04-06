@@ -1,6 +1,6 @@
 .header {
   padding: .75rem;
-  background: #ea6;
+  background: var(--theme-color-main);
 }
 
 .title {
