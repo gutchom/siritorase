@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "run-p dev:*",
     "dev:next": "next dev",
-    "dev:firebase": "firebase emulators:start",
+    "dev:firebase": "firebase emulators:start --import=.cache --export-on-exit=.cache",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
