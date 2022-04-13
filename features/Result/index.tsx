@@ -7,7 +7,7 @@ type Props = {
   history: string;
 };
 
-export function Result(props: Props) {
+export default function Result(props: Props) {
   const { id, title, picture, history } = props;
 
   return (

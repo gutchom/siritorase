@@ -6,7 +6,7 @@ type Props = {
   title: string;
 };
 
-export const Picture = forwardRef<HTMLImageElement, Props>(function Picture(
+export default forwardRef<HTMLImageElement, Props>(function Picture(
   props,
   ref,
 ) {

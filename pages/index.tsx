@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { db } from 'lib/firebase/server';
-import { Ancestors } from 'features/Ancestors';
+import Ancestors from 'features/Ancestors';
 import type { PictureDoc, PostType } from 'features/Drawing/types';
 import styles from 'styles/Home.module.css';
 
@@ -23,7 +23,6 @@ const Home: NextPage<Props> = (props) => {
 
       <main>
         <section className={styles.intro}>
-          <h2 className={styles.title}>いま、お絵描きしりとりが熱い！！</h2>
           <p>
             しりとらせは不特定多数の人たちとお絵描きしりとりができるWebサービスです。人気のお絵描きしりとりに今すぐ参加しよう！
           </p>
@@ -50,20 +49,11 @@ const Home: NextPage<Props> = (props) => {
 export default Home;
 
 async function getArrivals(): Promise<PostType[][]> {
-  const snapshot = await db
-    .collection('pictures')
-    // .orderBy('childrenCount')
-    // .limit(100)
-    .get();
+  const snapshot = await db.collection('pictures').get();
 
   return snapshot.docs.map((doc) => {
     const id = doc.id;
     const { title, ancestors, created } = doc.data() as PictureDoc;
-
-    // FIXME: DBのスキーマが確定したら取り除く
-    if (!ancestors) {
-      return [];
-    }
 
     return [...ancestors, { id, title, created: created.toDate() }];
   });

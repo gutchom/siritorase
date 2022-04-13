@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 import type { PostType } from './types';
 import { useDrawing } from './hooks/useDrawing';
-import { complete } from './utils';
-import { Tools } from './Tools';
+import { complete } from './utils/complete';
+import Tools from './Tools';
 import styles from './index.module.css';
 
 type Props = {
@@ -11,11 +11,12 @@ type Props = {
   onComplete(id: string, title: string, picture: Blob): void;
 };
 
-export function Drawing(props: Props) {
+export default function Drawing(props: Props) {
   const { ancestors, images, onComplete } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { start, draw, end } = useDrawing(canvasRef);
   const [title, setTitle] = useState('');
+  const [shouldCaution, setShouldCaution] = useState(false);
 
   return (
     <div className={styles.container}>
@@ -34,7 +35,6 @@ export function Drawing(props: Props) {
           end();
         }}
       />
-      {/* TODO: 未入力時に絵を投稿できない場合、注意書きを表示する */}
       <input
         className={styles.title}
         type="text"
@@ -44,6 +44,12 @@ export function Drawing(props: Props) {
           setTitle(e.target.value);
         }}
       />
+      <small
+        className={styles.caution}
+        style={{ display: shouldCaution ? 'block' : 'none' }}
+      >
+        ※タイトルを入力してください
+      </small>
       <div className={styles.tools}>
         <Tools />
       </div>
@@ -51,6 +57,10 @@ export function Drawing(props: Props) {
         className={styles.complete}
         onClick={async () => {
           if (canvasRef.current === null) {
+            return;
+          }
+          if (title.length === 0) {
+            setShouldCaution(true);
             return;
           }
           const [id, picture] = await complete(

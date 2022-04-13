@@ -1,8 +1,9 @@
-import type { RefObject } from 'react';
 import { forwardRef, useEffect, useRef } from 'react';
-import { getMediaURL } from 'lib/firebase/utils';
+import type { MultipleRef } from 'lib/useMultipleRef';
+import { getRef } from 'lib/useMultipleRef';
+import getMediaURL from 'lib/firebase/utils/getMediaURL';
 import type { PostType } from 'features/Drawing/types';
-import { Picture } from './Picture';
+import Picture from './Picture';
 import styles from './index.module.css';
 
 type Props = {
@@ -10,8 +11,8 @@ type Props = {
   isTitleVisible: boolean;
 };
 
-export const Ancestors = forwardRef<RefObject<HTMLImageElement>[], Props>(
-  function Ancestors(props, ref) {
+export default forwardRef<MultipleRef<HTMLImageElement>, Props>(
+  function Ancestors(props, refs) {
     const { ancestors, isTitleVisible } = props;
     const listRef = useRef<HTMLUListElement>(null);
 
@@ -27,7 +28,7 @@ export const Ancestors = forwardRef<RefObject<HTMLImageElement>[], Props>(
         {ancestors.map(({ id, title }, index) => (
           <li key={id} className={styles.picture}>
             <Picture
-              ref={ref && 'current' in ref ? ref.current?.[index] : null}
+              ref={getRef(refs, index)}
               url={getMediaURL(`picture/${id}.png`)}
               title={
                 index === ancestors.length - 1 && !isTitleVisible

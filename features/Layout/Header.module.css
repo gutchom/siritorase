@@ -1,10 +1,17 @@
 .header {
-  padding: .75rem;
-  background: #ea6;
+  display: flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: var(--theme-color-main);
 }
 
 .title {
+  padding: 12px 0;
   font-size: 1.5rem;
   font-weight: bold;
   color: #fff;
+}
+
+.account {
+  margin-left: auto;
 }

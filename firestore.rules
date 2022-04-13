@@ -1,8 +1,16 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /pictures/{picture=**} {
-      allow create;
+    match /pictures/{pictureId} {
+      allow create, update;
+
+      match /children/{childId} {
+        allow create;
+      }
+    }
+    match /users/{userId} {
+      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null;
     }
   }
 }

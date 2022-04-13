@@ -1,13 +1,13 @@
-import type { RefObject } from 'react';
-import { createRef, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { db } from 'lib/firebase/server';
-import { getMediaURL } from 'lib/firebase/utils';
-import { Ancestors } from 'features/Ancestors';
-import { Result } from 'features/Result';
-import { Drawing } from 'features/Drawing';
+import getMediaURL from 'lib/firebase/utils/getMediaURL';
+import useMultipleRef from 'lib/useMultipleRef';
+import Ancestors from 'features/Ancestors';
+import Result from 'features/Result';
+import Drawing from 'features/Drawing';
 import type { PictureDoc, PostType } from 'features/Drawing/types';
 
 type Props = {
@@ -20,20 +20,7 @@ const Post: NextPage<Props> = (props) => {
   const router = useRouter();
   const { pictureId } = router.query;
 
-  const ref = useRef<RefObject<HTMLImageElement>[]>(
-    Array(ancestors.length)
-      .fill(null)
-      .map(() => createRef<HTMLImageElement>()),
-  );
-  const [images, setImages] = useState<HTMLImageElement[]>([]);
-
-  useEffect(() => {
-    setImages(
-      ref.current
-        .map((ref) => ref.current)
-        .filter((image) => image !== null) as HTMLImageElement[],
-    );
-  }, [ref]);
+  const [refs, images] = useMultipleRef<HTMLImageElement>(ancestors.length);
 
   const [id, setId] = useState('');
   const [title, setTitle] = useState('');
@@ -71,7 +58,7 @@ const Post: NextPage<Props> = (props) => {
 
       <main>
         <Ancestors
-          ref={ref}
+          ref={refs}
           ancestors={ancestors}
           isTitleVisible={!isDrawing}
         />
@@ -119,6 +106,14 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
     throw new Error('context.params is not defined.');
   }
   const { pictureId } = context.params;
+
+  if (pictureId === 'new') {
+    return {
+      props: {
+        ancestors: [],
+      },
+    };
+  }
 
   return {
     props: {
