@@ -31,7 +31,7 @@ export default forwardRef<MultipleRef<HTMLImageElement>, Props>(
               ref={getRef(refs, index)}
               url={getMediaURL(`picture/${id}.png`)}
               title={
-                index === ancestors.length - 1 && !isTitleVisible
+                index >= ancestors.length - 3 && !isTitleVisible
                   ? '？？？'
                   : title
               }
