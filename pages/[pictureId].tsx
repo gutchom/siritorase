@@ -11,11 +11,12 @@ import Drawing from 'features/Drawing';
 import type { PictureDoc, PostType } from 'features/Drawing/types';
 
 type Props = {
+  ogp: string;
   ancestors: PostType[];
 };
 
 const Post: NextPage<Props> = (props) => {
-  const { ancestors } = props;
+  const { ogp, ancestors } = props;
 
   const router = useRouter();
   const { pictureId } = router.query;
@@ -45,10 +46,7 @@ const Post: NextPage<Props> = (props) => {
           property="og:url"
           content={`https://siritorase.net/${pictureId}`}
         />
-        <meta
-          property="og:image"
-          content={getMediaURL(`ogp/${pictureId}.png`)}
-        />
+        <meta property="og:image" content={ogp} />
 
         <meta property="og:site_name" content="しりとらせ" />
         <meta property="og:description" content={history} />
@@ -88,7 +86,7 @@ const Post: NextPage<Props> = (props) => {
 
 export default Post;
 
-async function getAncestors(id: string): Promise<PostType[]> {
+async function getAncestors(id: string): Promise<Omit<PostType, 'src'>[]> {
   const snapshot = await db.collection('pictures').doc(id).get();
   const { title, ancestors, created } = snapshot.data() as PictureDoc;
 
@@ -102,15 +100,16 @@ type Params = {
 export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   context,
 ) => {
-  if (!context.params) {
-    throw new Error('context.params is not defined.');
-  }
-  const { pictureId } = context.params;
   const { req, params } = context;
 
+  if (!params) {
+    throw new Error('params is undefined.');
+  }
+  const { pictureId } = params;
   if (pictureId === 'new') {
     return {
       props: {
+        ogp: '',
         ancestors: [],
       },
     };
@@ -123,6 +122,7 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
 
   return {
     props: {
+      ogp: getMediaURL(`ogp/${pictureId}.png`, hostname),
       ancestors: JSON.parse(JSON.stringify((await getAncestors(pictureId)).map((ancestor) => ({
         ...ancestor,
         src: getMediaURL(`picture/${ancestor.id}.png`, hostname),
