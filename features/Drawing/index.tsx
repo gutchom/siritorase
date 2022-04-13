@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import type { PostType } from './types';
 import { useDrawing } from './hooks/useDrawing';
-import { complete } from './util/complete';
+import { complete } from './utils/complete';
 import Tools from './Tools';
 import styles from './index.module.css';
 

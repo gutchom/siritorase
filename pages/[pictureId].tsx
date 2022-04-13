@@ -4,7 +4,7 @@ import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { db } from 'lib/firebase/server';
-import { getMediaURL } from 'lib/firebase/utils';
+import getMediaURL from 'lib/firebase/getMediaURL';
 import Ancestors from 'features/Ancestors';
 import Result from 'features/Result';
 import Drawing from 'features/Drawing';

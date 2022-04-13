@@ -1,6 +1,6 @@
 import type { RefObject } from 'react';
 import { forwardRef, useEffect, useRef } from 'react';
-import { getMediaURL } from 'lib/firebase/utils';
+import getMediaURL from 'lib/firebase/getMediaURL';
 import type { PostType } from 'features/Drawing/types';
 import Picture from './Picture';
 import styles from './index.module.css';
