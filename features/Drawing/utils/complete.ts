@@ -12,22 +12,21 @@ import uploadMedia from './uploadMedia';
 import canvasToBlob from './canvasToBlob';
 import createOGP from './createOGP';
 
-async function register(
-  title: string,
-  ancestors: PostType[],
-): Promise<[DocumentReference, DocumentReference]> {
+async function register(title: string, ancestors: PostType[]): Promise<string> {
   const [ancestor] = ancestors.slice(-1);
   const created = new Date();
   const post = { title, ancestors, created, childrenCount: 0 };
   const db = getFirebaseDb();
   const postRef = await addDoc(collection(db, 'pictures'), post);
-  const childRef = doc(db, 'pictures', ancestor.id, 'children', postRef.id);
-  await setDoc(childRef, post);
-  await updateDoc(doc(db, 'pictures', ancestor.id), {
-    childrenCount: increment(1),
-  });
+  if (ancestor) {
+    const childRef = doc(db, 'pictures', ancestor.id, 'children', postRef.id);
+    await setDoc(childRef, post);
+    await updateDoc(doc(db, 'pictures', ancestor.id), {
+      childrenCount: increment(1),
+    });
+  }
 
-  return [postRef, childRef];
+  return postRef.id;
 }
 
 export async function complete(
@@ -36,18 +35,15 @@ export async function complete(
   picture: HTMLCanvasElement,
   parentImages: HTMLImageElement[],
 ): Promise<[id: string, picture: Blob]> {
-  const blob = await canvasToBlob(picture);
-  const [postRef, childRef] = await register(title, ancestors);
-  const id = postRef.id;
+  let blob: Blob;
+  const id = await register(title, ancestors);
   await Promise.all([
-    uploadMedia(`picture/${id}.png`, blob),
-    createOGP(picture, parentImages).then((ogp) =>
-      uploadMedia(`ogp/${id}.png`, ogp),
+    uploadMedia(`picture/${id}.png`, (blob = await canvasToBlob(picture))),
+    uploadMedia(
+      `ogp/${id}.png`,
+      await canvasToBlob(createOGP(picture, parentImages)),
     ),
-  ]).catch(() => {
-    deleteDoc(postRef);
-    deleteDoc(childRef);
-  });
+  ]);
 
   return [id, blob];
 }
