@@ -3,12 +3,12 @@ service firebase.storage {
   match /b/{bucket}/o {
     match /picture/{pictureId} {
       allow get;
-      allow write: if request.resource.size < 5 * 1024 * 1024
+      allow create: if request.resource.size < 5 * 1024 * 1024
                       && request.resource.contentType.matches('image/.*');
     }
     match /ogp/{pictureId} {
       allow get;
-      allow write: if request.resource.size < 5 * 1024 * 1024
+      allow create: if request.resource.size < 5 * 1024 * 1024
                       && request.resource.contentType.matches('image/.*');
     }
   }
