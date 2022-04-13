@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "run-p dev:*",
+    "dev:next": "next dev",
+    "dev:firebase": "firebase emulators:start",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -35,7 +37,9 @@
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jest": "^26.1.1",
     "eslint-plugin-tsc": "^2.0.0",
+    "firebase-tools": "^10.6.0",
     "jest": "^27.5.1",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",
     "react-test-renderer": "^17.0.2",
     "stylelint": "^14.5.2",
