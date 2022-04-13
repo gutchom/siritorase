@@ -13,15 +13,15 @@ export function getRef<T>(
 
 export default function useMultipleRef<T>(
   length: number,
-): [refs: MultipleForwardedRef<T>, items: T[]] {
+): [refs: MultipleForwardedRef<T>, content: T[]] {
   const refs = useRef<MultipleRef<T>>(
     Array(length)
       .fill(null) // Do not call "createRef()" here.
       .map(() => createRef<T>()), // "createRef()" should be called in "Array#map()".
   );
-  const items = refs.current
+  const content = refs.current
     .map((ref) => ref.current)
     .filter((item): item is T => item !== null);
 
-  return [refs, items];
+  return [refs, content];
 }
