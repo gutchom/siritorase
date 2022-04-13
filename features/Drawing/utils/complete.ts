@@ -9,7 +9,7 @@ import {
   updateDoc,
 } from '@firebase/firestore';
 import { getFirebaseDb } from 'lib/firebase/browser';
-import uploadMedia from 'lib/firebase/uploadMedia';
+import uploadMedia from 'lib/firebase/utils/uploadMedia';
 import type { Point, PostType } from '../types';
 
 function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
