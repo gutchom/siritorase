@@ -12,6 +12,15 @@
   color: #fff;
 }
 
+.link,
+.link:hover,
+.link:focus,
+.link:active,
+.link:visited {
+  color: #fff;
+  text-decoration: none;
+}
+
 .account {
   margin-left: auto;
 }
