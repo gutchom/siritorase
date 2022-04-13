@@ -21,7 +21,7 @@ export default function useMultipleRef<T>(
   );
   const items = refs.current
     .map((ref) => ref.current)
-    .filter((item): item is T => item != null);
+    .filter((item): item is T => item !== null);
 
   return [refs, items];
 }
