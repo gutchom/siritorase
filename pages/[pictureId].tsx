@@ -106,6 +106,7 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
     throw new Error('context.params is not defined.');
   }
   const { pictureId } = context.params;
+  const { req, params } = context;
 
   if (pictureId === 'new') {
     return {
@@ -115,9 +116,17 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
     };
   }
 
+  if (!req.headers.host) {
+    throw new Error('host is undefined.');
+  }
+  const [hostname] = req.headers.host.split(':');
+
   return {
     props: {
-      ancestors: JSON.parse(JSON.stringify(await getAncestors(pictureId))),
+      ancestors: JSON.parse(JSON.stringify((await getAncestors(pictureId)).map((ancestor) => ({
+        ...ancestor,
+        src: getMediaURL(`picture/${ancestor.id}.png`, hostname),
+      })))),
     },
   };
 };

@@ -48,19 +48,28 @@ const Home: NextPage<Props> = (props) => {
 
 export default Home;
 
-async function getArrivals(): Promise<PostType[][]> {
+async function getArrivals(hostname: string): Promise<PostType[][]> {
   const snapshot = await db.collection('pictures').get();
 
   return snapshot.docs.map((doc) => {
     const id = doc.id;
     const { title, ancestors, created } = doc.data() as PictureDoc;
 
-    return [...ancestors, { id, title, created: created.toDate() }];
+    return [...ancestors, { id, title, created: created.toDate() }].map((ancestor) => ({
+      ...ancestor,
+      src: getMediaURL(`picture/${ancestor.id}.png`, hostname),
+    }));
   });
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
+export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
+  const { req } = context;
+  if (!req.headers.host) {
+    throw new Error('host is undefined.');
+  }
+  const [hostname] = req.headers.host.split(':');
+
   return {
-    props: { arrivals: JSON.parse(JSON.stringify(await getArrivals())) },
+    props: { arrivals: JSON.parse(JSON.stringify(await getArrivals(hostname))) },
   };
 };

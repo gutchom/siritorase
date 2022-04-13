@@ -4,6 +4,7 @@ export type Point = { x: number; y: number };
 
 export type PostType = {
   id: string;
+  src: string;
   title: string;
   created: Date;
 };
