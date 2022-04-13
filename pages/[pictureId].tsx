@@ -107,6 +107,14 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   }
   const { pictureId } = context.params;
 
+  if (pictureId === 'new') {
+    return {
+      props: {
+        ancestors: [],
+      },
+    };
+  }
+
   return {
     props: {
       ancestors: JSON.parse(JSON.stringify(await getAncestors(pictureId))),
