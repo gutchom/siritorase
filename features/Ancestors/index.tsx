@@ -1,5 +1,6 @@
 import type { RefObject } from 'react';
 import { forwardRef, useEffect, useRef } from 'react';
+import { getRef } from 'lib/useMultipleRef';
 import getMediaURL from 'lib/firebase/getMediaURL';
 import type { PostType } from 'features/Drawing/types';
 import Picture from './Picture';
@@ -27,7 +28,7 @@ export default forwardRef<RefObject<HTMLImageElement>[], Props>(
         {ancestors.map(({ id, title }, index) => (
           <li key={id} className={styles.picture}>
             <Picture
-              ref={ref && 'current' in ref ? ref.current?.[index] : null}
+              ref={getRef(ref, index)}
               url={getMediaURL(`picture/${id}.png`)}
               title={
                 index === ancestors.length - 1 && !isTitleVisible
