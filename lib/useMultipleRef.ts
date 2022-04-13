@@ -1,5 +1,5 @@
 import type { ForwardedRef, RefObject } from 'react';
-import { createRef, useRef } from 'react';
+import { createRef, useEffect, useRef, useState } from 'react';
 
 export type MultipleRef<T> = RefObject<T>[];
 export type MultipleForwardedRef<T> = ForwardedRef<MultipleRef<T>>;
@@ -19,9 +19,15 @@ export default function useMultipleRef<T>(
       .fill(null) // Do not call "createRef()" here.
       .map(() => createRef<T>()), // "createRef()" should be called in "Array#map()".
   );
-  const content = refs.current
-    .map((ref) => ref.current)
-    .filter((item): item is T => item !== null);
 
-  return [refs, content];
+  const [items, setItems] = useState<T[]>([]);
+  useEffect(() => {
+    setItems(
+      refs.current
+        .map((ref) => ref.current)
+        .filter((item): item is T => item !== null),
+    );
+  }, [refs]);
+
+  return [refs, items];
 }
