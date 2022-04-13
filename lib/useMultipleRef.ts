@@ -1,14 +1,20 @@
 import type { ForwardedRef, RefObject } from 'react';
 import { createRef, useRef } from 'react';
 
-export function getRef<T>(refs: ForwardedRef<RefObject<T>[]>, index: number) {
-  return refs && 'current' in refs ? refs.current?.[index] : null;
+export type MultipleRef<T> = RefObject<T>[];
+export type MultipleForwardedRef<T> = ForwardedRef<MultipleRef<T>>;
+
+export function getRef<T>(
+  refs: MultipleForwardedRef<T>,
+  index: number,
+): RefObject<T> | null {
+  return refs && 'current' in refs ? refs.current?.[index] ?? null : null;
 }
 
 export default function useMultipleRef<T>(
   length: number,
-): [refs: ForwardedRef<RefObject<T>[]>, items: T[]] {
-  const refs = useRef<RefObject<T>[]>(
+): [refs: MultipleForwardedRef<T>, items: T[]] {
+  const refs = useRef<MultipleRef<T>>(
     Array(length)
       .fill(null) // Do not call "createRef()" here.
       .map(() => createRef<T>()), // "createRef()" should be called in "Array#map()".
