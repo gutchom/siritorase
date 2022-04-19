@@ -104,15 +104,6 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   if (!params) {
     throw new Error('params is undefined.');
   }
-  const { pictureId } = params;
-  if (pictureId === 'new') {
-    return {
-      props: {
-        ogp: '',
-        ancestors: [],
-      },
-    };
-  }
 
   if (!req.headers.host) {
     throw new Error('host is undefined.');
