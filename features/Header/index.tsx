@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import Account from './Account';
-import styles from './Header.module.css';
+import styles from './index.module.css';
 
-export function Header() {
+export default function Header() {
   return (
     <header className={styles.header}>
       <h1 className={styles.title}>
