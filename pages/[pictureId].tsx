@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { db } from 'lib/firebase/server';
-import getMediaURL from 'lib/firebase/utils/getMediaURL';
+import getMediaURL from 'lib/getMediaURL';
 import useMultipleRef from 'lib/useMultipleRef';
 import Ancestors from 'features/Ancestors';
 import Result from 'features/Result';
@@ -11,11 +11,12 @@ import Drawing from 'features/Drawing';
 import type { PictureDoc, PostType } from 'features/Drawing/types';
 
 type Props = {
+  ogp: string;
   ancestors: PostType[];
 };
 
 const Post: NextPage<Props> = (props) => {
-  const { ancestors } = props;
+  const { ogp, ancestors } = props;
 
   const router = useRouter();
   const { pictureId } = router.query;
@@ -38,17 +39,13 @@ const Post: NextPage<Props> = (props) => {
     <>
       <Head>
         <title>しりとらせ</title>
-        <link rel="icon" href="/favicon.ico" />
         <meta property="og:title" content={history} />
         <meta property="og:type" content="article" />
         <meta
           property="og:url"
           content={`https://siritorase.net/${pictureId}`}
         />
-        <meta
-          property="og:image"
-          content={getMediaURL(`ogp/${pictureId}.png`)}
-        />
+        <meta property="og:image" content={ogp} />
 
         <meta property="og:site_name" content="しりとらせ" />
         <meta property="og:description" content={history} />
@@ -88,11 +85,16 @@ const Post: NextPage<Props> = (props) => {
 
 export default Post;
 
-async function getAncestors(id: string): Promise<PostType[]> {
+async function getAncestors(id: string): Promise<Omit<PostType, 'src'>[]> {
   const snapshot = await db.collection('pictures').doc(id).get();
+  if (!snapshot.exists) {
+    throw new RangeError('"pictures" does not have an id.');
+  }
   const { title, ancestors, created } = snapshot.data() as PictureDoc;
 
-  return [...ancestors, { id, title, created: created.toDate() }];
+  return JSON.parse(
+    JSON.stringify([...ancestors, { id, title, created: created.toDate() }]),
+  );
 }
 
 type Params = {
@@ -102,22 +104,28 @@ type Params = {
 export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   context,
 ) => {
-  if (!context.params) {
-    throw new Error('context.params is not defined.');
-  }
-  const { pictureId } = context.params;
+  const { req, params } = context;
+  const { pictureId } = params!;
+  const [hostname] = req.headers.host?.split(':') ?? [];
 
-  if (pictureId === 'new') {
+  try {
+    const ancestors = (await getAncestors(pictureId)).map((ancestor) => ({
+      ...ancestor,
+      src: getMediaURL(`picture/${ancestor.id}.png`, hostname),
+    }));
+
     return {
       props: {
-        ancestors: [],
+        ogp: getMediaURL(`ogp/${pictureId}.png`, hostname),
+        ancestors,
+      },
+    };
+  } catch {
+    return {
+      redirect: {
+        statusCode: 302,
+        destination: '/',
       },
     };
   }
-
-  return {
-    props: {
-      ancestors: JSON.parse(JSON.stringify(await getAncestors(pictureId))),
-    },
-  };
 };

@@ -1,7 +1,6 @@
 import { forwardRef, useEffect, useRef } from 'react';
 import type { MultipleRef } from 'lib/useMultipleRef';
 import { getRef } from 'lib/useMultipleRef';
-import getMediaURL from 'lib/firebase/utils/getMediaURL';
 import type { PostType } from 'features/Drawing/types';
 import Picture from './Picture';
 import styles from './index.module.css';
@@ -25,13 +24,13 @@ export default forwardRef<MultipleRef<HTMLImageElement>, Props>(
 
     return (
       <ul className={styles.ancestors} ref={listRef}>
-        {ancestors.map(({ id, title }, index) => (
+        {ancestors.map(({ id, src, title }, index) => (
           <li key={id} className={styles.picture}>
             <Picture
               ref={getRef(refs, index)}
-              url={getMediaURL(`picture/${id}.png`)}
+              src={src}
               title={
-                index === ancestors.length - 1 && !isTitleVisible
+                index >= ancestors.length - 3 && !isTitleVisible
                   ? '？？？'
                   : title
               }

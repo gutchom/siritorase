@@ -1,8 +1,8 @@
-import type { NextPage } from 'next';
-import { GetServerSideProps } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { db } from 'lib/firebase/server';
+import getMediaURL from 'lib/getMediaURL';
 import Ancestors from 'features/Ancestors';
 import type { PictureDoc, PostType } from 'features/Drawing/types';
 import styles from 'styles/Home.module.css';
@@ -18,7 +18,6 @@ const Home: NextPage<Props> = (props) => {
     <>
       <Head>
         <title>しりとらせ</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main>
@@ -48,19 +47,34 @@ const Home: NextPage<Props> = (props) => {
 
 export default Home;
 
-async function getArrivals(): Promise<PostType[][]> {
+async function getArrivals(hostname: string): Promise<PostType[][]> {
   const snapshot = await db.collection('pictures').get();
 
   return snapshot.docs.map((doc) => {
     const id = doc.id;
     const { title, ancestors, created } = doc.data() as PictureDoc;
 
-    return [...ancestors, { id, title, created: created.toDate() }];
+    return [...ancestors, { id, title, created: created.toDate() }].map(
+      (ancestor) => ({
+        ...ancestor,
+        src: getMediaURL(`picture/${ancestor.id}.png`, hostname),
+      }),
+    );
   });
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context,
+) => {
+  const { req } = context;
+  if (!req.headers.host) {
+    throw new Error('host is undefined.');
+  }
+  const [hostname] = req.headers.host.split(':');
+
   return {
-    props: { arrivals: JSON.parse(JSON.stringify(await getArrivals())) },
+    props: {
+      arrivals: JSON.parse(JSON.stringify(await getArrivals(hostname))),
+    },
   };
 };

@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import styles from 'features/Ancestors/Picture.module.css';
 
 type Props = {
-  url: string;
+  src: string;
   title: string;
 };
 
@@ -10,14 +10,14 @@ export default forwardRef<HTMLImageElement, Props>(function Picture(
   props,
   ref,
 ) {
-  const { url, title } = props;
+  const { src, title } = props;
 
   return (
     <figure>
       <img
         className={styles.img}
         ref={ref}
-        src={url}
+        src={src}
         alt={title}
         crossOrigin="anonymous"
       />

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { FaQuestion, FaSignOutAlt } from 'react-icons/fa';
 import { getFirebaseAuth } from 'lib/firebase/browser';
-import { useAuth } from 'lib/firebase/utils/useAuth';
+import { useAuth } from 'lib/firebase/useAuth';
 import styles from './Account.module.css';
 
 export default function Account() {

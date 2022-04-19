@@ -4,6 +4,7 @@ export default function Document() {
   return (
     <Html>
       <Head>
+        <link rel="icon" href="/favicon.ico" />
         <meta name="theme-color" content="#eeaa66" />
         <script
           async
