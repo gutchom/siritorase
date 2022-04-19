@@ -1,5 +1,4 @@
-import type { NextPage } from 'next';
-import { GetServerSideProps } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { db } from 'lib/firebase/server';
@@ -55,14 +54,18 @@ async function getArrivals(hostname: string): Promise<PostType[][]> {
     const id = doc.id;
     const { title, ancestors, created } = doc.data() as PictureDoc;
 
-    return [...ancestors, { id, title, created: created.toDate() }].map((ancestor) => ({
-      ...ancestor,
-      src: getMediaURL(`picture/${ancestor.id}.png`, hostname),
-    }));
+    return [...ancestors, { id, title, created: created.toDate() }].map(
+      (ancestor) => ({
+        ...ancestor,
+        src: getMediaURL(`picture/${ancestor.id}.png`, hostname),
+      }),
+    );
   });
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context,
+) => {
   const { req } = context;
   if (!req.headers.host) {
     throw new Error('host is undefined.');
@@ -70,6 +73,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
   const [hostname] = req.headers.host.split(':');
 
   return {
-    props: { arrivals: JSON.parse(JSON.stringify(await getArrivals(hostname))) },
+    props: {
+      arrivals: JSON.parse(JSON.stringify(await getArrivals(hostname))),
+    },
   };
 };
