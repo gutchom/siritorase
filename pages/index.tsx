@@ -19,7 +19,6 @@ const Home: NextPage<Props> = (props) => {
     <>
       <Head>
         <title>しりとらせ</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main>
