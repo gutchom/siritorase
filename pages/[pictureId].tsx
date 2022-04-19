@@ -1,7 +1,7 @@
-import { useState } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { db } from 'lib/firebase/server';
 import getMediaURL from 'lib/getMediaURL';
 import useMultipleRef from 'lib/useMultipleRef';
@@ -87,9 +87,14 @@ export default Post;
 
 async function getAncestors(id: string): Promise<Omit<PostType, 'src'>[]> {
   const snapshot = await db.collection('pictures').doc(id).get();
+  if (!snapshot.exists) {
+    throw new RangeError('"pictures" does not have an id.');
+  }
   const { title, ancestors, created } = snapshot.data() as PictureDoc;
 
-  return [...ancestors, { id, title, created: created.toDate() }];
+  return JSON.parse(
+    JSON.stringify([...ancestors, { id, title, created: created.toDate() }]),
+  );
 }
 
 type Params = {
@@ -100,27 +105,27 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   context,
 ) => {
   const { req, params } = context;
+  const { pictureId } = params!;
+  const [hostname] = req.headers.host?.split(':') ?? [];
 
-  if (!params) {
-    throw new Error('params is undefined.');
+  try {
+    const ancestors = (await getAncestors(pictureId)).map((ancestor) => ({
+      ...ancestor,
+      src: getMediaURL(`picture/${ancestor.id}.png`, hostname),
+    }));
+
+    return {
+      props: {
+        ogp: getMediaURL(`ogp/${pictureId}.png`, hostname),
+        ancestors,
+      },
+    };
+  } catch {
+    return {
+      redirect: {
+        statusCode: 302,
+        destination: '/',
+      },
+    };
   }
-
-  if (!req.headers.host) {
-    throw new Error('host is undefined.');
-  }
-  const [hostname] = req.headers.host.split(':');
-
-  return {
-    props: {
-      ogp: getMediaURL(`ogp/${pictureId}.png`, hostname),
-      ancestors: JSON.parse(
-        JSON.stringify(
-          (await getAncestors(pictureId)).map((ancestor) => ({
-            ...ancestor,
-            src: getMediaURL(`picture/${ancestor.id}.png`, hostname),
-          })),
-        ),
-      ),
-    },
-  };
 };
