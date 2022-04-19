@@ -13,7 +13,14 @@ export default function Result(props: Props) {
   return (
     <div className={styles.container}>
       <figure>
-        <img className={styles.picture} src={picture} alt={title} />
+        <img
+          className={styles.picture}
+          src={picture}
+          alt={title}
+          onLoad={(e) => {
+            URL.revokeObjectURL(e.currentTarget.src);
+          }}
+        />
         <figcaption className={styles.caption}>{title}</figcaption>
       </figure>
 
