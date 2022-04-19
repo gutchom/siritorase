@@ -1,33 +1,26 @@
-import type { ForwardedRef, RefObject } from 'react';
+import type { ForwardedRef, MutableRefObject, RefObject } from 'react';
 import { createRef, useEffect, useRef, useState } from 'react';
 
 export type MultipleRef<T> = RefObject<T>[];
-export type MultipleForwardedRef<T> = ForwardedRef<MultipleRef<T>>;
 
-export function getRef<T>(
-  refs: MultipleForwardedRef<T>,
+export const getRef = <T>(
+  refs: ForwardedRef<MultipleRef<T>>,
   index: number,
-): RefObject<T> | null {
-  return refs && 'current' in refs ? refs.current?.[index] ?? null : null;
-}
+): RefObject<T> | null =>
+  refs && 'current' in refs ? refs.current && refs.current[index] : null;
 
 export default function useMultipleRef<T>(
   length: number,
-): [refs: MultipleForwardedRef<T>, content: T[]] {
-  const refs = useRef<MultipleRef<T>>(
-    Array(length)
-      .fill(null) // Do not call "createRef()" here.
-      .map(() => createRef<T>()), // "createRef()" should be called in "Array#map()".
-  );
-
-  const [items, setItems] = useState<T[]>([]);
+): [MutableRefObject<MultipleRef<T>>, T[]] {
+  const refs = useRef(Array<RefObject<T>>(length).fill(createRef<T>()));
+  const [values, setValues] = useState<T[]>([]);
   useEffect(() => {
-    setItems(
+    setValues(
       refs.current
         .map((ref) => ref.current)
         .filter((item): item is T => item !== null),
     );
   }, [refs]);
 
-  return [refs, items];
+  return [refs, values];
 }

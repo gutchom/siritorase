@@ -122,10 +122,14 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   return {
     props: {
       ogp: getMediaURL(`ogp/${pictureId}.png`, hostname),
-      ancestors: JSON.parse(JSON.stringify((await getAncestors(pictureId)).map((ancestor) => ({
-        ...ancestor,
-        src: getMediaURL(`picture/${ancestor.id}.png`, hostname),
-      })))),
+      ancestors: JSON.parse(
+        JSON.stringify(
+          (await getAncestors(pictureId)).map((ancestor) => ({
+            ...ancestor,
+            src: getMediaURL(`picture/${ancestor.id}.png`, hostname),
+          })),
+        ),
+      ),
     },
   };
 };
