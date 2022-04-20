@@ -2,6 +2,7 @@ import type { RefObject } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useStroke } from './useStroke';
+import type { StrokeColor, StrokeType, StrokeWidth } from '../atoms';
 import { strokeColorState, strokeTypeState, strokeWidthState } from '../atoms';
 import type { Point } from '../types';
 
@@ -20,7 +21,13 @@ export function useDrawing(ref: RefObject<HTMLCanvasElement>): {
   const [canvasHeight, setCanvasHeight] = useState(0);
   const [isDrawing, setIsDrawing] = useState(false);
 
-  const beginStroke = useCallback(
+  const beginStroke: (
+    x: number,
+    y: number,
+    strokeWidth?: StrokeWidth,
+    strokeColor?: StrokeColor,
+    strokeType?: StrokeType,
+  ) => void = useCallback(
     (
       x: number,
       y: number,
