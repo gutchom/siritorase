@@ -1,9 +1,10 @@
+import { DataSet } from 'vis-data';
 import type { Edge, Node } from 'vis-network';
 import type { PictureNode } from 'features/Drawing/types';
 
 export default function getNetworkData(pictures: PictureNode[]): {
-  nodes: Node[];
-  edges: Edge[];
+  nodes: DataSet<Node>;
+  edges: DataSet<Edge>;
 } {
   const nodes: Node[] = pictures.map(({ id, src, title }) => ({
     id,
@@ -16,5 +17,5 @@ export default function getNetworkData(pictures: PictureNode[]): {
     to: id,
   }));
 
-  return { nodes, edges };
+  return { nodes: new DataSet(nodes), edges: new DataSet(edges) };
 }
