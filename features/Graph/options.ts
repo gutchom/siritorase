@@ -16,7 +16,13 @@ export const options = {
     },
   },
   edges: {
-    color: '#ea6',
+    arrows: {
+      to: true,
+    },
+    color: {
+      color: '#ea6',
+      highlight: '#2b6',
+    },
     width: 2,
   },
 };

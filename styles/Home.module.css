@@ -23,3 +23,9 @@
   background: var(--theme-color-accent);
   border-radius: 8px;
 }
+
+.vis {
+  width: 95vw;
+  height: 75vh;
+  margin: auto;
+}
