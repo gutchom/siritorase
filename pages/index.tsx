@@ -27,7 +27,9 @@ const Index: NextPage<Props> = (props) => {
         </section>
 
         <section>
-          <VisNetwork pictures={pictures} />
+          <div className={styles.vis}>
+            <VisNetwork pictures={pictures} />
+          </div>
         </section>
       </main>
     </>

@@ -1,5 +1,6 @@
 .vis {
-  width: 90vw;
-  height: 90vh;
+  width: 100%;
+  height: 100%;
   margin: auto;
+  background: #fff;
 }

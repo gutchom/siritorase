@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router';
 import { useEffect, useRef } from 'react';
 import { Network } from 'vis-network';
-import { options } from './options';
 import type { PictureNode } from 'features/Drawing/types';
-import getNetworkData from './getNetworkData';
+import { options } from './utils/options';
+import getNetworkData from './utils/getNetworkData';
 import styles from './index.module.css';
 
 type EventParam = {
