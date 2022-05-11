@@ -15,3 +15,7 @@ export type PictureDoc = {
   childrenCount: number;
   created: Timestamp;
 };
+
+export type PictureNode = Omit<PostType, 'created'> & {
+  parentId: string;
+};

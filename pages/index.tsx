@@ -1,18 +1,17 @@
 import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
 import { db } from 'lib/firebase/server';
 import getMediaURL from 'lib/getMediaURL';
-import Ancestors from 'features/Ancestors';
-import type { PictureDoc, PostType } from 'features/Drawing/types';
+import type { PictureDoc, PictureNode } from 'features/Drawing/types';
+import VisNetwork from 'features/Graph';
 import styles from 'styles/Home.module.css';
 
 type Props = {
-  arrivals: PostType[][];
+  pictures: PictureNode[];
 };
 
-const Home: NextPage<Props> = (props) => {
-  const { arrivals } = props;
+const Index: NextPage<Props> = (props) => {
+  const { pictures } = props;
 
   return (
     <>
@@ -23,43 +22,30 @@ const Home: NextPage<Props> = (props) => {
       <main>
         <section className={styles.intro}>
           <p>
-            しりとらせは不特定多数の人たちとお絵描きしりとりができるWebサービスです。人気のお絵描きしりとりに今すぐ参加しよう！
+            しりとらせは不特定多数の人たちとお絵描きしりとりができるWebサービスです。今すぐ人気のお絵描きしりとりに参加しよう！
           </p>
         </section>
 
         <section>
-          <h2 className={styles.title}>新着お絵描きしりとり一覧</h2>
-          <ul>
-            {arrivals.map((posts, index) => (
-              <li key={index} className={styles.posts}>
-                <Ancestors ancestors={posts} isTitleVisible={false} />
-                <Link href={`/${posts[posts.length - 1]?.id}`}>
-                  <a className={styles.join}>しりとりに参加する</a>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <VisNetwork pictures={pictures} />
         </section>
       </main>
     </>
   );
 };
 
-export default Home;
+export default Index;
 
-async function getArrivals(hostname: string): Promise<PostType[][]> {
+async function getPictures(hostname: string): Promise<PictureNode[]> {
   const snapshot = await db.collection('pictures').get();
 
   return snapshot.docs.map((doc) => {
     const id = doc.id;
-    const { title, ancestors, created } = doc.data() as PictureDoc;
+    const src = getMediaURL(`picture/${id}.png`, hostname);
+    const { title, ancestors } = doc.data() as PictureDoc;
+    const [parent] = ancestors.slice(-1);
 
-    return [...ancestors, { id, title, created: created.toDate() }].map(
-      (ancestor) => ({
-        ...ancestor,
-        src: getMediaURL(`picture/${ancestor.id}.png`, hostname),
-      }),
-    );
+    return { id, src, title, parentId: parent?.id ?? '' };
   });
 }
 
@@ -71,10 +57,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     throw new Error('host is undefined.');
   }
   const [hostname] = req.headers.host.split(':');
+  const pictures = await getPictures(hostname);
 
-  return {
-    props: {
-      arrivals: JSON.parse(JSON.stringify(await getArrivals(hostname))),
-    },
-  };
+  return { props: { pictures } };
 };

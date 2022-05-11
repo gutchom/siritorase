@@ -41,8 +41,8 @@ export const strokeTypeState = atom<StrokeType>({
 });
 
 export type Stroke = {
-  color: string;
-  width: number;
+  color: StrokeColor;
+  width: StrokeWidth;
   type: StrokeType;
   points: { x: number; y: number }[];
 };

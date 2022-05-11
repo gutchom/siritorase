@@ -21,7 +21,9 @@
     "react-icons": "^4.3.1",
     "recoil": "^0.6.1",
     "reset-css": "^5.0.1",
-    "twitter-api-v2": "^1.11.2"
+    "twitter-api-v2": "^1.11.2",
+    "vis-data": "^7.1.4",
+    "vis-network": "^9.1.2"
   },
   "devDependencies": {
     "@firebase/testing": "^0.20.11",
