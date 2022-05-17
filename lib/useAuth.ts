@@ -6,9 +6,9 @@ import {
   signInWithPopup,
 } from '@firebase/auth';
 import { doc, setDoc } from '@firebase/firestore';
-import { getFirebaseDb } from 'lib/firebase/browser';
+import { db } from 'lib/browser/firebase';
 
-export function useAuth(auth: Auth): {
+export default function useAuth(auth: Auth): {
   user: User | null;
   login(): void;
   logout(): void;
@@ -18,11 +18,11 @@ export function useAuth(auth: Auth): {
 
   function login() {
     signInWithPopup(auth, new TwitterAuthProvider()).then(async (result) => {
+      console.log(result);
       const uid = result.user.uid;
       const credential = TwitterAuthProvider.credentialFromResult(result);
       const token = credential?.accessToken ?? '';
       const secret = credential?.secret ?? '';
-      const db = getFirebaseDb();
       await setDoc(doc(db, 'users', uid), { token, secret });
     });
   }

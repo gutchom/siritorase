@@ -1,12 +1,11 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { FaQuestion, FaSignOutAlt } from 'react-icons/fa';
-import { getFirebaseAuth } from 'lib/firebase/browser';
-import { useAuth } from 'lib/firebase/useAuth';
+import { auth } from 'lib/browser/firebase';
+import useAuth from 'lib/useAuth';
 import styles from './Account.module.css';
 
 export default function Account() {
-  const auth = getFirebaseAuth();
   const { user, login, logout } = useAuth(auth);
   const [isOpen, setIsOpen] = useState(false);
 
