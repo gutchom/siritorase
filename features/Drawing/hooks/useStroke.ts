@@ -2,7 +2,7 @@ import type { Stroke } from '../atoms';
 import { canceledStrokesState, strokesState } from '../atoms';
 import { useRecoilState } from 'recoil';
 
-export function useStroke(): {
+export default function useStroke(): {
   strokes: Stroke[];
   setStroke(stroke: Stroke): void;
   undo(): void;

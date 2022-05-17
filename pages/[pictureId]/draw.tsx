@@ -1,34 +1,23 @@
 import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { db } from 'lib/firebase/server';
+import { db } from 'lib/server/firebase';
 import getMediaURL from 'lib/getMediaURL';
 import useMultipleRef from 'lib/useMultipleRef';
 import Ancestors from 'features/Ancestors';
-import Result from 'features/Result';
 import Drawing from 'features/Drawing';
-import type { PictureDoc, PostType } from 'features/Drawing/types';
+import type { PictureDoc, PictureType } from 'features/Drawing/types';
 
 type Props = {
   ogp: string;
-  ancestors: PostType[];
+  ancestors: PictureType[];
 };
 
-const Post: NextPage<Props> = (props) => {
+const Draw: NextPage<Props> = (props) => {
   const { ogp, ancestors } = props;
-
   const router = useRouter();
   const { pictureId } = router.query;
-
   const [refs, images] = useMultipleRef<HTMLImageElement>(ancestors.length);
-
-  const [id, setId] = useState('');
-  const [title, setTitle] = useState('');
-  const [picture, setPicture] = useState<Blob>();
-
-  const isDrawing =
-    id.length === 0 || title.length === 0 || picture === undefined;
   const history = ancestors
     .slice(-3, -1)
     .map(({ title }) => title)
@@ -54,38 +43,22 @@ const Post: NextPage<Props> = (props) => {
       </Head>
 
       <main>
-        <Ancestors
-          ref={refs}
+        <Ancestors ref={refs} ancestors={ancestors} />
+        <Drawing
           ancestors={ancestors}
-          isTitleVisible={!isDrawing}
+          images={images}
+          onComplete={(id) => {
+            router.push(`/${id}/result`);
+          }}
         />
-
-        {isDrawing ? (
-          <Drawing
-            ancestors={ancestors}
-            images={images}
-            onComplete={(id, title, picture) => {
-              setId(id);
-              setTitle(title);
-              setPicture(picture);
-            }}
-          />
-        ) : (
-          <Result
-            id={id}
-            title={title}
-            picture={URL.createObjectURL(picture)}
-            history={history}
-          />
-        )}
       </main>
     </>
   );
 };
 
-export default Post;
+export default Draw;
 
-async function getAncestors(id: string): Promise<Omit<PostType, 'src'>[]> {
+async function getAncestors(id: string): Promise<Omit<PictureType, 'src'>[]> {
   const snapshot = await db.collection('pictures').doc(id).get();
   if (!snapshot.exists) {
     throw new RangeError('"pictures" does not have an id.');
@@ -105,7 +78,10 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   context,
 ) => {
   const { req, params } = context;
-  const { pictureId } = params!;
+  if (!params) {
+    throw new Error('params is not defined.');
+  }
+  const { pictureId } = params;
   const [hostname] = req.headers.host?.split(':') ?? [];
 
   try {
@@ -121,11 +97,6 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
       },
     };
   } catch {
-    return {
-      redirect: {
-        statusCode: 302,
-        destination: '/',
-      },
-    };
+    return { notFound: true };
   }
 };

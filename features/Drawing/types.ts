@@ -2,7 +2,7 @@ import type { Timestamp } from '@firebase/firestore';
 
 export type Point = { x: number; y: number };
 
-export type PostType = {
+export type PictureType = {
   id: string;
   src: string;
   title: string;
@@ -11,11 +11,15 @@ export type PostType = {
 
 export type PictureDoc = {
   title: string;
-  ancestors: PostType[];
+  ancestors: PictureType[];
   childrenCount: number;
   created: Timestamp;
+  tweetId: string;
+  userId: string;
 };
 
-export type PictureNode = Omit<PostType, 'created'> & {
+export type PictureNode = PictureType & {
   parentId: string;
+  tweetId: string;
+  userId: string;
 };

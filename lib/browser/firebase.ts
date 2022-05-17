@@ -1,9 +1,6 @@
 import { initializeApp } from '@firebase/app';
-import type { Auth } from '@firebase/auth';
 import { getAuth } from '@firebase/auth';
-import type { Firestore } from '@firebase/firestore';
 import { connectFirestoreEmulator, getFirestore } from '@firebase/firestore';
-import type { FirebaseStorage } from '@firebase/storage';
 import { connectStorageEmulator, getStorage } from '@firebase/storage';
 
 const firebaseConfig = {
@@ -17,29 +14,14 @@ const firebaseConfig = {
 };
 
 export const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
 
-export function getFirebaseAuth(): Auth {
-  return getAuth(app);
-}
-
-export function getFirebaseDb(): Firestore {
-  const db = getFirestore(app);
-  if (
-    typeof window !== 'undefined' &&
-    window.location.hostname === 'localhost'
-  ) {
-    connectFirestoreEmulator(db, 'localhost', 8080);
-  }
-  return db;
-}
-
-export function getFirebaseStorage(): FirebaseStorage {
-  const storage = getStorage(app);
-  if (
-    typeof window !== 'undefined' &&
-    window.location.hostname === 'localhost'
-  ) {
-    connectStorageEmulator(storage, 'localhost', 9199);
-  }
-  return storage;
+if (
+  typeof window !== 'undefined' &&
+  window.location.hostname.indexOf('local') >= 0
+) {
+  connectFirestoreEmulator(db, window.location.hostname, 8080);
+  connectStorageEmulator(storage, window.location.hostname, 9199);
 }

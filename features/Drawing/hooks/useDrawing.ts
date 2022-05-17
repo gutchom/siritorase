@@ -1,12 +1,12 @@
 import type { RefObject } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useStroke } from './useStroke';
+import useStroke from './useStroke';
 import type { StrokeColor, StrokeType, StrokeWidth } from '../atoms';
 import { strokeColorState, strokeTypeState, strokeWidthState } from '../atoms';
 import type { Point } from '../types';
 
-export function useDrawing(ref: RefObject<HTMLCanvasElement>): {
+export default function useDrawing(ref: RefObject<HTMLCanvasElement>): {
   start(x: number, y: number): void;
   draw(x: number, y: number): void;
   end(): void;
