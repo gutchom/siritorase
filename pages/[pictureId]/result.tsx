@@ -95,11 +95,11 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   context,
 ) => {
   const { req, params } = context;
-  const { pictureId } = params!;
-  if (!req.headers.host) {
-    throw new Error('host is undefined.');
+  if (!params) {
+    throw new Error('params is not defined.');
   }
-  const [hostname] = req.headers.host.split(':');
+  const { pictureId } = params;
+  const [hostname] = req.headers.host?.split(':') ?? [];
   const pictures = await getPictures(hostname);
   const drew = pictures.find(({ id }) => id === pictureId);
 
