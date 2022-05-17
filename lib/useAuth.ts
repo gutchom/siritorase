@@ -18,7 +18,6 @@ export default function useAuth(auth: Auth): {
 
   function login() {
     signInWithPopup(auth, new TwitterAuthProvider()).then(async (result) => {
-      console.log(result);
       const uid = result.user.uid;
       const credential = TwitterAuthProvider.credentialFromResult(result);
       const token = credential?.accessToken ?? '';
