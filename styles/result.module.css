@@ -1,24 +1,7 @@
-.picture {
-  display: block;
-  width: 320px;
-  height: 320px;
-  margin: auto;
-  border: 6px solid var(--theme-color-main);
-  border-radius: 8px;
-}
-
-.caption {
-  box-sizing: border-box;
-  display: block;
-  width: 180px;
-  height: 40px;
-  padding: 8px 0;
+.vis {
+  width: 95vw;
+  height: 64vh;
   margin: 12px auto;
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
-  background: #fff;
-  border: 3px solid var(--theme-color-main);
 }
 
 .tweet {
