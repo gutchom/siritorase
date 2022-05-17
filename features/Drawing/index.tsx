@@ -1,14 +1,14 @@
 import { useRef, useState } from 'react';
-import type { PostType } from './types';
-import { complete } from './utils/complete';
+import type { PictureType } from './types';
 import useDrawing from './hooks/useDrawing';
+import post from './utils/post';
 import Tools from './Tools';
 import styles from './index.module.css';
 
 type Props = {
-  ancestors: PostType[];
+  ancestors: PictureType[];
   images: HTMLImageElement[];
-  onComplete(id: string, title: string, picture: Blob): void;
+  onComplete(id: string): void;
 };
 
 export default function Drawing(props: Props) {
@@ -63,13 +63,8 @@ export default function Drawing(props: Props) {
             setShouldCaution(true);
             return;
           }
-          const [id, picture] = await complete(
-            title,
-            ancestors,
-            canvasRef.current,
-            images,
-          );
-          onComplete(id, title, picture);
+          const id = await post(title, ancestors, canvasRef.current, images);
+          onComplete(id);
         }}
       >
         絵を投稿する
