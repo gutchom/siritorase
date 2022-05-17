@@ -6,7 +6,7 @@ export const options = {
       border: '#ea6',
       background: '#fff',
       highlight: {
-        border: '#2b6',
+        border: '#2bf',
         background: '#fff',
       },
     },
@@ -21,7 +21,7 @@ export const options = {
     },
     color: {
       color: '#ea6',
-      highlight: '#2b6',
+      highlight: '#2bf',
     },
     width: 2,
   },
