@@ -1,6 +1,6 @@
 export default function getMediaURL(path: string, hostname: string): string {
   const host =
-    hostname.startsWith('local') || hostname.endsWith('local')
+    hostname.indexOf('local') >= 0
       ? `http://${hostname}:9199`
       : 'https://firebasestorage.googleapis.com';
   return `${host}/v0/b/${
