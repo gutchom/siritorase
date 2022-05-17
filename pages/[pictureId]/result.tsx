@@ -101,6 +101,11 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   }
   const [hostname] = req.headers.host.split(':');
   const pictures = await getPictures(hostname);
+  const drew = pictures.find(({ id }) => id === pictureId);
 
-  return { props: JSON.parse(JSON.stringify({ pictures })) };
+  if (drew) {
+    return { props: JSON.parse(JSON.stringify({ pictures, drew })) };
+  } else {
+    return { notFound: true };
+  }
 };
