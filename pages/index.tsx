@@ -1,16 +1,15 @@
 import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
-import { db } from 'lib/firebase/server';
-import getMediaURL from 'lib/getMediaURL';
-import type { PictureDoc, PictureNode } from 'features/Drawing/types';
-import VisNetwork from 'features/Graph';
-import styles from 'styles/Home.module.css';
+import getPictures from 'lib/server/getPictures';
+import type { PictureNode } from 'features/Drawing/types';
+import Graph from 'features/Graph';
+import styles from 'styles/home.module.css';
 
 type Props = {
   pictures: PictureNode[];
 };
 
-const Index: NextPage<Props> = (props) => {
+const Home: NextPage<Props> = (props) => {
   const { pictures } = props;
 
   return (
@@ -28,7 +27,7 @@ const Index: NextPage<Props> = (props) => {
 
         <section>
           <div className={styles.vis}>
-            <VisNetwork pictures={pictures} />
+            <Graph pictures={pictures} />
           </div>
         </section>
       </main>
@@ -36,20 +35,7 @@ const Index: NextPage<Props> = (props) => {
   );
 };
 
-export default Index;
-
-async function getPictures(hostname: string): Promise<PictureNode[]> {
-  const snapshot = await db.collection('pictures').get();
-
-  return snapshot.docs.map((doc) => {
-    const id = doc.id;
-    const src = getMediaURL(`picture/${id}.png`, hostname);
-    const { title, ancestors } = doc.data() as PictureDoc;
-    const [parent] = ancestors.slice(-1);
-
-    return { id, src, title, parentId: parent?.id ?? '' };
-  });
-}
+export default Home;
 
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context,
@@ -61,5 +47,5 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   const [hostname] = req.headers.host.split(':');
   const pictures = await getPictures(hostname);
 
-  return { props: { pictures } };
+  return { props: JSON.parse(JSON.stringify({ pictures })) };
 };
