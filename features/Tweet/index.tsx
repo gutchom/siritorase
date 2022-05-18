@@ -24,7 +24,6 @@ export default function Tweet(props: Props) {
   const { user, login } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [tweetText] = useState(getTweetText(pictureId, tweetUserId));
-  console.log(Twitter.autoLink(getTweetText(pictureId, 'gutchom')));
 
   return (
     <>
