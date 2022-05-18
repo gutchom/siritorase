@@ -28,17 +28,20 @@ const Draw: NextPage<Props> = (props) => {
     <>
       <Head>
         <title>しりとらせ</title>
-        <meta property="og:title" content={history} />
         <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="しりとらせ" />
+        <meta
+          property="og:description"
+          content="絵しりとりをツイートしてみんなで遊ぼう！"
+        />
+        <meta property="og:title" content={history} />
         <meta
           property="og:url"
           content={`https://siritorase.net/${pictureId}`}
         />
         <meta property="og:image" content={ogp} />
 
-        <meta property="og:site_name" content="しりとらせ" />
-        <meta property="og:description" content={history} />
-
+        <meta name="twitter:site" content="@gutchom" />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
 
