@@ -45,6 +45,7 @@ export default function Tweet(props: Props) {
       <Modal
         visible={isOpen}
         header={<h1 className={styles.header}>ツイート</h1>}
+        onCloseClick={() => setIsOpen(false)}
         footer={
           <div className={styles.footer}>
             <button className={styles.cancel} onClick={() => setIsOpen(false)}>

@@ -10,10 +10,11 @@ type Props = {
   header?: ReactNode;
   footer?: ReactNode;
   children?: ReactNode;
+  onCloseClick(): void;
 };
 
 export default function Modal(props: Props) {
-  const { header, footer, visible, children } = props;
+  const { header, footer, visible, children, onCloseClick } = props;
   const background = useRef<HTMLDivElement>(null);
   const content = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState(0);
@@ -81,6 +82,7 @@ export default function Modal(props: Props) {
     <div
       ref={background}
       className={clsx(styles.background, { [styles.visible]: visible })}
+      onClick={onCloseClick}
     >
       <div className={clsx(styles.window, { [styles.visible]: visible })}>
         {header && <header className={styles.header}>{header}</header>}
