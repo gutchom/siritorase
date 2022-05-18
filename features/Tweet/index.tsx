@@ -35,7 +35,6 @@ export default function Tweet(props: Props) {
       )}
       <Modal
         visible={isOpen}
-        onClose={() => setIsOpen(false)}
         header={<h1>ツイート</h1>}
         footer={
           <div>

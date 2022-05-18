@@ -1,21 +1,19 @@
-import type { MouseEvent, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import usePropChange from 'lib/usePropChange';
 import isInnerNode from 'lib/isInnerNode';
 import styles from './index.module.css';
-import { FaTimes } from 'react-icons/fa';
 
 type Props = {
+  visible: boolean;
   header?: ReactNode;
   footer?: ReactNode;
-  visible: boolean;
   children?: ReactNode;
-  onClose(e: MouseEvent<HTMLButtonElement>): void;
 };
 
 export default function Modal(props: Props) {
-  const { header, footer, visible, children, onClose } = props;
+  const { header, footer, visible, children } = props;
   const background = useRef<HTMLDivElement>(null);
   const content = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState(0);
@@ -87,15 +85,6 @@ export default function Modal(props: Props) {
       <div className={clsx(styles.window, { [styles.visible]: visible })}>
         {header && <header className={styles.header}>{header}</header>}
         {footer && <footer className={styles.footer}>{footer}</footer>}
-        <button
-          className={styles.close}
-          onClick={(e) => {
-            onClose(e);
-          }}
-          tabIndex={-1}
-        >
-          <FaTimes />
-        </button>
         <div ref={content} className={styles.content}>
           {children}
         </div>
