@@ -3,23 +3,30 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { doc, updateDoc } from '@firebase/firestore';
 import { db } from 'lib/browser/firebase';
+import getAncestors from 'lib/server/getAncestors';
 import getPictures from 'lib/server/getPictures';
-import type { PictureNode } from 'features/Drawing/types';
+import type { PictureNode, PictureType } from 'features/Drawing/types';
 import Graph from 'features/Graph';
 import Tweet from 'features/Tweet';
 import styles from 'styles/result.module.css';
 
 type Props = {
-  pictures: PictureNode[];
   drew: PictureNode;
+  pictures: PictureNode[];
+  ancestors: PictureType[];
 };
 
 const Result: NextPage<Props> = (props) => {
-  const { pictures, drew } = props;
+  const { drew, pictures, ancestors } = props;
   const { src, title, tweetId, userId } = drew;
   const router = useRouter();
   const { pictureId } = router.query;
   const id = typeof pictureId === 'string' ? pictureId : '';
+  const history = ancestors
+    .slice(-3, -1)
+    .map(({ title }) => title)
+    .concat('？？？')
+    .join('→');
 
   return (
     <>
@@ -34,6 +41,7 @@ const Result: NextPage<Props> = (props) => {
           </div>
           <Tweet
             pictureId={id}
+            history={history}
             tweetId={tweetId}
             tweetUserId={userId}
             onTweet={async (tweetId, tweetUserId) => {
@@ -70,11 +78,12 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   }
   const { pictureId } = params;
   const [hostname] = req.headers.host?.split(':') ?? [];
+  const ancestors = await getAncestors(pictureId);
   const pictures = await getPictures(hostname);
   const drew = pictures.find(({ id }) => id === pictureId);
 
   if (drew) {
-    return { props: JSON.parse(JSON.stringify({ pictures, drew })) };
+    return { props: JSON.parse(JSON.stringify({ pictures, drew, ancestors })) };
   } else {
     return { notFound: true };
   }
