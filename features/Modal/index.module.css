@@ -40,22 +40,6 @@
   transform: scale(1);
 }
 
-.close {
-  position: fixed;
-  top: calc(24px * -0.5);
-  right: calc(24px * -0.5);
-  z-index: 5;
-  box-sizing: border-box;
-  width: 24px;
-  height: 24px;
-  font-size: 18px;
-  color: #fff;
-  text-align: center;
-  cursor: pointer;
-  background: #444;
-  border-radius: 50%;
-}
-
 .header,
 .footer {
   position: absolute;
