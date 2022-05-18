@@ -50,7 +50,7 @@ export default function Graph(props: Props) {
             nodes: selection.nodes,
             maxZoomLevel: 0.75,
             animation: {
-              duration: 3000,
+              duration: 5000,
               easingFunction: 'easeInOutCubic',
             },
           });
