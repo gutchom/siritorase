@@ -1,3 +1,4 @@
+.window,
 .header,
 .footer,
 .content {
@@ -25,10 +26,11 @@
 
 .window {
   position: absolute;
-  top: var(--modal-padding);
+  top: 30%;
   right: var(--modal-padding);
-  bottom: var(--modal-padding);
+  bottom: 30%;
   left: var(--modal-padding);
+  margin: auto;
   background: #fff;
   border-radius: var(--radius-small);
   box-shadow: 0 0 10px 0 #333;
