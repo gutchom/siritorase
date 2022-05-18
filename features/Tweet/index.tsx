@@ -1,23 +1,30 @@
 import Editor from 'features/Tweet/Editor';
 import { useState } from 'react';
+import Twitter from 'twitter-text';
 import useAuth from 'lib/useAuth';
 import Modal from 'features/Modal';
 import styles from './index.module.css';
 
 type Props = {
   pictureId: string;
+  history: string;
   tweetId: string;
   tweetUserId: string;
   onTweet(tweetId: string, tweetUserId: string): void;
 };
 
 export default function Tweet(props: Props) {
-  const { pictureId, tweetId: parentTweetId, tweetUserId, onTweet } = props;
+  const {
+    pictureId,
+    history,
+    tweetId: parentTweetId,
+    tweetUserId,
+    onTweet,
+  } = props;
   const { user, login } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [tweetText, setTweetText] = useState(
-    getTweetText(pictureId, tweetUserId),
-  );
+  const [tweetText] = useState(getTweetText(pictureId, tweetUserId));
+  console.log(Twitter.autoLink(getTweetText(pictureId, 'gutchom')));
 
   return (
     <>
@@ -64,21 +71,29 @@ export default function Tweet(props: Props) {
           </div>
         }
       >
-        {<Editor baseText={tweetText} onChange={setTweetText} />}
+        <Editor
+          base={Twitter.autoLink(getTweetText(pictureId, history, 'gutchom'))}
+        />
       </Modal>
     </>
   );
 }
 
-function getTweetText(id: string, parentTweetUser?: string): string {
-  const text = [
-    '絵しりとりを描いたよ！リンク先からしりとりの続きに参加しよう',
-    `https://siritorase.vercel.app/${id}`,
-    '#絵しりとり #しりとり #しりとらせ',
-  ].join('\n');
+function getTweetText(
+  id: string,
+  history: string,
+  parentTweetUser?: string,
+): string {
   const mention = `@${parentTweetUser}`;
+  const text = [
+    history,
+    '絵しりとりを描いたよ！リンクからしりとりの続きに参加しよう',
+    '',
+    '#絵しりとり #しりとり #しりとらせ',
+    `https://siritorase.vercel.app/${id}`,
+  ];
 
-  return parentTweetUser ? mention + text : text;
+  return (parentTweetUser ? [mention, '', ...text] : text).join('\n<br>\n');
 }
 
 async function tweet(

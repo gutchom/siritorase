@@ -1,28 +1,36 @@
 import { useEffect, useRef, useState } from 'react';
+import parse from 'html-react-parser';
 import styles from './Editor.module.css';
 
 type Props = {
-  baseText: string;
-  onChange(planeText: string): void;
+  base: string;
 };
 
 export default function Editor(props: Props) {
-  const { baseText } = props;
-  const container = useRef<HTMLDivElement>(null);
-  const [text] = useState(baseText);
+  const { base } = props;
+  const editor = useRef<HTMLDivElement>(null);
+  const [observer, setObserver] = useState<MutationObserver>();
+  const [html, setHtml] = useState(base);
 
   useEffect(() => {
-    container.current?.focus();
-  }, [container]);
+    setObserver(new MutationObserver(observe));
+    return () => observer && observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (observer && editor.current) {
+      observer.observe(editor.current);
+    }
+  }, [editor]);
+
+  function observe(list: MutationRecord[]) {
+    console.log(list);
+    setHtml(editor.current?.innerHTML ?? html);
+  }
 
   return (
-    <div
-      contentEditable={false}
-      ref={container}
-      className={styles.container}
-      onChange={(e) => console.log(e)}
-    >
-      {text}
+    <div contentEditable ref={editor} className={styles.container}>
+      {parse(html)}
     </div>
   );
 }
