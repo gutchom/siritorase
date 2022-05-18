@@ -1,3 +1,4 @@
+import Editor from 'features/Tweet/Editor';
 import { useState } from 'react';
 import useAuth from 'lib/useAuth';
 import Modal from 'features/Modal';
@@ -14,17 +15,19 @@ export default function Tweet(props: Props) {
   const { pictureId, tweetId: parentTweetId, tweetUserId, onTweet } = props;
   const { user, login } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const tweetText = getTweetText(pictureId, tweetUserId);
+  const [tweetText, setTweetText] = useState(
+    getTweetText(pictureId, tweetUserId),
+  );
 
   return (
     <>
       {user ? (
-        <button className={styles.tweet} onClick={() => setIsOpen(true)}>
+        <button className={styles.trigger} onClick={() => setIsOpen(true)}>
           ツイートする
         </button>
       ) : (
         <button
-          className={styles.tweet}
+          className={styles.trigger}
           onClick={async () => {
             await login;
             setIsOpen(true);
@@ -35,12 +38,14 @@ export default function Tweet(props: Props) {
       )}
       <Modal
         visible={isOpen}
-        header={<h1>ツイート</h1>}
+        header={<h1 className={styles.header}>ツイート</h1>}
         footer={
-          <div>
-            <button onClick={() => setIsOpen(false)}>キャンセル</button>
+          <div className={styles.footer}>
+            <button className={styles.cancel} onClick={() => setIsOpen(false)}>
+              キャンセル
+            </button>
             <button
-              className={styles.tweet}
+              className={styles.post}
               onClick={async () => {
                 if (user) {
                   const [tweetId, tweetUserId] = await tweet(
@@ -59,7 +64,7 @@ export default function Tweet(props: Props) {
           </div>
         }
       >
-        {<div>{tweetText}</div>}
+        {<Editor baseText={tweetText} onChange={setTweetText} />}
       </Modal>
     </>
   );
