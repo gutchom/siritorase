@@ -20,6 +20,7 @@ export default function getNetworkData(pictures: PictureNode[]): {
 
   const isLeaf = getIsLeaf(edges);
   const leaf = {
+    size: 50,
     label: '？？？',
     color: {
       border: '#2b6',
