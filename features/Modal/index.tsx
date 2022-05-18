@@ -20,9 +20,15 @@ export default function Modal(props: Props) {
   const content = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState(0);
 
-  usePropChange(visible, () => {
-    content.current?.scrollTo(0, 1);
-    setPosition(document.body.scrollTop || document.documentElement.scrollTop);
+  usePropChange(visible, (nextProp) => {
+    if (nextProp) {
+      content.current?.scrollTo(0, 1);
+      setPosition(
+        document.body.scrollTop || document.documentElement.scrollTop,
+      );
+    } else {
+      window.scrollTo(0, position);
+    }
   });
 
   useEffect(
@@ -84,7 +90,6 @@ export default function Modal(props: Props) {
         <button
           className={styles.close}
           onClick={(e) => {
-            window.scrollTo(0, position);
             onClose(e);
           }}
           tabIndex={-1}
