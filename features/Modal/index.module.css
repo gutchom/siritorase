@@ -1,0 +1,80 @@
+.window,
+.header,
+.footer,
+.content {
+  --modal-padding: 4vw;
+  --modal-bar-height: 3em;
+}
+
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  display: block;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+  background: rgb(0 0 0 / 0%);
+  transition: var(--duration) background;
+}
+
+.background.visible {
+  visibility: visible;
+  background: rgb(0 0 0 / 30%);
+}
+
+.window {
+  position: absolute;
+  top: 30%;
+  right: var(--modal-padding);
+  bottom: 30%;
+  left: var(--modal-padding);
+  margin: auto;
+  background: #fff;
+  border-radius: var(--radius-small);
+  box-shadow: 0 0 10px 0 #333;
+  transition: var(--duration-slow) var(--easing-in-out-back);
+  transform: scale(0);
+}
+
+.window.visible {
+  transform: scale(1);
+}
+
+.header,
+.footer {
+  position: absolute;
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--modal-bar-height);
+}
+
+.header {
+  top: 0;
+  border-radius: var(--radius-small) var(--radius-small) 0 0;
+}
+
+.footer {
+  bottom: 0;
+  z-index: 1;
+  border-radius: 0 0 var(--radius-small) var(--radius-small);
+}
+
+.content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  overflow-y: scroll;
+  border-radius: inherit;
+  -webkit-overflow-scrolling: touch;
+}
+
+.header ~ .content {
+  top: var(--modal-bar-height);
+}
+
+.footer ~ .content {
+  bottom: var(--modal-bar-height);
+}
