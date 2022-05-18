@@ -1,5 +1,6 @@
 import Editor from 'features/Tweet/Editor';
 import { useState } from 'react';
+import { BsTwitter } from 'react-icons/bs';
 import Twitter from 'twitter-text';
 import useAuth from 'lib/useAuth';
 import Modal from 'features/Modal';
@@ -39,13 +40,17 @@ export default function Tweet(props: Props) {
             setIsOpen(true);
           }}
         >
-          Twitterでログインしてツイートする
+          ログインしてツイートする
         </button>
       )}
       <Modal
         visible={isOpen}
-        header={<h1 className={styles.header}>ツイート</h1>}
         onCloseClick={() => setIsOpen(false)}
+        header={
+          <h1 className={styles.header}>
+            <BsTwitter />
+          </h1>
+        }
         footer={
           <div className={styles.footer}>
             <button className={styles.cancel} onClick={() => setIsOpen(false)}>
