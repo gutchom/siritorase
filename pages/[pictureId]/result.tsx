@@ -16,7 +16,7 @@ type Props = {
 
 const Result: NextPage<Props> = (props) => {
   const { pictures, drew } = props;
-  const { user, login } = useAuth(auth);
+  const { user, login } = useAuth();
   const router = useRouter();
   const { pictureId } = router.query;
   const id = typeof pictureId === 'string' ? pictureId : '';

@@ -1,33 +1,33 @@
 import { useState } from 'react';
-import type { Auth, User } from '@firebase/auth';
+import type { User } from '@firebase/auth';
 import {
   TwitterAuthProvider,
   onAuthStateChanged,
   signInWithPopup,
 } from '@firebase/auth';
 import { doc, setDoc } from '@firebase/firestore';
-import { db } from 'lib/browser/firebase';
+import { auth, db } from 'lib/browser/firebase';
 
-export default function useAuth(auth: Auth): {
+export default function useAuth(): {
   user: User | null;
-  login(): void;
-  logout(): void;
+  login(): Promise<void>;
+  logout(): Promise<void>;
 } {
   const [user, setUser] = useState<User | null>(null);
   onAuthStateChanged(auth, (user) => setUser(user));
 
-  function login() {
-    signInWithPopup(auth, new TwitterAuthProvider()).then(async (result) => {
-      const uid = result.user.uid;
-      const credential = TwitterAuthProvider.credentialFromResult(result);
-      const token = credential?.accessToken ?? '';
-      const secret = credential?.secret ?? '';
-      await setDoc(doc(db, 'users', uid), { token, secret });
-    });
+  async function login() {
+    const result = await signInWithPopup(auth, new TwitterAuthProvider());
+    const credential = TwitterAuthProvider.credentialFromResult(result);
+    if (!credential) {
+      throw new Error('Can not get OAuth credential');
+    }
+    const { accessToken: token, secret } = credential;
+    await setDoc(doc(db, 'users', result.user.uid), { token, secret });
   }
 
-  function logout() {
-    auth.signOut().then();
+  async function logout() {
+    await auth.signOut();
   }
 
   return { user, login, logout };
