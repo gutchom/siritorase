@@ -8,7 +8,13 @@
     "dev:firebase": "firebase emulators:start --import=.cache --export-on-exit=.cache",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "test": "jest --watch",
+    "lint": "run-s lint:*",
+    "lint:style": "stylelint './**/*.css'",
+    "lint:script": "next lint",
+    "fix": "run-s fix:*",
+    "fix:style": "stylelint './**/*.css' --fix",
+    "fix:script": "next lint --fix"
   },
   "dependencies": {
     "@testing-library/react-hooks": "^8.0.0",
