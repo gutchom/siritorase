@@ -264,7 +264,7 @@
     core-js-pure "^3.20.2"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.10.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.16.3", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.10.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.16.3", "@babel/runtime@^7.3.1", "@babel/runtime@^7.9.2":
   version "7.17.9"
   resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.17.9.tgz"
   integrity sha512-lSiBBvodq29uShpWGNbgFdKYNiFDo5/HIYsaCEY9ff4sb10x9jizo2+pRrSyF4jKZCXqgzuqBOQKbUm90gQwJg==
@@ -1828,6 +1828,11 @@
   dependencies:
     "@types/jest" "*"
 
+"@types/twitter-text@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@types/twitter-text/-/twitter-text-3.1.1.tgz#c23334522ca252659e432635eec2f439706737d0"
+  integrity sha512-TqUdwZOdCi3pB4kmCyOS6sjLfzRjbqcwFuVKGQ9Gq9J37GBnF7mf6cIw/zN2GgDbvXYEEfoiuPGFw+TK5ZU0EA==
+
 "@types/yargs-parser@*":
   version "21.0.0"
   resolved "https://registry.npmjs.org/@types/yargs-parser/-/yargs-parser-21.0.0.tgz"
@@ -3103,6 +3108,11 @@ core-js@3.6.5:
   version "3.6.5"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.6.5.tgz#7395dc273af37fb2e50e9bd3d9fe841285231d1a"
   integrity sha512-vZVEEwZoIsI+vPEuoF9Iqf5H7/M3eeQqWlQnYa8FSKKePuYTf5MWnxb5SDAzCa60b3JBRS5g9b+Dq7b1y/RCrA==
+
+core-js@^2.5.0:
+  version "2.6.12"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
+  integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
 
 core-util-is@1.0.2:
   version "1.0.2"
@@ -7777,7 +7787,7 @@ pumpify@^2.0.0:
     inherits "^2.0.3"
     pump "^3.0.0"
 
-punycode@^1.3.2:
+punycode@1.4.1, punycode@^1.3.2:
   version "1.4.1"
   resolved "https://registry.npmjs.org/punycode/-/punycode-1.4.1.tgz"
   integrity sha1-wNWmOycYgArY4esPpSachN1BhF4=
@@ -9169,10 +9179,25 @@ tweetsodium@0.0.5:
     blakejs "^1.1.0"
     tweetnacl "^1.0.1"
 
+twemoji-parser@^11.0.2:
+  version "11.0.2"
+  resolved "https://registry.yarnpkg.com/twemoji-parser/-/twemoji-parser-11.0.2.tgz#24e87c2008abe8544c962f193b88b331de32b446"
+  integrity sha512-5kO2XCcpAql6zjdLwRwJjYvAZyDy3+Uj7v1ipBzLthQmDL7Ce19bEqHr3ImSNeoSW2OA8u02XmARbXHaNO8GhA==
+
 twitter-api-v2@^1.11.2:
   version "1.12.0"
   resolved "https://registry.npmjs.org/twitter-api-v2/-/twitter-api-v2-1.12.0.tgz"
   integrity sha512-8Fv+sUYY0P1gloiBSgG1w/NSuGUIP32lDKMPVzIMX3jd4zDhiJFtCft41fKs+JqcD8m7s+4vkMO/XwyY2+NULQ==
+
+twitter-text@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/twitter-text/-/twitter-text-3.1.0.tgz#798e932b289f506efe2a1f03fe917ba30627f125"
+  integrity sha512-nulfUi3FN6z0LUjYipJid+eiwXvOLb8Ass7Jy/6zsXmZK3URte043m8fL3FyDzrK+WLpyqhHuR/TcARTN/iuGQ==
+  dependencies:
+    "@babel/runtime" "^7.3.1"
+    core-js "^2.5.0"
+    punycode "1.4.1"
+    twemoji-parser "^11.0.2"
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
