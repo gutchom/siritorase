@@ -9,7 +9,7 @@ type Body = {
 
 type Res = {
   tweetId: string;
-  userId: string;
+  tweetUserId: string;
 };
 
 export default async function handler(
@@ -25,7 +25,7 @@ export default async function handler(
       : await twitter.v1.tweet(text);
 
   const tweetId = response.id_str;
-  const userId = response.user.screen_name;
+  const tweetUserId = response.user.screen_name;
 
-  res.status(200).json({ tweetId, userId });
+  res.status(200).json({ tweetId, tweetUserId });
 }
