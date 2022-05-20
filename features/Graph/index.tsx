@@ -1,16 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import type { Edge, IdType } from 'vis-network';
 import { Network } from 'vis-network';
 import type { PictureNode } from 'features/Drawing/types';
 import { options } from './utils/options';
 import getNetworkData from './utils/getNetworkData';
-import trace from './utils/trace';
+import getAncestorsSelection from './utils/getAncestorsSelection';
 import styles from './index.module.css';
-
-type EventParam = {
-  nodes: number[];
-};
 
 type Props = {
   pictures: PictureNode[];
@@ -27,20 +22,29 @@ export default function Graph(props: Props) {
       const data = getNetworkData(pictures);
       const network = new Network(ref.current, data, options);
 
-      network.on('doubleClick', (param: EventParam) => {
-        const [, id] = param.nodes;
-        router.push(`/${id}/draw`);
+      network.on('doubleClick', async ({ nodes }) => {
+        const [id] = nodes;
+        await router.push(`/${id}/draw`);
       });
 
-      network.on('click', (param: EventParam) => {
-        const [id] = param.nodes;
-        network.setSelection(selectionToRoot(id, data.edges.get()), {
-          highlightEdges: false,
-        });
+      network.on('click', ({ nodes }) => {
+        const [id] = nodes;
+        if (id) {
+          const selection = getAncestorsSelection(
+            id,
+            data.nodes.get(),
+            data.edges.get(),
+          );
+          network.setSelection(selection, { highlightEdges: false });
+        }
       });
 
       if (targetId) {
-        const selection = selectionToRoot(targetId, data.edges.get());
+        const selection = getAncestorsSelection(
+          targetId,
+          data.nodes.get(),
+          data.edges.get(),
+        );
         network.once('beforeDrawing', () => {
           network.focus(targetId, { scale: 4 });
           network.setSelection(selection, { highlightEdges: false });
@@ -60,18 +64,4 @@ export default function Graph(props: Props) {
   }, [ref]);
 
   return <div className={styles.vis} ref={ref} />;
-}
-
-function selectionToRoot(id: IdType, allEdge: Edge[]) {
-  const track = trace(allEdge, id);
-  const edges = track.map((edge) => edge.id).filter((id): id is IdType => !!id);
-  const nodes = track
-    .flatMap(({ from, to }) => [from, to])
-    .filter((id): id is IdType => !!id)
-    .reduce<IdType[]>(
-      (list, id) => (list.includes(id) ? list : [...list, id]),
-      [],
-    );
-
-  return { edges, nodes };
 }

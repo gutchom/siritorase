@@ -29,12 +29,19 @@ export default function getNetworkData(pictures: PictureNode[]): {
   };
 
   const nodes: Node[] = pictures
-    .map(({ id, src, title }) => ({
-      id,
-      shape: 'image',
-      image: src,
-      label: title,
-    }))
+    .map(
+      ({ id, src, title }): Node => ({
+        id,
+        size: 30,
+        shape: 'image',
+        image: src,
+        label: title,
+        chosen: {
+          node: true,
+          label: (values) => (values.size *= 2.5),
+        },
+      }),
+    )
     .map((node) => (isLeaf(node) ? { ...node, ...leaf } : node));
 
   return { nodes: new DataSet(nodes), edges: new DataSet(edges) };
