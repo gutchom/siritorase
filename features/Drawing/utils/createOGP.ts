@@ -37,6 +37,17 @@ export default function createOGP(
   ctx.fillStyle = '#fd8';
   ctx.fillRect(0, 0, 1200, 630);
 
+  const bg = new Image();
+  bg.addEventListener(
+    'load',
+    () => {
+      ctx.drawImage(bg, 0, 0);
+    },
+    false,
+  );
+  bg.src = '/img/ogp_background.png';
+  console.log('draw background');
+
   // 枠付きの回答画像を描画
   drawRoundSquare(660 - 6, 60 - 6, 480 + 12, 480 + 12, 9, '#ea6', ctx);
   ctx.drawImage(picture, 660, 60, 480, 480);
