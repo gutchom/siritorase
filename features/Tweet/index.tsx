@@ -30,13 +30,13 @@ export default function Tweet(props: Props) {
     <>
       {user ? (
         <button className={styles.trigger} onClick={() => setIsOpen(true)}>
-          ツイートする
+          結果をツイートする
         </button>
       ) : (
         <button
           className={styles.trigger}
           onClick={async () => {
-            await login;
+            await login();
             setIsOpen(true);
           }}
         >
