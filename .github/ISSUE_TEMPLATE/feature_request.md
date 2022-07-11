@@ -1,20 +1,26 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
+name: 機能追加要望
+about: 何のためにどのような機能を追加したいのかを説明する
 title: ''
-labels: ''
-assignees: gutchom
+labels: '機能の追加や要望'
+assignees: 'gutchom'
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## 機能の追加/改修が必要となる理由
+**Note** 散文でも箇条書きでも良いので**3行以内**でまとめる[^1]
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+## 機能追加で解決され実現されること
+**Note** 機能が実行される文脈や具体的な数値による比較が述べられていると嬉しい :+1:
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+
+### 現状の実装で不足する機能や問題となること
+**Note** どのモジュールと依存し、何を行っているのかを調査し、問題点を説明する
+
+### 依存関係
+#### この機能を呼び出している箇所
+<!-- 当該箇所のソースコードをパーマリンクで引用する -->
+
+#### この機能の出力を利用している箇所
+<!-- 当該箇所のソースコードをパーマリンクで引用する -->
