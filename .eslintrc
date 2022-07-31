@@ -29,7 +29,8 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:import/errors",
     "plugin:import/typescript",
-    "plugin:import/warnings"
+    "plugin:import/warnings",
+    "prettier"
   ],
   "plugins": [
     "@typescript-eslint",
