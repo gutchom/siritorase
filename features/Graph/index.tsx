@@ -22,29 +22,22 @@ export default function Graph(props: Props) {
       const data = getNetworkData(pictures);
       const network = new Network(ref.current, data, options);
 
-      network.on('doubleClick', async ({ nodes }) => {
-        const [id] = nodes;
-        await router.push(`/${id}/draw`);
-      });
-
       network.on('click', ({ nodes }) => {
         const [id] = nodes;
         if (id) {
-          const selection = getAncestorsSelection(
-            id,
-            data.nodes.get(),
-            data.edges.get(),
-          );
+          const selection = getAncestorsSelection(id, data.edges.get());
           network.setSelection(selection, { highlightEdges: false });
+        }
+      });
+      network.on('doubleClick', async ({ nodes }) => {
+        const [id] = nodes;
+        if (id) {
+          await router.push(`/${id}/draw`);
         }
       });
 
       if (targetId) {
-        const selection = getAncestorsSelection(
-          targetId,
-          data.nodes.get(),
-          data.edges.get(),
-        );
+        const selection = getAncestorsSelection(targetId, data.edges.get());
         network.once('beforeDrawing', () => {
           network.focus(targetId, { scale: 4 });
           network.setSelection(selection, { highlightEdges: false });
