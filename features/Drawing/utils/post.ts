@@ -9,20 +9,22 @@ import {
 import { ref, uploadBytes } from '@firebase/storage';
 import { db, storage } from 'lib/browser/firebase';
 import type { PictureType } from '../types';
-import createOGP from './createOGP';
+import generateOGP from './OGP';
 
 export default async function post(
   title: string,
   ancestors: PictureType[],
   picture: HTMLCanvasElement,
-  parentImages: HTMLImageElement[],
+  ancestorImages: HTMLImageElement[],
 ): Promise<string> {
   const id = await register(title, ancestors);
   await Promise.all([
     upload(`picture/${id}.png`, await canvasToBlob(picture)),
     upload(
       `ogp/${id}.png`,
-      await canvasToBlob(createOGP(picture, parentImages)),
+      await canvasToBlob(
+        await generateOGP(title, picture, ancestors, ancestorImages),
+      ),
     ),
   ]);
 
