@@ -1,4 +1,5 @@
 import type { GetServerSideProps, NextPage } from 'next';
+import { useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import getAncestors from 'lib/server/getAncestors';
@@ -6,6 +7,7 @@ import getMediaURL from 'lib/getMediaURL';
 import useMultipleRef from 'lib/useMultipleRef';
 import Ancestors from 'features/Ancestors';
 import Drawing from 'features/Drawing';
+import Introduction from 'features/Introduction';
 import type { PictureType } from 'features/Drawing/types';
 
 type Props = {
@@ -18,6 +20,7 @@ const Draw: NextPage<Props> = (props) => {
   const router = useRouter();
   const { pictureId } = router.query;
   const [refs, images] = useMultipleRef<HTMLImageElement>(ancestors.length);
+  const [isIntroOpen, setIsIntroOpen] = useState(true);
   const history = ancestors
     .slice(-3, -1)
     .map(({ title }) => title)
@@ -55,6 +58,12 @@ const Draw: NextPage<Props> = (props) => {
           }}
         />
       </main>
+
+      <button onClick={() => setIsIntroOpen(true)}>ひらく</button>
+      <Introduction
+        visible={isIntroOpen}
+        onClose={() => setIsIntroOpen(false)}
+      />
     </>
   );
 };

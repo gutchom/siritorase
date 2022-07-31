@@ -1,0 +1,35 @@
+.header {
+  padding: 0.6rem 1.2rem;
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #fff;
+  text-align: center;
+  background: var(--theme-color-main);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  border-top: 1px solid #ddd;
+}
+
+.login {
+  box-sizing: border-box;
+  display: block;
+  padding: 0.3rem 0.6rem;
+  margin: auto;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  background: var(--color-twitter);
+}
+
+.paragraph {
+  padding: 1rem 1.5rem;
+  line-height: 1.2rem;
+  font-size: 1.1rem;
+  letter-spacing: .05rem;
+}
