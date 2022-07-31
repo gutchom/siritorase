@@ -16,7 +16,8 @@ export default function Drawing(props: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { start, draw, end } = useDrawing(canvasRef);
   const [title, setTitle] = useState('');
-  const [shouldCaution, setShouldCaution] = useState(false);
+  const [shouldWarn, setShouldWarn] = useState(false);
+  const [isPosting, setIsPosting] = useState(false);
 
   return (
     <div className={styles.container}>
@@ -46,7 +47,7 @@ export default function Drawing(props: Props) {
       />
       <small
         className={styles.caution}
-        style={{ display: shouldCaution ? 'block' : 'none' }}
+        style={{ display: shouldWarn ? 'block' : 'none' }}
       >
         ※タイトルを入力してください
       </small>
@@ -55,19 +56,22 @@ export default function Drawing(props: Props) {
       </div>
       <button
         className={styles.complete}
+        disabled={isPosting}
         onClick={async () => {
           if (canvasRef.current === null) {
             return;
           }
           if (title.length === 0) {
-            setShouldCaution(true);
+            setShouldWarn(true);
             return;
           }
           const id = await post(title, ancestors, canvasRef.current, images);
+          setIsPosting(true);
           onComplete(id);
+          setIsPosting(false);
         }}
       >
-        絵を投稿する
+        {isPosting ? '投稿中' : '絵を投稿する'}
       </button>
     </div>
   );
