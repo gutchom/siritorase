@@ -10,12 +10,10 @@ export default async function getTwitterClient(uid: string) {
   const snapshot = await db.collection('users').doc(uid).get();
   const credential = snapshot.data() as Credential;
 
-  const twitter = new TwitterApi({
+  return new TwitterApi({
     appKey: process.env.TWITTER_CONSUMER_KEY as string,
     appSecret: process.env.TWITTER_CONSUMER_SECRET as string,
     accessToken: credential.token,
     accessSecret: credential.secret,
   });
-
-  return twitter;
 }
