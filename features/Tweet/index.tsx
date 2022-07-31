@@ -92,9 +92,10 @@ function getTweetText(
   const mention = `@${parentTweetUser}`;
   const text = [
     history,
+    '',
     '絵しりとりを描いたよ！リンクからしりとりの続きに参加しよう',
     '',
-    '#絵しりとり #しりとり #しりとらせ',
+    '#絵しりとり #しりとらせ',
     `https://siritorase.vercel.app/${id}`,
   ];
 
