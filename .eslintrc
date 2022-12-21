@@ -86,7 +86,7 @@
     "jest/no-identical-title": "error",
     "jest/prefer-to-have-length": "warn",
     "jest/valid-expect": "error",
-    "curly": ["error", "all"],
+    "curly": ["error", "multi-line"],
     "sort-imports": ["error", { "ignoreDeclarationSort": true }],
     "no-console": "warn",
     "lines-between-class-members": "off",
