@@ -1,6 +1,5 @@
-import Link from 'next/link';
 import { useState } from 'react';
-import { FaQuestion, FaSignOutAlt } from 'react-icons/fa';
+import { FaSignOutAlt } from 'react-icons/fa';
 import useAuth from 'lib/useAuth';
 import styles from './Account.module.css';
 
@@ -26,14 +25,7 @@ export default function Account() {
         style={{ display: isOpen ? 'flex' : 'none' }}
       >
         <li>
-          <Link href="/about">
-            <a className={styles.about}>
-              <FaQuestion />
-            </a>
-          </Link>
-        </li>
-        <li>
-          <button className={styles.logout} onClick={logout}>
+          <button className={styles.button} onClick={logout}>
             <FaSignOutAlt />
           </button>
         </li>

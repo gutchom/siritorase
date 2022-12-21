@@ -40,8 +40,7 @@
   margin: 6px auto 0;
 }
 
-.about,
-.logout {
+.button {
   box-sizing: border-box;
   display: block;
   width: 36px;
