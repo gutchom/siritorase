@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import getAncestors from 'lib/server/getAncestors';
 import getMediaURL from 'lib/getMediaURL';
 import useMultipleRef from 'lib/useMultipleRef';
+import useAuth from 'lib/useAuth';
 import Ancestors from 'features/Ancestors';
 import Drawing from 'features/Drawing';
 import Introduction from 'features/Introduction';
@@ -20,6 +21,7 @@ const Draw: NextPage<Props> = (props) => {
   const router = useRouter();
   const { pictureId } = router.query;
   const [refs, images] = useMultipleRef<HTMLImageElement>(ancestors.length);
+  const { user } = useAuth();
   const [isIntroOpen, setIsIntroOpen] = useState(true);
   const history = ancestors
     .slice(-3, -1)
@@ -59,9 +61,8 @@ const Draw: NextPage<Props> = (props) => {
         />
       </main>
 
-      <button onClick={() => setIsIntroOpen(true)}>ひらく</button>
       <Introduction
-        visible={isIntroOpen}
+        visible={isIntroOpen && !user}
         onClose={() => setIsIntroOpen(false)}
       />
     </>
