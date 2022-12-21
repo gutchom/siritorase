@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { User, UserCredential } from '@firebase/auth';
+import type { User } from '@firebase/auth';
 import {
   TwitterAuthProvider,
   onAuthStateChanged,
@@ -13,7 +13,7 @@ export default function useAuth(): {
   login(): Promise<void>;
   logout(): Promise<void>;
 } {
-  const [user, setUser] = useState<User | null>(auth.currentUser);
+  const [user, setUser] = useState(auth.currentUser);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => setUser(user));
@@ -23,12 +23,7 @@ export default function useAuth(): {
   }, []);
 
   async function login() {
-    let result: UserCredential;
-    try {
-      result = await signInWithPopup(auth, new TwitterAuthProvider());
-    } catch (e) {
-      throw e;
-    }
+    const result = await signInWithPopup(auth, new TwitterAuthProvider());
     const credential = TwitterAuthProvider.credentialFromResult(result);
     if (!credential) {
       throw new Error('Can not get OAuth credential');
