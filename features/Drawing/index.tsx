@@ -58,14 +58,12 @@ export default function Drawing(props: Props) {
         className={styles.complete}
         disabled={isPosting}
         onClick={async () => {
-          if (canvasRef.current === null) {
-            return;
-          }
+          if (canvasRef.current === null) return;
           if (title.length === 0) {
             setShouldWarn(true);
             return;
           }
-          const id = await post(title, ancestors, canvasRef.current, images);
+          const id = await post(title, canvasRef.current, ancestors, images);
           setIsPosting(true);
           onComplete(id);
           setIsPosting(false);

@@ -100,7 +100,7 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async (
     throw new Error('params is not defined.');
   }
   const { pictureId } = params;
-  const [hostname] = req.headers.host?.split(':') ?? [];
+  const hostname = req.headers.host?.split(':').at(0) ?? '';
 
   try {
     const ancestors = (await getAncestors(pictureId)).map((ancestor) => ({

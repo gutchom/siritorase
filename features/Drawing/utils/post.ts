@@ -13,8 +13,8 @@ import generateOGP from './OGP';
 
 export default async function post(
   title: string,
-  ancestors: PictureType[],
   picture: HTMLCanvasElement,
+  ancestors: PictureType[],
   ancestorImages: HTMLImageElement[],
 ): Promise<string> {
   const id = await register(title, ancestors);

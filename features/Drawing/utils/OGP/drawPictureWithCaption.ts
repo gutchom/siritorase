@@ -22,5 +22,4 @@ export default function drawPictureWithCaption(
   ctx.textBaseline = 'top';
   ctx.fillStyle = '#222';
   ctx.fillText(title, captionX, captionY, captionWidth);
-  console.log('font', ctx.font);
 }
