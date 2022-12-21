@@ -1,10 +1,10 @@
 import type { GetServerSideProps, NextPage } from 'next';
-import { useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import type { RefCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import getAncestors from 'lib/server/getAncestors';
 import getMediaURL from 'lib/getMediaURL';
-import useMultipleRef from 'lib/useMultipleRef';
 import useAuth from 'lib/useAuth';
 import Ancestors from 'features/Ancestors';
 import Drawing from 'features/Drawing';
@@ -20,14 +20,31 @@ const Draw: NextPage<Props> = (props) => {
   const { ogp, ancestors } = props;
   const router = useRouter();
   const { pictureId } = router.query;
-  const [refs, images] = useMultipleRef<HTMLImageElement>(ancestors.length);
   const { user } = useAuth();
+  const [imgMap, setImgMap] = useState(new Map<number, HTMLImageElement>());
   const [isIntroOpen, setIsIntroOpen] = useState(true);
   const history = ancestors
     .slice(-3, -1)
     .map(({ title }) => title)
     .concat('？？？')
     .join('→');
+
+  const images = useMemo(
+    () =>
+      Array.from(imgMap)
+        .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+        .map(([, img]) => img),
+    [imgMap],
+  );
+
+  const imageRef: RefCallback<HTMLImageElement> = useCallback(
+    (img) => {
+      if (img === null) return;
+      const index = ancestors.findIndex(({ id }) => id === img?.id);
+      setImgMap((map) => new Map(map).set(index, img));
+    },
+    [ancestors],
+  );
 
   return (
     <>
@@ -51,7 +68,7 @@ const Draw: NextPage<Props> = (props) => {
       </Head>
 
       <main>
-        <Ancestors ref={refs} ancestors={ancestors} />
+        <Ancestors ancestors={ancestors} imageRef={imageRef} />
         <Drawing
           ancestors={ancestors}
           images={images}
