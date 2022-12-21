@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import styles from './index.module.css';
 
@@ -15,25 +15,32 @@ export default function Modal(props: Props) {
   const { header, footer, visible, children, onCloseClick } = props;
   const background = useRef<HTMLDivElement>(null);
   const content = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState(0);
 
   useEffect(() => {
     if (visible) {
       content.current?.scrollTo(0, 1);
-      setPosition(
-        document.body.scrollTop || document.documentElement.scrollTop,
-      );
-    } else {
-      window.scrollTo(0, position);
     }
   }, [visible]);
 
   useEffect(() => {
+    function preventBehindScroll(e: TouchEvent) {
+      if (content.current && background.current && e.target instanceof Node) {
+        const { scrollTop, scrollHeight, clientHeight } = content.current;
+        const bottom = scrollHeight - clientHeight;
+
+        if (background.current.contains(e.target)) {
+          e.stopPropagation();
+        } else if (scrollTop === 0 || scrollTop === bottom) {
+          e.preventDefault();
+        }
+      }
+    }
+
     window.addEventListener('touchmove', preventBehindScroll);
     return () => {
       window.removeEventListener('touchmove', preventBehindScroll);
     };
-  }, [content]);
+  }, []);
 
   function adjustScroll() {
     if (content.current) {
@@ -45,24 +52,6 @@ export default function Modal(props: Props) {
       }
       if (scrollTop === bottom) {
         content.current.scrollTo(0, bottom - 1);
-      }
-    }
-  }
-
-  function preventBehindScroll(e: TouchEvent) {
-    if (
-      visible &&
-      content.current &&
-      background.current &&
-      e.target instanceof Node
-    ) {
-      const { scrollTop, scrollHeight, clientHeight } = content.current;
-      const bottom = scrollHeight - clientHeight;
-
-      if (background.current.contains(e.target)) {
-        e.stopPropagation();
-      } else if (scrollTop === 0 || scrollTop === bottom) {
-        e.preventDefault();
       }
     }
   }
