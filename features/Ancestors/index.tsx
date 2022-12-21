@@ -1,4 +1,5 @@
-import { forwardRef, useEffect, useRef } from 'react';
+import type { RefCallback } from 'react';
+import { forwardRef, useCallback } from 'react';
 import type { MultipleRef } from 'lib/useMultipleRef';
 import { getRef } from 'lib/useMultipleRef';
 import type { PictureType } from 'features/Drawing/types';
@@ -11,14 +12,10 @@ type Props = {
 export default forwardRef<MultipleRef<HTMLImageElement>, Props>(
   function Ancestors(props, refs) {
     const { ancestors } = props;
-    const listRef = useRef<HTMLUListElement>(null);
 
-    useEffect(() => {
-      listRef.current?.scrollTo(
-        listRef.current.scrollWidth - listRef.current.offsetWidth,
-        0,
-      );
-    }, [listRef]);
+    const listRef: RefCallback<HTMLUListElement> = useCallback((list) => {
+      list?.scrollTo(list.scrollWidth - list.offsetWidth, 0);
+    }, []);
 
     return (
       <ul className={styles.ancestors} ref={listRef}>
