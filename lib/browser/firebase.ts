@@ -18,10 +18,7 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-if (
-  typeof window !== 'undefined' &&
-  window.location.hostname.indexOf('local') >= 0
-) {
-  connectFirestoreEmulator(db, window.location.hostname, 8080);
-  connectStorageEmulator(storage, window.location.hostname, 9199);
+if (process.env.NODE_ENV === 'development') {
+  connectFirestoreEmulator(db, 'localhost', 8080);
+  connectStorageEmulator(storage, 'localhost', 9199);
 }
