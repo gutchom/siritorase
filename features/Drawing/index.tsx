@@ -63,9 +63,8 @@ export default function Drawing(props: Props) {
             setShouldWarn(true);
             return;
           }
-          const id = await post(title, canvasRef.current, ancestors, images);
           setIsPosting(true);
-          onComplete(id);
+          onComplete(await post(title, canvasRef.current, ancestors, images));
           setIsPosting(false);
         }}
       >
