@@ -23,11 +23,15 @@ const Draw: NextPage<Props> = (props) => {
   const { user } = useAuth();
   const [imgMap, setImgMap] = useState(new Map<number, HTMLImageElement>());
   const [isIntroOpen, setIsIntroOpen] = useState(true);
-  const history = ancestors
-    .slice(-3, -1)
-    .map(({ title }) => title)
-    .concat('？？？')
-    .join('→');
+  const history = useMemo(
+    () =>
+      ancestors
+        .slice(-3, -1)
+        .map(({ title }) => title)
+        .concat('？？？')
+        .join('→'),
+    [ancestors],
+  );
 
   const images = useMemo(
     () =>
