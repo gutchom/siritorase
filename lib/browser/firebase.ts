@@ -19,6 +19,7 @@ export const db = getFirestore(app);
 export const storage = getStorage(app);
 
 if (process.env.NODE_ENV === 'development') {
-  connectFirestoreEmulator(db, 'localhost', 8080);
-  connectStorageEmulator(storage, 'localhost', 9199);
+  const host = process.env.NEXT_PUBLIC_HOST ?? 'localhost';
+  connectFirestoreEmulator(db, host, 8080);
+  connectStorageEmulator(storage, host, 9199);
 }

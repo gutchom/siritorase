@@ -95,22 +95,21 @@ type Params = {
 export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   context,
 ) => {
-  const { req, params } = context;
+  const { params } = context;
   if (!params) {
     throw new Error('params is not defined.');
   }
   const { pictureId } = params;
-  const hostname = req.headers.host?.split(':').at(0) ?? '';
 
   try {
     const ancestors = (await getAncestors(pictureId)).map((ancestor) => ({
       ...ancestor,
-      src: getMediaURL(`picture/${ancestor.id}.png`, hostname),
+      src: getMediaURL(`picture/${ancestor.id}.png`),
     }));
 
     return {
       props: {
-        ogp: getMediaURL(`ogp/${pictureId}.png`, hostname),
+        ogp: getMediaURL(`ogp/${pictureId}.png`),
         ancestors,
       },
     };
