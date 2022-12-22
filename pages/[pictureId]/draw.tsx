@@ -23,6 +23,13 @@ const Draw: NextPage<Props> = (props) => {
   const { user } = useAuth();
   const [imgMap, setImgMap] = useState(new Map<number, HTMLImageElement>());
   const [isIntroOpen, setIsIntroOpen] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShouldIntroOpen(true);
+    }, 1000);
+  }, []);
+
   const history = useMemo(
     () =>
       ancestors
