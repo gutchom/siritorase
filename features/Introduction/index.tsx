@@ -19,13 +19,13 @@ export default function Introduction(props: Props) {
       footer={
         <footer className={styles.footer}>
           <button className={styles.login} onClick={login}>
-            Twitterでログインする
+            Twitterでログイン！
           </button>
         </footer>
       }
     >
       <p className={styles.paragraph}>
-        しりとらせはTwitterでお絵描きしりとりができるサービスです。しりとりの続きの絵を描いてどんどんツイートしよう！
+        &quot;しりとらせ&quot;はTwitterでお絵描きしりとりができるサービスです。しりとりの続きをどんどん描いてツイートしよう！
       </p>
     </Modal>
   );

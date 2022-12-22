@@ -9,7 +9,7 @@
   color: #fff;
   background: var(--color-twitter);
   border: none;
-  border-radius: 3px;
+  border-radius: var(--radius);
 }
 
 .account {

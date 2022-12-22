@@ -32,7 +32,7 @@
   left: var(--modal-padding);
   margin: auto;
   background: #fff;
-  border-radius: var(--radius-small);
+  border-radius: var(--radius-large);
   box-shadow: 0 0 10px 0 #333;
   transition: var(--duration-slow) var(--easing-in-out-back);
   transform: scale(0);
@@ -48,17 +48,18 @@
   box-sizing: border-box;
   width: 100%;
   height: var(--modal-bar-height);
+  overflow: hidden;
 }
 
 .header {
   top: 0;
-  border-radius: var(--radius-small) var(--radius-small) 0 0;
+  border-radius: var(--radius-large) var(--radius-large) 0 0;
 }
 
 .footer {
   bottom: 0;
   z-index: 1;
-  border-radius: 0 0 var(--radius-small) var(--radius-small);
+  border-radius: 0 0 var(--radius-large) var(--radius-large);
 }
 
 .content {
