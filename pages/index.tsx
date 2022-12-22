@@ -44,8 +44,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   if (!req.headers.host) {
     throw new Error('host is undefined.');
   }
-  const [hostname] = req.headers.host.split(':');
-  const pictures = await getPictures(hostname);
+  const pictures = await getPictures();
 
   return { props: JSON.parse(JSON.stringify({ pictures })) };
 };

@@ -72,14 +72,13 @@ type Params = {
 export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   context,
 ) => {
-  const { req, params } = context;
+  const { params } = context;
   if (!params) {
     throw new Error('params is not defined.');
   }
   const { pictureId } = params;
-  const [hostname] = req.headers.host?.split(':') ?? [];
   const ancestors = await getAncestors(pictureId);
-  const pictures = await getPictures(hostname);
+  const pictures = await getPictures();
   const drew = pictures.find(({ id }) => id === pictureId);
 
   if (drew) {
