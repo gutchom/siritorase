@@ -2,7 +2,7 @@ import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import type { RefCallback } from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import getAncestors from 'lib/server/getAncestors';
 import getMediaURL from 'lib/getMediaURL';
 import useAuth from 'lib/useAuth';
@@ -22,7 +22,7 @@ const Draw: NextPage<Props> = (props) => {
   const { pictureId } = router.query;
   const { user } = useAuth();
   const [imgMap, setImgMap] = useState(new Map<number, HTMLImageElement>());
-  const [isIntroOpen, setIsIntroOpen] = useState(true);
+  const [shouldIntroOpen, setShouldIntroOpen] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
@@ -90,8 +90,8 @@ const Draw: NextPage<Props> = (props) => {
       </main>
 
       <Introduction
-        visible={isIntroOpen && !user}
-        onClose={() => setIsIntroOpen(false)}
+        visible={shouldIntroOpen && !user}
+        onClose={() => setShouldIntroOpen(false)}
       />
     </>
   );
