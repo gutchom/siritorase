@@ -19,17 +19,10 @@ const Home: NextPage<Props> = (props) => {
       </Head>
 
       <main>
-        <p className={styles.intro}>
-          しりとらせはツイッターで絵しりとりができるWebサービスです。
-          <br />
-          今すぐ絵しりとりの続きを描こう！
-        </p>
-
-        <section>
-          <div className={styles.vis}>
-            <Graph pictures={pictures} />
-          </div>
-        </section>
+        <div className={styles.vis}>
+          <Graph pictures={pictures} />
+        </div>
+        <h2 className={styles.title}>みんなのしりとり</h2>
       </main>
     </>
   );
