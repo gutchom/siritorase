@@ -16,8 +16,11 @@ export default function Account() {
       <button className={styles.account} onClick={() => setIsOpen(!isOpen)}>
         <img
           className={styles.icon}
-          src={user.photoURL ?? '/default_icon.jpg'}
           alt="アカウント"
+          src={user.photoURL ?? '/img/default_icon.jpg'}
+          onError={(e) => {
+            e.currentTarget.src = '/img/default_icon.jpg';
+          }}
         />
       </button>
       <ul
