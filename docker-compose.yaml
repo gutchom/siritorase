@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: postgres
+    volumes:
+      - db:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - LANG=ja_JP.utf8
+      - TZ=Asia/Tokyo
+volumes:
+  db:
