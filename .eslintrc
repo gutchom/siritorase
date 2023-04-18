@@ -19,24 +19,26 @@
   },
   "env": {
     "browser": true,
-    "node": true,
     "es6": true,
     "jest": true,
     "jest/globals": true
   },
   "extends": [
-    "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/errors",
     "plugin:import/typescript",
     "plugin:import/warnings",
-    "prettier"
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
   ],
   "plugins": [
     "@typescript-eslint",
     "import",
     "jest",
-    "tsc"
+    "react",
+    "react-hooks",
+    "tsc",
+    "prettier"
   ],
   "rules": {
     "block-scoped-var": "error",
@@ -99,6 +101,11 @@
     "semi-style": ["error", "last"],
     "no-extra-semi": "error",
     "no-unexpected-multiline": "error",
-    "no-unreachable": "error"
+    "no-unreachable": "error",
+    "react-hooks/exhaustive-deps": [
+      "warn", {
+        "additionalHooks": "(useRecoilCallback|useRecoilTransaction_UNSTABLE)"
+      }
+    ]
   }
 }

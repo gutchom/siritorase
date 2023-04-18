@@ -16,8 +16,8 @@ const Post: NextPage = () => {
         <Drawing
           ancestors={[]}
           images={[]}
-          onComplete={(id) => {
-            router.push(`/${id}/result`);
+          onComplete={async (id) => {
+            await router.push(`/${id}/result`);
           }}
         />
       </main>

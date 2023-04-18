@@ -15,7 +15,7 @@ export default async function generateOGP(
   drawPictureWithCaption(
     ctx,
     latest,
-    title,
+    '？？？',
     480,
     ctx.canvas.width / 2 + 60,
     60,

@@ -1,8 +1,8 @@
 import Editor from 'features/Tweet/Editor';
+import { signIn, useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { BsTwitter } from 'react-icons/bs';
 import Twitter from 'twitter-text';
-import useAuth from 'lib/useAuth';
 import Modal from 'features/Modal';
 import styles from './index.module.css';
 
@@ -22,27 +22,39 @@ export default function Tweet(props: Props) {
     tweetUserId,
     onTweet,
   } = props;
-  const { user, login } = useAuth();
+  const { data: session, status } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [tweetText] = useState(getTweetText(pictureId, tweetUserId));
 
   return (
     <>
-      {user ? (
-        <button className={styles.trigger} onClick={() => setIsOpen(true)}>
-          結果をツイートする
-        </button>
-      ) : (
-        <button
-          className={styles.trigger}
-          onClick={async () => {
-            await login();
-            setIsOpen(true);
-          }}
-        >
-          ログインしてツイートする
-        </button>
-      )}
+      {() => {
+        switch (status) {
+          case 'loading':
+            return null;
+          case 'authenticated':
+            return (
+              <button
+                className={styles.trigger}
+                onClick={() => setIsOpen(true)}
+              >
+                結果をツイートする
+              </button>
+            );
+          case 'unauthenticated':
+            return (
+              <button
+                className={styles.trigger}
+                onClick={async () => {
+                  await signIn();
+                  setIsOpen(true);
+                }}
+              >
+                ログインしてツイートする
+              </button>
+            );
+        }
+      }}
       <Modal
         visible={isOpen}
         onCloseClick={() => setIsOpen(false)}
@@ -59,15 +71,15 @@ export default function Tweet(props: Props) {
             <button
               className={styles.post}
               onClick={async () => {
-                if (user) {
+                if (status === 'authenticated') {
                   const [tweetId, tweetUserId] = await tweet(
-                    user.uid,
+                    session?.user.uid,
                     tweetText,
                     parentTweetId,
                   );
                   onTweet(tweetId, tweetUserId);
                 } else {
-                  await login();
+                  await signIn();
                 }
               }}
             >

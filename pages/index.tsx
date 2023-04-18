@@ -1,6 +1,5 @@
 import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
-import getPictures from 'lib/server/getPictures';
 import type { PictureNode } from 'features/Drawing/types';
 import Graph from 'features/Graph';
 import styles from 'styles/home.module.css';

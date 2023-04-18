@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import getTwitterClient from 'lib/server/getTwitterClient';
+import getTwitterClient from 'lib/getTwitterClient';
 
 type Body = {
   uid: string;

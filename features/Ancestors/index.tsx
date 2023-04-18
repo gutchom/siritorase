@@ -1,5 +1,4 @@
 import type { RefCallback } from 'react';
-import { useCallback } from 'react';
 import type { PictureType } from 'features/Drawing/types';
 import styles from './index.module.css';
 
@@ -11,12 +10,13 @@ type Props = {
 export default function Ancestors(props: Props) {
   const { ancestors, imageRef } = props;
 
-  const listRef: RefCallback<HTMLUListElement> = useCallback((list) => {
-    list?.scrollTo(list.scrollWidth - list.offsetWidth, 0);
-  }, []);
-
   return (
-    <ul className={styles.ancestors} ref={listRef}>
+    <ul
+      className={styles.ancestors}
+      ref={(list) => {
+        list?.scrollTo(list?.scrollWidth - list?.offsetWidth, 0);
+      }}
+    >
       {ancestors.map(({ id, src, title }, index) => (
         <li key={id} className={styles.picture}>
           <label>

@@ -1,5 +1,5 @@
+import { signIn } from 'next-auth/react';
 import Modal from 'features/Modal';
-import useAuth from 'lib/useAuth';
 import styles from './index.module.css';
 
 type Props = {
@@ -9,7 +9,6 @@ type Props = {
 
 export default function Introduction(props: Props) {
   const { visible, onClose } = props;
-  const { login } = useAuth();
 
   return (
     <Modal
@@ -18,7 +17,12 @@ export default function Introduction(props: Props) {
       header={<header className={styles.header}>しりとらせとは？</header>}
       footer={
         <footer className={styles.footer}>
-          <button className={styles.login} onClick={login}>
+          <button
+            className={styles.login}
+            onClick={() =>
+              signIn('twitter', { callbackUrl: window.location.href })
+            }
+          >
             Twitterでログイン！
           </button>
         </footer>

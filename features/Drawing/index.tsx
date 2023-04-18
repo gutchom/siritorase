@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import type { PictureType } from './types';
 import useDrawing from './hooks/useDrawing';
-import post from './utils/post';
 import Tools from './Tools';
 import styles from './index.module.css';
 
@@ -12,7 +11,7 @@ type Props = {
 };
 
 export default function Drawing(props: Props) {
-  const { ancestors, images, onComplete } = props;
+  const {} = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { start, draw, end } = useDrawing(canvasRef);
   const [title, setTitle] = useState('');
@@ -64,7 +63,7 @@ export default function Drawing(props: Props) {
             return;
           }
           setIsPosting(true);
-          onComplete(await post(title, canvasRef.current, ancestors, images));
+          // onComplete(await post(title, canvasRef.current, ancestors, images));
           setIsPosting(false);
         }}
       >
