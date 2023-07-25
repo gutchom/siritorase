@@ -1,6 +1,10 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
   "settings": {
     "react": {
       "version": "detect"
@@ -20,23 +24,22 @@
   "env": {
     "browser": true,
     "node": true,
-    "es6": true,
-    "jest": true,
-    "jest/globals": true
+    "es6": true
   },
   "extends": [
-    "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/errors",
     "plugin:import/typescript",
     "plugin:import/warnings",
-    "prettier"
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
   ],
   "plugins": [
     "@typescript-eslint",
+    "tsc",
     "import",
-    "jest",
-    "tsc"
+    "react",
+    "react-refresh"
   ],
   "rules": {
     "block-scoped-var": "error",
@@ -81,11 +84,6 @@
         "configFile": "./tsconfig.json"
       }
     ],
-    "jest/no-disabled-tests": "warn",
-    "jest/no-focused-tests": "error",
-    "jest/no-identical-title": "error",
-    "jest/prefer-to-have-length": "warn",
-    "jest/valid-expect": "error",
     "curly": ["error", "multi-line"],
     "sort-imports": ["error", { "ignoreDeclarationSort": true }],
     "no-console": "warn",
@@ -99,6 +97,18 @@
     "semi-style": ["error", "last"],
     "no-extra-semi": "error",
     "no-unexpected-multiline": "error",
-    "no-unreachable": "error"
+    "no-unreachable": "error",
+    "react/prop-types": "off",
+    "react/no-children-prop": "off",
+    "react/react-in-jsx-scope": "off",
+    "react-hooks/exhaustive-deps": [
+      "warn", {
+        "additionalHooks": "(useRecoilCallback|useRecoilTransaction_UNSTABLE)"
+      }
+    ],
+    "react-refresh/only-export-components": [
+      "warn",
+      { "allowConstantExport": true }
+    ]
   }
 }
