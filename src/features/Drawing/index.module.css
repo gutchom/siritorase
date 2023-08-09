@@ -5,8 +5,6 @@
 
 .canvas {
   display: block;
-  width: 320px;
-  height: 320px;
   margin: auto;
   touch-action: none;
   border: 6px solid var(--theme-color-main);
@@ -48,7 +46,7 @@
   border-radius: 8px;
 }
 
-.caution {
+.warn {
   display: block;
   font-size: 0.75rem;
   color: #f00;

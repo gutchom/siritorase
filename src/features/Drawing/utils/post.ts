@@ -1,63 +1,90 @@
-import {
-  addDoc,
-  collection,
-  doc,
-  increment,
-  setDoc,
-  updateDoc,
-} from '@firebase/firestore';
-import { ref, uploadBytes } from '@firebase/storage';
-import { db, storage } from 'src/lib/browser/firebase';
-import type { PictureType } from 'src/features/Drawing/types';
-import generateOGP from 'src/features/Drawing/utils/OGP';
+import type { PostItem } from '../types';
+import canvasToBlob from './canvasToBlob';
+import generatePage from './generatePage';
+import generateOGP from './generateOGP';
+import generateThumbnail from './generateThumbnail';
+
+/*
+  page -> /:id/index.html
+  ogp -> /:id/ogp.png
+  pic -> /:id/:title.png
+  thumb -> /:id/thumbnail.png
+*/
+
+type WriteResponse = {
+  id: string;
+  page: string;
+  pic: string;
+  ogp: string;
+  thumb: string;
+};
 
 export default async function post(
   title: string,
   picture: HTMLCanvasElement,
-  ancestors: PictureType[],
-  ancestorImages: HTMLImageElement[],
+  ancestors: PostItem[],
 ): Promise<string> {
-  const id = await register(title, ancestors);
+  const res = await write(title, picture, ancestors);
+  const { id, page, pic, ogp, thumb } = res;
+  const history = [...ancestors, { id, title }];
+  const digest = ancestors.slice(-2).map(({ title }) => title);
+
   await Promise.all([
-    upload(`picture/${id}.png`, await canvasToBlob(picture)),
-    upload(
-      `ogp/${id}.png`,
-      await canvasToBlob(
-        await generateOGP(title, picture, ancestors, ancestorImages),
-      ),
-    ),
+    upload(pic, await canvasToBlob(picture)),
+    upload(ogp, await canvasToBlob(await generateOGP(picture, history))),
+    upload(thumb, await canvasToBlob(await generateThumbnail(picture))),
   ]);
+
+  await upload(page, generatePage(id, digest, history), 'text/html');
 
   return id;
 }
 
-async function register(
+async function write(
   title: string,
-  ancestors: PictureType[],
-): Promise<string> {
-  const [ancestor] = ancestors.slice(-1);
-  const created = new Date();
-  const post = { title, ancestors, created, childrenCount: 0 };
-  const postRef = await addDoc(collection(db, 'pictures'), post);
-  if (ancestor) {
-    const childRef = doc(db, 'pictures', ancestor.id, 'children', postRef.id);
-    await setDoc(childRef, post);
-    await updateDoc(doc(db, 'pictures', ancestor.id), {
-      childrenCount: increment(1),
-    });
+  picture: HTMLCanvasElement,
+  ancestors: PostItem[],
+): Promise<WriteResponse> {
+  const res = await fetch('/api/post', {
+    method: 'POST',
+    body: JSON.stringify({ title, picture, ancestors }),
+    cache: 'no-cache',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!res.ok) throw new Error('failed to post');
+  const json = await res.json();
+
+  if (isValid(json)) {
+    return json;
+  } else {
+    throw new Error('failed to post');
   }
-
-  return postRef.id;
 }
 
-async function upload(path: string, blob: Blob) {
-  await uploadBytes(ref(storage, path), blob);
+function isValid(json: Record<string, unknown>): json is WriteResponse {
+  const hasId = 'id' in json && typeof json.id === 'string';
+  const hasOGP = 'ogp' in json && typeof json.ogp === 'string';
+  const hasHTML = 'html' in json && typeof json.html === 'string';
+  const hasPicture = 'pic' in json && typeof json.picture === 'string';
+  const hasThumbnail = 'thumb' in json && typeof json.thumbnail === 'string';
+
+  return hasId && hasHTML && hasOGP && hasPicture && hasThumbnail;
 }
 
-function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      blob === null ? reject('blob is null') : resolve(blob);
-    });
+function upload(
+  url: string,
+  body: Blob | string,
+  type = 'image/png',
+): Promise<Response> {
+  return fetch(url, {
+    body,
+    method: 'PUT',
+    cache: 'no-cache',
+    headers: {
+      'Content-Type': type,
+    },
   });
 }

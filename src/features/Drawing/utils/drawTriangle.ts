@@ -1,6 +1,5 @@
 export default function drawTriangle(
   ctx: CanvasRenderingContext2D,
-  direction: 'left' | 'right',
   x: number,
   y: number,
   width: number,

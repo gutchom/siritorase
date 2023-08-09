@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { atom } from 'jotai';
 
 export const colors = [
   'white',
@@ -17,42 +17,20 @@ export const colors = [
   'blue',
 ] as const;
 
-export type StrokeColor = typeof colors[number];
-
-export const strokeColorState = atom<StrokeColor>({
-  key: 'strokeColorState',
-  default: 'black',
-});
+export const strokeColorAtom = atom('black');
 
 export const widths = [8, 24, 64] as const;
 
-export type StrokeWidth = typeof widths[number];
+export const strokeWidthAtom = atom(24);
 
-export const strokeWidthState = atom<StrokeWidth>({
-  key: 'strokeWidthState',
-  default: 24,
-});
-
-export type StrokeType = 'pen' | 'eraser';
-
-export const strokeTypeState = atom<StrokeType>({
-  key: 'strokeTypeState',
-  default: 'pen',
-});
+export type Point = { x: number; y: number };
 
 export type Stroke = {
-  color: StrokeColor;
-  width: StrokeWidth;
-  type: StrokeType;
-  points: { x: number; y: number }[];
+  width: number;
+  color: string;
+  points: Point[];
 };
 
-export const strokesState = atom<Stroke[]>({
-  key: 'strokesState',
-  default: [],
-});
+export const strokesAtom = atom<Stroke[]>([]);
 
-export const canceledStrokesState = atom<Stroke[]>({
-  key: 'canceledStrokesState',
-  default: [],
-});
+export const canceledAtom = atom<Stroke[]>([]);

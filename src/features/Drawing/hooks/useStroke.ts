@@ -1,6 +1,6 @@
-import type { Stroke } from 'src/features/Drawing/atoms';
-import { canceledStrokesState, strokesState } from 'src/features/Drawing/atoms';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
+import type { Stroke } from '@/features/Drawing/atoms';
+import { strokesAtom, canceledAtom } from '@/features/Drawing/atoms';
 
 export default function useStroke(): {
   strokes: Stroke[];
@@ -8,8 +8,8 @@ export default function useStroke(): {
   undo(): void;
   redo(): void;
 } {
-  const [strokes, setStrokes] = useRecoilState(strokesState);
-  const [canceled, setCanceled] = useRecoilState(canceledStrokesState);
+  const [strokes, setStrokes] = useAtom(strokesAtom);
+  const [canceled, setCanceled] = useAtom(canceledAtom);
 
   function setStroke(stroke: Stroke) {
     setStrokes([...strokes, stroke]);

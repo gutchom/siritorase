@@ -1,6 +1,6 @@
 import { FaRedo, FaUndo } from 'react-icons/fa';
-import useStroke from 'src/features/Drawing/hooks/useStroke';
-import styles from 'src/features/Drawing/Tools/UndoRedo.module.css';
+import useStroke from '@/features/Drawing/hooks/useStroke';
+import styles from './UndoRedo.module.css';
 
 export default function UndoRedo() {
   const { undo, redo } = useStroke();

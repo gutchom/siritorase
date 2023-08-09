@@ -1,11 +1,10 @@
+import { useAtom } from 'jotai';
 import { FaCheck, FaEraser } from 'react-icons/fa';
-import { useRecoilState } from 'recoil';
-import type { StrokeColor } from 'src/features/Drawing/atoms';
-import { colors, strokeColorState } from 'src/features/Drawing/atoms';
-import styles from 'src/features/Drawing/Tools/Pallet.module.css';
+import { colors, strokeColorAtom } from '../atoms';
+import styles from './Pallet.module.css';
 
 export default function Pallet() {
-  const [strokeColor, setStrokeColor] = useRecoilState(strokeColorState);
+  const [strokeColor, setStrokeColor] = useAtom(strokeColorAtom);
 
   return (
     <ul className={styles.container}>
@@ -29,7 +28,7 @@ export default function Pallet() {
               value={color}
               checked={color === strokeColor}
               onChange={(e) => {
-                setStrokeColor(e.target.value as StrokeColor);
+                setStrokeColor(e.target.value);
               }}
             />
           </label>

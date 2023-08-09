@@ -1,7 +1,7 @@
-import Pallet from 'src/features/Drawing/Tools/Pallet';
-import UndoRedo from 'src/features/Drawing/Tools/UndoRedo';
-import Brushes from 'src/features/Drawing/Tools/Brushes';
-import styles from 'src/features/Drawing/Tools/index.module.css';
+import Pallet from '@/features/Drawing/Tools/Pallet';
+import UndoRedo from '@/features/Drawing/Tools/UndoRedo';
+import Brushes from '@/features/Drawing/Tools/Brushes';
+import styles from './index.module.css';
 
 export default function Tools() {
   return (

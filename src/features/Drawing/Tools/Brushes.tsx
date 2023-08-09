@@ -1,8 +1,7 @@
+import { useAtom } from 'jotai';
 import { FaBrush, FaPaintBrush, FaPenNib } from 'react-icons/fa';
-import { useRecoilState } from 'recoil';
-import type { StrokeWidth } from 'src/features/Drawing/atoms';
-import { strokeWidthState, widths } from 'src/features/Drawing/atoms';
-import styles from 'src/features/Drawing/Tools/Brushes.module.css';
+import { strokeWidthAtom, widths } from '../atoms';
+import styles from './Brushes.module.css';
 
 const icons = [
   <FaPenNib key={1} />,
@@ -11,7 +10,7 @@ const icons = [
 ];
 
 export default function Brushes() {
-  const [strokeWidth, setStrokeWidth] = useRecoilState(strokeWidthState);
+  const [strokeWidth, setStrokeWidth] = useAtom(strokeWidthAtom);
 
   return (
     <ul className={styles.container}>
@@ -31,7 +30,7 @@ export default function Brushes() {
               value={width}
               checked={width === strokeWidth}
               onChange={(e) => {
-                setStrokeWidth(+e.target.value as StrokeWidth);
+                setStrokeWidth(+e.target.value);
               }}
             />
           </label>
