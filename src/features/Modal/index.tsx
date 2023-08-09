@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useEffect, useRef } from 'react';
 import clsx from 'clsx';
-import styles from 'src/features/Modal/index.module.css';
+import styles from './index.module.css';
 
 type Props = {
   visible: boolean;
@@ -59,14 +59,14 @@ export default function Modal(props: Props) {
   return (
     <div
       ref={background}
-      className={clsx(styles.background, { [styles.visible]: visible })}
+      className={clsx(styles.background, visible && styles.visible)}
       onClick={(e) => {
         if (e.target === background.current) {
           onCloseClick();
         }
       }}
     >
-      <div className={clsx(styles.window, { [styles.visible]: visible })}>
+      <div className={styles.window}>
         {header && <header className={styles.header}>{header}</header>}
         {footer && <footer className={styles.footer}>{footer}</footer>}
         <div ref={content} className={styles.content} onScroll={adjustScroll}>
