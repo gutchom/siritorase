@@ -20,6 +20,11 @@ const input = readdirSync(entries, { withFileTypes: true })
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@/': `${root}/`,
+    },
+  },
   root,
   build: {
     outDir,
