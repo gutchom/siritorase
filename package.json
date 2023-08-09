@@ -12,7 +12,8 @@
     "lint": "npm run lint:ts && npm run lint:css",
     "lint:ts": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:css": "stylelint src/**/*.css",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "count": "printf '\\e[36m\n  This project has\\e[35m %s lines\\e[36m of source code!\n\n\\e[m' $(find ./src -name '*.html' -o -name '*.css' -o -name '*.js*' -o -name '*.ts*' -o -name '*.json' | xargs wc -l | tail -1 | awk '{print $1}')"
   },
   "dependencies": {
     "clsx": "^2.0.0",
