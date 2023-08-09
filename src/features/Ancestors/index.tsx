@@ -1,35 +1,35 @@
-import type { RefCallback } from 'react';
-import { useCallback } from 'react';
-import type { PictureType } from 'src/features/Drawing/types';
-import styles from 'src/features/Ancestors/index.module.css';
+import type { PostItem } from '@/features/Drawing/types';
+import styles from './index.module.css';
 
 type Props = {
-  ancestors: PictureType[];
-  imageRef: RefCallback<HTMLImageElement>;
+  ancestors: PostItem[];
 };
 
 export default function Ancestors(props: Props) {
-  const { ancestors, imageRef } = props;
+  const { ancestors } = props;
 
-  const listRef: RefCallback<HTMLUListElement> = useCallback((list) => {
-    list?.scrollTo(list.scrollWidth - list.offsetWidth, 0);
-  }, []);
+  function secret(index: number, count: number): boolean {
+    return index >= ancestors.length - count;
+  }
 
   return (
-    <ul className={styles.ancestors} ref={listRef}>
-      {ancestors.map(({ id, src, title }, index) => (
+    <ul
+      className={styles.ancestors}
+      ref={(list) => {
+        list?.scrollTo(list.scrollWidth - list.offsetWidth, 0);
+      }}
+    >
+      {ancestors.map(({ id, title }, index) => (
         <li key={id} className={styles.picture}>
           <label>
             <img
               className={styles.img}
-              ref={imageRef}
               id={id}
-              src={src}
-              alt={index >= ancestors.length - 3 ? '？？？' : title}
-              crossOrigin="anonymous"
+              src={`/${id}/${encodeURIComponent(title)}.png`}
+              alt={secret(index, 3) ? '？？？' : title}
             />
             <span className={styles.caption}>
-              {index >= ancestors.length - 3 ? '？？？' : title}
+              {secret(index, 3) ? '？？？' : title}
             </span>
           </label>
         </li>
