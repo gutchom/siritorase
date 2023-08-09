@@ -4,16 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tmp/node_modules/.bin/vite",
-    "build": "tmp/node_modules/.bin/tsc && vite build",
-    "test": "tmp/node_modules/.bin/playwright test --ui & vitest",
-    "test:coverage": "tmp/node_modules/.bin/vitest run --coverage",
-    "test:e2e": "tmp/node_modules/.bin/playwright test --ui",
-    "test:e2e:debug": "tmp/node_modules/.bin/playwright test --debug",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "test": "playwright test --ui & vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:debug": "playwright test --debug",
     "lint": "npm run lint:ts && npm run lint:css",
-    "lint:ts": "tmp/node_modules/.bin/eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "lint:css": "tmp/node_modules/.bin/stylelint src/**/*.css",
-    "preview": "tmp/node_modules/.bin/vite preview"
+    "lint:ts": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:css": "stylelint src/**/*.css",
+    "preview": "vite preview"
   },
   "dependencies": {
     "aws-cdk-lib": "^2.88.0",
