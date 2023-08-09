@@ -1,5 +1,5 @@
-import Account from 'src/features/Header/Account';
-import styles from 'src/features/Header/index.module.css';
+import Account from './Account';
+import styles from './index.module.css';
 
 export default function Header() {
   return (

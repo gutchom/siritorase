@@ -7,7 +7,7 @@
   padding: 8px 12px;
   font-weight: bold;
   color: #fff;
-  background: var(--color-twitter);
+  background: #000;
   border: none;
   border-radius: var(--radius);
 }
@@ -30,6 +30,7 @@
 }
 
 .buttons {
+  display: flex;
   position: absolute;
   z-index: 1;
   flex-direction: column;
