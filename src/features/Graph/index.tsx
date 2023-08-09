@@ -1,25 +1,23 @@
 import { useEffect, useRef } from 'react';
-import { useRouter } from 'next/router';
 import { Network } from 'vis-network';
-import type { PictureNode } from 'src/features/Drawing/types';
-import { options } from 'src/features/Graph/utils/options';
-import getNetworkData from 'src/features/Graph/utils/getNetworkData';
-import getAncestorsSelection from 'src/features/Graph/utils/getAncestorsSelection';
-import styles from 'src/features/Graph/index.module.css';
+import type { PostNode } from '@/features/Drawing/types';
+import options from './utils/options';
+import getNetworkData from './utils/getNetworkData';
+import getAncestorsSelection from './utils/getAncestorsSelection';
+import styles from './index.module.css';
 
 type Props = {
-  pictures: PictureNode[];
-  targetId?: string;
+  posts: PostNode[];
+  target?: string;
 };
 
 export default function Graph(props: Props) {
-  const { pictures, targetId } = props;
-  const router = useRouter();
+  const { posts, target } = props;
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (ref.current) {
-      const data = getNetworkData(pictures);
+      const data = getNetworkData(posts);
       const network = new Network(ref.current, data, options);
 
       network.on('click', ({ nodes }) => {
@@ -31,15 +29,13 @@ export default function Graph(props: Props) {
       });
       network.on('doubleClick', async ({ nodes }) => {
         const [id] = nodes;
-        if (id) {
-          await router.push(`/${id}/draw`);
-        }
+        if (id) location.assign(`/${id}`);
       });
 
-      if (targetId) {
-        const selection = getAncestorsSelection(targetId, data.edges.get());
+      if (target) {
+        const selection = getAncestorsSelection(target, data.edges.get());
         network.once('beforeDrawing', () => {
-          network.focus(targetId, { scale: 4 });
+          network.focus(target, { scale: 4 });
           network.setSelection(selection, { highlightEdges: false });
         });
         network.once('afterDrawing', () => {

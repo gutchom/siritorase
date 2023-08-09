@@ -1,4 +1,6 @@
-export const options = {
+import type { Options } from 'vis-network';
+
+export default {
   nodes: {
     borderWidth: 2,
     borderWidthSelected: 4,
@@ -25,4 +27,4 @@ export const options = {
     },
     width: 2,
   },
-};
+} as Options;

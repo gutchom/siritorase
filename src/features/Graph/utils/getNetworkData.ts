@@ -1,19 +1,19 @@
 import { DataSet } from 'vis-data';
 import type { Edge, Node } from 'vis-network';
-import type { PictureNode } from 'src/features/Drawing/types';
+import type { PostNode } from '@/features/Drawing/types';
 
 function getIsLeaf(edges: Edge[]): (node: Node) => boolean {
   const parents = new Set(edges.map(({ from }) => from));
   return (node) => !parents.has(node.id);
 }
 
-export default function getNetworkData(pictures: PictureNode[]): {
+export default function getNetworkData(posts: PostNode[]): {
   nodes: DataSet<Node>;
   edges: DataSet<Edge>;
 } {
-  const edges: Edge[] = pictures
-    .map(({ id, parentId }) => ({
-      from: parentId,
+  const edges: Edge[] = posts
+    .map(({ id, parent }) => ({
+      from: parent,
       to: id,
     }))
     .filter(({ from, to }) => from.length > 0 && to.length > 0);
@@ -28,13 +28,13 @@ export default function getNetworkData(pictures: PictureNode[]): {
     },
   };
 
-  const nodes: Node[] = pictures
+  const nodes: Node[] = posts
     .map(
-      ({ id, src, title }): Node => ({
+      ({ id, title }): Node => ({
         id,
         size: 30,
         shape: 'image',
-        image: src,
+        image: `/${id}/thumb.png`,
         label: title,
         chosen: {
           node: true,
