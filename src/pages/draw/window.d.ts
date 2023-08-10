@@ -1,4 +1,4 @@
-import { PostItem } from '@/features/Drawing/types.ts';
+import { PostItem } from '@/features/Drawing/types';
 
 export declare global {
   interface Window {
