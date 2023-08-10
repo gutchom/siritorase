@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai';
-import type { Stroke } from '@/features/Drawing/atoms';
-import { strokesAtom, canceledAtom } from '@/features/Drawing/atoms';
+import type { Stroke } from '../atoms';
+import { strokesAtom, canceledAtom } from '../atoms';
 
 export default function useStroke(): {
   strokes: Stroke[];
