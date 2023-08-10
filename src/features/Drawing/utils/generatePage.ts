@@ -34,6 +34,7 @@ export default function generatePage(
   <meta property="og:image" content="https://siritorase.net/${id}/ogp.png">
   <meta property="og:title" content="${title}">
 
+  <script>window.siritorase=\{\};</script>
   <script>window.siritorase.ancestors=${ancestors};</script>
 
   <title>しりとらせ</title>

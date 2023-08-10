@@ -6,7 +6,7 @@ import { useLocalStorage } from '@/functions/useStorage';
 export default function Drawing() {
   const id = window.location.pathname.split('/').at(-1)!;
   const ancestors = window.siritorase.ancestors ?? [];
-  const [{ title }] = ancestors;
+  const [{ title }] = ancestors.length > 0 ? ancestors : [{ title: '' }];
   const [drew, setDrew] = useLocalStorage<string[]>('drew', []);
   const [strokes, setStrokes] = useLocalStorage<Stroke[]>('strokes', []);
 
