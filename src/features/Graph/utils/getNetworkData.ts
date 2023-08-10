@@ -1,6 +1,7 @@
 import { DataSet } from 'vis-data';
 import type { Edge, Node } from 'vis-network';
 import type { PostNode } from '@/features/Drawing/types';
+import { thumb } from '@/functions/src';
 
 function getIsLeaf(edges: Edge[]): (node: Node) => boolean {
   const parents = new Set(edges.map(({ from }) => from));
@@ -34,7 +35,7 @@ export default function getNetworkData(posts: PostNode[]): {
         id,
         size: 30,
         shape: 'image',
-        image: `/${id}/thumb.png`,
+        image: thumb(id, title),
         label: title,
         chosen: {
           node: true,
