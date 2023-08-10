@@ -6,7 +6,7 @@ import react from '@vitejs/plugin-react-swc';
 const root = resolve(__dirname, 'src');
 const outDir = resolve(__dirname, 'dist');
 
-const entries = resolve(__dirname, 'src/entries');
+const entries = resolve(__dirname, 'src/pages');
 const input = readdirSync(entries, { withFileTypes: true })
   .filter((dirent) => dirent.isDirectory())
   .reduce(
