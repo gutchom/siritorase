@@ -6,16 +6,16 @@ import generateThumbnail from './generateThumbnail';
 
 /*
   page -> /:id/index.html
-  ogp -> /:id/ogp.png
   pic -> /:id/:title.png
+  ogp -> /:id/ogp.png
   thumb -> /:id/thumbnail.png
 */
 
 type WriteResponse = {
   id: string;
   page: string;
-  pic: string;
   ogp: string;
+  pic: string;
   thumb: string;
 };
 
@@ -64,14 +64,18 @@ async function write(
   }
 }
 
-function isValid(json: Record<string, unknown>): json is WriteResponse {
-  const hasId = 'id' in json && typeof json.id === 'string';
-  const hasOGP = 'ogp' in json && typeof json.ogp === 'string';
-  const hasHTML = 'html' in json && typeof json.html === 'string';
-  const hasPicture = 'pic' in json && typeof json.picture === 'string';
-  const hasThumbnail = 'thumb' in json && typeof json.thumbnail === 'string';
+const properties: Readonly<(keyof WriteResponse)[]> = [
+  'id',
+  'page',
+  'ogp',
+  'pic',
+  'thumb',
+] as const;
 
-  return hasId && hasHTML && hasOGP && hasPicture && hasThumbnail;
+function isValid(json: Record<string, unknown>): json is WriteResponse {
+  return properties.every(
+    (key) => key in json && typeof json[key] === 'string',
+  );
 }
 
 function upload(
