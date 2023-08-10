@@ -1,6 +1,6 @@
-import Modal from 'src/features/Modal';
-import useAuth from 'src/lib/useAuth';
-import styles from 'src/features/Introduction/index.module.css';
+import Modal from '@/features/Modal';
+import useTwitter from '@/functions/twitter/useTwitter';
+import styles from './index.module.css';
 
 type Props = {
   visible: boolean;
@@ -9,7 +9,7 @@ type Props = {
 
 export default function Introduction(props: Props) {
   const { visible, onClose } = props;
-  const { login } = useAuth();
+  const { login } = useTwitter();
 
   return (
     <Modal

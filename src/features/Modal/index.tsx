@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useEffect, useRef } from 'react';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import styles from './index.module.css';
 
 type Props = {
