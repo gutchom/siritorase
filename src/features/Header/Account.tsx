@@ -4,7 +4,7 @@ import useTwitter from '@/functions/twitter/useTwitter';
 import styles from './Account.module.css';
 
 export default function Account() {
-  const [user, login, logout] = useTwitter();
+  const { user, login, logout } = useTwitter();
   const [isOpen, setIsOpen] = useState(false);
 
   return !user ? (

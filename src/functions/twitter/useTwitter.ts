@@ -1,4 +1,4 @@
-import useStorage from '@/functions/useStorage';
+import { useLocalStorage } from '@/functions/useStorage';
 
 const api = 'https://api.twitter.com';
 
@@ -18,16 +18,13 @@ type Credentials = {
   secret: string;
 };
 
-export default function useTwitter(): [
-  icon: User | undefined,
-  login: () => void,
-  logout: () => void,
-] {
-  const [twitter, setTwitter] = useStorage<Twitter>(
-    localStorage,
-    'twitter',
-    {},
-  );
+export default function useTwitter(): {
+  user?: User;
+  login(): void;
+  logout(): void;
+} {
+  const [twitter, setTwitter] = useLocalStorage<Twitter>('twitter', {});
+  const { user } = twitter;
 
   function login() {
     const callback = `${location.origin}/auth/callback/twitter?redirect=${location.pathname}`;
@@ -50,5 +47,5 @@ export default function useTwitter(): [
     setTwitter({});
   }
 
-  return [twitter?.user, login, logout];
+  return { user, login, logout };
 }
