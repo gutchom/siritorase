@@ -23,21 +23,21 @@ export default function useCanvas(ref: RefObject<HTMLCanvasElement>): {
   const color = useAtomValue(strokeColorAtom);
   const width = useAtomValue(strokeWidthAtom);
   const stroke = useRef<Point[]>([]);
-  const context = useMemo(() => ref.current?.getContext('2d')!, [ref]);
+  const ctx = useMemo(() => ref.current?.getContext('2d')!, [ref]);
   const [isDrawing, setIsDrawing] = useState(false);
 
   useEffect(() => {
-    context.lineCap = 'round';
-    context.lineJoin = 'round';
-    context.globalAlpha = 1;
-    context.globalCompositeOperation = 'source-over';
-  }, [context]);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+  }, [ctx]);
 
   function begin(x: number, y: number, width: number, color: string) {
-    context.lineWidth = width;
-    context.strokeStyle = color;
-    context.beginPath();
-    context.moveTo(x, y);
+    ctx.lineWidth = width;
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
   }
 
   function start(x: number, y: number) {
@@ -48,8 +48,8 @@ export default function useCanvas(ref: RefObject<HTMLCanvasElement>): {
 
   function draw(x: number, y: number) {
     if (!isDrawing) return;
-    context.lineTo(x, y);
-    context.stroke();
+    ctx.lineTo(x, y);
+    ctx.stroke();
     stroke.current.push({ x, y });
   }
 
@@ -60,21 +60,21 @@ export default function useCanvas(ref: RefObject<HTMLCanvasElement>): {
   }
 
   useEffect(() => {
-    if (!context) return;
-    context.fillStyle = '#fff';
-    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-    context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+    if (!ctx) return;
+    ctx.fillStyle = '#fff';
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
     for (const { points, width, color } of strokes) {
       const [{ x, y }, ...stroke] = points;
       begin(x, y, width, color);
 
       for (const { x, y } of stroke) {
-        context.lineTo(x, y);
-        context.stroke();
+        ctx.lineTo(x, y);
+        ctx.stroke();
       }
     }
-  }, [context, strokes]);
+  }, [ctx, strokes]);
 
   return { start, draw, end };
 }
