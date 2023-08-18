@@ -1,4 +1,4 @@
-import drawRoundSquare from '@/features/Drawing/utils/drawRoundSquare';
+import drawRoundSquare from './drawRoundSquare';
 
 export default function drawFramedBox(
   ctx: CanvasRenderingContext2D,

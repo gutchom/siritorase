@@ -1,4 +1,4 @@
-import createCanvasContext from '@/features/Drawing/utils/createCanvasContext';
+import createCanvasContext from './createCanvasContext';
 
 export default function generateThumbnail(
   original: HTMLCanvasElement,

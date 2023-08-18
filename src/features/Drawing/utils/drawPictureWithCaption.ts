@@ -1,4 +1,4 @@
-import drawFramedBox from '@/features/Drawing/utils/drawFramedBox';
+import drawFramedBox from './drawFramedBox';
 
 export default function drawPictureWithCaption(
   ctx: CanvasRenderingContext2D,
