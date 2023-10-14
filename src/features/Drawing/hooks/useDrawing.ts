@@ -1,5 +1,4 @@
-import type { RefObject } from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import useStroke from './useStroke';
 import type { Point } from '../atoms';
@@ -14,7 +13,7 @@ import { strokeColorAtom, strokeWidthAtom } from '../atoms';
  *  - 線を選択して移動できるようにしたい
  *  - 線を選択して削除できるようにしたい
  */
-export default function useCanvas(ref: RefObject<HTMLCanvasElement>): {
+export default function useCanvas(ctx: CanvasRenderingContext2D): {
   start(x: number, y: number): void;
   draw(x: number, y: number): void;
   end(): void;
@@ -23,26 +22,19 @@ export default function useCanvas(ref: RefObject<HTMLCanvasElement>): {
   const color = useAtomValue(strokeColorAtom);
   const width = useAtomValue(strokeWidthAtom);
   const stroke = useRef<Point[]>([]);
-  const ctx = useMemo(() => ref.current?.getContext('2d')!, [ref]);
   const [isDrawing, setIsDrawing] = useState(false);
 
   useEffect(() => {
+    if (!ctx) return;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'source-over';
   }, [ctx]);
 
-  function begin(x: number, y: number, width: number, color: string) {
-    ctx.lineWidth = width;
-    ctx.strokeStyle = color;
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-  }
-
   function start(x: number, y: number) {
     setIsDrawing(true);
-    begin(x, y, width, color);
+    begin(ctx, x, y, width, color);
     stroke.current = [{ x, y }];
   }
 
@@ -67,7 +59,7 @@ export default function useCanvas(ref: RefObject<HTMLCanvasElement>): {
 
     for (const { points, width, color } of strokes) {
       const [{ x, y }, ...stroke] = points;
-      begin(x, y, width, color);
+      begin(ctx, x, y, width, color);
 
       for (const { x, y } of stroke) {
         ctx.lineTo(x, y);
@@ -77,4 +69,19 @@ export default function useCanvas(ref: RefObject<HTMLCanvasElement>): {
   }, [ctx, strokes]);
 
   return { start, draw, end };
+}
+
+function begin(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  color: string,
+) {
+  ctx.lineWidth = width;
+  ctx.strokeStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x, y);
+  ctx.stroke();
 }
