@@ -6,13 +6,13 @@ import react from '@vitejs/plugin-react-swc';
 const root = resolve(__dirname, 'src');
 const outDir = resolve(__dirname, 'dist');
 
-const entries = resolve(__dirname, 'src/pages');
-const input = readdirSync(entries, { withFileTypes: true })
+const pages = resolve(__dirname, 'src/pages');
+const input = readdirSync(pages, { withFileTypes: true })
   .filter((dirent) => dirent.isDirectory())
   .reduce(
     (result, dirent) => ({
       ...result,
-      [dirent.name]: resolve(entries, dirent.name, 'index.html'),
+      [dirent.name]: resolve(pages, dirent.name, 'index.html'),
     }),
     {},
   );
@@ -21,9 +21,7 @@ const input = readdirSync(entries, { withFileTypes: true })
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: {
-      '@/': `${root}/`,
-    },
+    alias: [{ find: '@/', replacement: `${root}/` }],
   },
   root,
   build: {
