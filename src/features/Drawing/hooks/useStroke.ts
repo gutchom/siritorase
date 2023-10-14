@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai';
 import type { Stroke } from '../atoms';
-import { strokesAtom, canceledAtom } from '../atoms';
+import { canceledAtom, strokesAtom } from '../atoms';
 
 export default function useStroke(): {
   strokes: Stroke[];
@@ -13,9 +13,7 @@ export default function useStroke(): {
 
   function setStroke(stroke: Stroke) {
     setStrokes([...strokes, stroke]);
-    if (canceled.length > 0) {
-      setCanceled([]);
-    }
+    setCanceled([]);
   }
 
   function undo() {
