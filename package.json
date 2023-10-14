@@ -12,6 +12,10 @@
     "lint": "npm run lint:ts && npm run lint:css",
     "lint:ts": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:css": "stylelint src/**/*.css",
+    "fix": "npm run format && npm run fix:ts && npm run fix:css",
+    "fix:ts": "npm run lint:ts -- --fix",
+    "fix:css": "npm run lint:css -- --fix",
+    "format": "prettier --write src/**/*.{ts,tsx,css}",
     "preview": "vite preview",
     "count": "printf '\\e[36m\n  This project has\\e[35m %s lines\\e[36m of source code!\n\n\\e[m' $(find ./src -name '*.html' -o -name '*.css' -o -name '*.js*' -o -name '*.ts*' -o -name '*.json' | xargs wc -l | tail -1 | awk '{print $1}')"
   },
