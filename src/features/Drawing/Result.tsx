@@ -35,6 +35,9 @@ export default function Result(props: Props) {
         <div className={styles.vis}>
           <Graph posts={posts} target={id} />
         </div>
+        <a className={styles.intent} href={tweet}>
+          &#x1D54F;に投稿する
+        </a>
         <a
           className={styles.download}
           download={`${title}.png`}
