@@ -27,7 +27,7 @@ export default function Result(props: Props) {
 
   useEffect(() => {
     fetchPosts().then(setPosts);
-  });
+  }, []);
 
   return (
     <main>
