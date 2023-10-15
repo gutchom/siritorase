@@ -4,6 +4,7 @@ import type { Stroke } from '@/features/Drawing/atoms';
 import Graph from '@/features/Graph';
 import fetchPosts from '@/functions/fetchPosts';
 import { pic } from '@/functions/src';
+import intent from '@/functions/intent';
 import styles from './Result.module.css';
 
 type Props = {
@@ -18,6 +19,11 @@ type Props = {
 export default function Result(props: Props) {
   const { id, title } = props;
   const [posts, setPosts] = useState<PostNode[]>([]);
+  const tweet = intent(
+    `絵しりとりを描いたよ〜〜🎨✨\nリンクからしりとりの続きに参加しよう🧑‍🎨🧑‍🎨🧑‍🎨`,
+    `${location.origin}/${id}`,
+    ['しりとらせ', '絵しりとり'],
+  );
 
   useEffect(() => {
     fetchPosts().then(setPosts);
