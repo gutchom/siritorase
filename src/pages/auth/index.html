@@ -13,14 +13,17 @@
   <meta name="theme-color" content="#ffdd88">
   <meta name="theme-color" content="#eeaa66">
 
-  <title>しりとらせ</title>
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="しりとらせ">
+  <meta property="og:description" content="絵しりとりをツイートしてみんなで遊ぼう！">
 
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const path = params.get('redirect');
-    if (path) window.location.replace(path);
-  </script>
+  <meta name="twitter:card" content="summary_large_image">
+
+  <meta property="og:url" content="https://siritorase.net">
+  <meta property="og:image" content="https://siritorase.net/img/ogp.png">
+  <meta property="og:title" content="みんなのしりとりを見てみる">
+
+  <title>しりとらせ</title>
 </head>
-<body>
-</body>
+<script type="module" src="./main.tsx"></script>
 </html>
