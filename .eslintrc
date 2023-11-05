@@ -104,5 +104,6 @@
       "warn",
       { "allowConstantExport": true }
     ]
-  }
+  },
+  "reportUnusedDisableDirectives": true
 }
