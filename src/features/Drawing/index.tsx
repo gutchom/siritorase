@@ -1,7 +1,7 @@
+import { useLocalStorage } from '@/functions/useLocalStorage';
+import { Stroke } from './atoms';
 import Draw from './Draw';
 import Result from './Result';
-import { Stroke } from './atoms';
-import { useLocalStorage } from '@/functions/useStorage';
 
 export default function Drawing() {
   const id = window.location.pathname.split('/').at(-1)!;
