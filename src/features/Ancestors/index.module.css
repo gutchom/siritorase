@@ -1,0 +1,42 @@
+.ancestors {
+  display: flex;
+  padding: 12px 8px 8px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.picture {
+  position: relative;
+  margin: 0 12px;
+}
+
+.picture::before {
+  position: absolute;
+  top: calc(36px - 0.5rem);
+  left: -1.25rem;
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  margin: auto;
+  color: #f00;
+  content: '▶︎';
+}
+
+.picture:first-child::before {
+  display: none;
+}
+
+.img {
+  display: block;
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--theme-color-main);
+  border-radius: 6px;
+}
+
+.caption {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  text-align: center;
+}
