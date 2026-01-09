@@ -1,33 +1,47 @@
 {
-	"name": "siritorase-cloudflare",
-	"private": true,
-	"type": "module",
-	"scripts": {
-		"build": "react-router build",
-		"cf-typegen": "wrangler types",
-		"deploy": "npm run build && wrangler deploy",
-		"dev": "react-router dev",
-		"postinstall": "npm run cf-typegen",
-		"preview": "npm run build && vite preview",
-		"typecheck": "npm run cf-typegen && react-router typegen && tsc -b"
-	},
-	"dependencies": {
-		"isbot": "^5.1.31",
-		"react": "^19.1.1",
-		"react-dom": "^19.1.1",
-		"react-router": "^7.10.0"
-	},
-	"devDependencies": {
-		"@cloudflare/vite-plugin": "^1.13.5",
-		"@react-router/dev": "^7.10.0",
-		"@tailwindcss/vite": "^4.1.13",
-		"@types/node": "^22",
-		"@types/react": "^19.1.13",
-		"@types/react-dom": "^19.1.9",
-		"tailwindcss": "^4.1.13",
-		"typescript": "^5.9.2",
-		"vite": "^7.1.7",
-		"vite-tsconfig-paths": "^5.1.4",
-		"wrangler": "^4.58.0"
-	}
+  "name": "siritorase-cloudflare",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "license": "BSL-1.0",
+  "author": "gutchom",
+  "description": "絵しりとりアプリのCloudflare Workers版",
+  "repository": "git@github.com:gutchom/siritorase.git",
+  "homepage": "siritorase.gutchom.net",
+  "engines": {
+    "node": ">=24",
+    "npm": ">=11"
+  },
+  "scripts": {
+    "build": "react-router build",
+    "cf-typegen": "wrangler types",
+    "deploy": "npm run build && wrangler deploy",
+    "dev": "react-router dev",
+    "postinstall": "npm run cf-typegen",
+    "preview": "npm run build && vite preview",
+    "typecheck": "npm run cf-typegen && react-router typegen && tsc -b"
+  },
+  "dependencies": {
+    "@xyflow/react": "^12.10.0",
+    "isbot": "^5.1.31",
+    "jotai": "^2.16.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router": "^7.10.0"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.13.5",
+    "@playwright/test": "^1.57.0",
+    "@plumeria/core": "^6.1.0",
+    "@plumeria/vite-plugin": "^6.1.0",
+    "@react-router/dev": "^7.10.0",
+    "@types/node": "^22",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.7",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^4.0.16",
+    "wrangler": "^4.58.0"
+  }
 }
