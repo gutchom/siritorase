@@ -1,23 +1,26 @@
 import { useState } from 'react';
 import { FaSignOutAlt } from 'react-icons/fa';
-import useAuth from 'lib/useAuth';
+import type { AuthUser } from '../../lib/auth.server';
 import styles from './Account.module.css';
 
-export default function Account() {
-  const { user, login, logout } = useAuth();
+type Props = {
+  user: AuthUser | null;
+};
+
+export default function Account({ user }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   return !user ? (
-    <button className={styles.login} onClick={login}>
+    <a className={styles.login} href="/auth/twitter/login">
       Twitterでログイン
-    </button>
+    </a>
   ) : (
     <div className={styles.container}>
       <button className={styles.account} onClick={() => setIsOpen(!isOpen)}>
         <img
           className={styles.icon}
           alt="アカウント"
-          src={user.photoURL ?? '/img/default_icon.jpg'}
+          src={user.profileImageUrl ?? '/img/default_icon.jpg'}
           onError={(e) => {
             e.currentTarget.src = '/img/default_icon.jpg';
           }}
@@ -28,9 +31,11 @@ export default function Account() {
         style={{ display: isOpen ? 'flex' : 'none' }}
       >
         <li>
-          <button className={styles.button} onClick={logout}>
-            <FaSignOutAlt />
-          </button>
+          <form method="post" action="/auth/logout">
+            <button className={styles.button} type="submit">
+              <FaSignOutAlt />
+            </button>
+          </form>
         </li>
       </ul>
     </div>

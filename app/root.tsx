@@ -7,8 +7,14 @@ import {
   ScrollRestoration,
 } from "react-router";
 
+import Header from "./features/Header";
+import { getCurrentUser } from "./lib/auth.server";
 import type { Route } from "./+types/root";
 import "./app.css";
+
+export async function loader({ request, context }: Route.LoaderArgs) {
+  return { user: await getCurrentUser(request, context.cloudflare.env) };
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -41,8 +47,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
-  return <Outlet />;
+export default function App({ loaderData }: Route.ComponentProps) {
+  return (
+    <>
+      <Header user={loaderData.user} />
+      <Outlet />
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

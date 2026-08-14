@@ -2,11 +2,12 @@ import Editor from './Editor';
 import { useState } from 'react';
 import { BsTwitter } from 'react-icons/bs';
 import Twitter from 'twitter-text';
-import useAuth from 'lib/useAuth';
+import type { AuthUser } from '../../lib/auth.server';
 import Modal from '../Modal';
 import styles from './index.module.css';
 
 type Props = {
+  user: AuthUser | null;
   pictureId: string;
   history: string;
   tweetId: string;
@@ -14,15 +15,17 @@ type Props = {
   onTweet(tweetId: string, tweetUserId: string): void;
 };
 
+const LOGIN_URL = '/auth/twitter/login';
+
 export default function Tweet(props: Props) {
   const {
+    user,
     pictureId,
     history,
     tweetId: parentTweetId,
     tweetUserId,
     onTweet,
   } = props;
-  const { user, login } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [tweetText] = useState(getTweetText(pictureId, tweetUserId));
 
@@ -33,15 +36,9 @@ export default function Tweet(props: Props) {
           結果をツイートする
         </button>
       ) : (
-        <button
-          className={styles.trigger}
-          onClick={async () => {
-            await login();
-            setIsOpen(true);
-          }}
-        >
+        <a className={styles.trigger} href={LOGIN_URL}>
           ログインしてツイートする
-        </button>
+        </a>
       )}
       <Modal
         visible={isOpen}
@@ -61,13 +58,13 @@ export default function Tweet(props: Props) {
               onClick={async () => {
                 if (user) {
                   const [tweetId, tweetUserId] = await tweet(
-                    user.uid,
+                    pictureId,
                     tweetText,
                     parentTweetId,
                   );
                   onTweet(tweetId, tweetUserId);
                 } else {
-                  await login();
+                  window.location.href = LOGIN_URL;
                 }
               }}
             >
@@ -103,11 +100,11 @@ function getTweetText(
 }
 
 async function tweet(
-  uid: string,
+  pictureId: string,
   text: string,
-  parentTweetId?: string,
+  inReplyToTweetId?: string,
 ): Promise<[string, string]> {
-  const body = JSON.stringify({ uid, text, parentTweetId });
+  const body = JSON.stringify({ pictureId, text, inReplyToTweetId });
   const response = await fetch(new Request('/api/tweet'), {
     method: 'POST',
     body,
