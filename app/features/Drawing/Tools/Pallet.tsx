@@ -1,11 +1,11 @@
 import { FaCheck, FaEraser } from 'react-icons/fa';
-import { useRecoilState } from 'recoil';
-import type { StrokeColor } from '../atoms';
-import { colors, strokeColorState } from '../atoms';
+import type { StrokeColor } from '../DrawingContext';
+import { colors, useDrawingContext } from '../DrawingContext';
 import styles from './Pallet.module.css';
 
 export default function Pallet() {
-  const [strokeColor, setStrokeColor] = useRecoilState(strokeColorState);
+  const { state, dispatch } = useDrawingContext();
+  const strokeColor = state.color;
 
   return (
     <ul className={styles.container}>
@@ -29,7 +29,7 @@ export default function Pallet() {
               value={color}
               checked={color === strokeColor}
               onChange={(e) => {
-                setStrokeColor(e.target.value as StrokeColor);
+                dispatch({ type: 'SET_COLOR', color: e.target.value as StrokeColor });
               }}
             />
           </label>

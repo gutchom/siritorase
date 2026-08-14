@@ -20,6 +20,22 @@
 			"binding": "KV_BINDING",
 			"id": "6c3ee052b02c47ef90c2cfc48fbc6434"
 		}
+	],
+	// TODO: `wrangler d1 create siritorase-db` 実行後、database_id を実際のIDに置き換える
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "siritorase-db",
+			"database_id": "00000000-0000-0000-0000-000000000000",
+			"migrations_dir": "migrations"
+		}
+	],
+	// TODO: `wrangler r2 bucket create siritorase-pictures` の実行が必要
+	"r2_buckets": [
+		{
+			"binding": "PICTURES_BUCKET",
+			"bucket_name": "siritorase-pictures"
+		}
 	]
 	/**
 	 * Smart Placement

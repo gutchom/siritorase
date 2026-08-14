@@ -1,7 +1,9 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useFetcher } from 'react-router';
 import type { PictureType } from './types';
+import { DrawingProvider } from './DrawingContext';
 import useDrawing from './hooks/useDrawing';
-import post from './utils/post';
+import buildPostFormData from './utils/post';
 import Tools from './Tools';
 import styles from './index.module.css';
 
@@ -12,12 +14,28 @@ type Props = {
 };
 
 export default function Drawing(props: Props) {
+  return (
+    <DrawingProvider>
+      <DrawingCanvas {...props} />
+    </DrawingProvider>
+  );
+}
+
+function DrawingCanvas(props: Props) {
   const { ancestors, images, onComplete } = props;
+  const parentId = ancestors.slice(-1)[0]?.id ?? null;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { start, draw, end } = useDrawing(canvasRef);
   const [title, setTitle] = useState('');
   const [shouldWarn, setShouldWarn] = useState(false);
-  const [isPosting, setIsPosting] = useState(false);
+  const fetcher = useFetcher<{ id: string }>();
+  const isPosting = fetcher.state !== 'idle';
+
+  useEffect(() => {
+    if (fetcher.data?.id) {
+      onComplete(fetcher.data.id);
+    }
+  }, [fetcher.data, onComplete]);
 
   return (
     <div className={styles.container}>
@@ -58,9 +76,14 @@ export default function Drawing(props: Props) {
             setShouldWarn(true);
             return;
           }
-          setIsPosting(true);
-          onComplete(await post(title, canvasRef.current, ancestors, images));
-          setIsPosting(false);
+          const formData = await buildPostFormData(
+            title,
+            parentId,
+            canvasRef.current,
+            ancestors,
+            images,
+          );
+          fetcher.submit(formData, { method: 'post', encType: 'multipart/form-data' });
         }}
       >
         {isPosting ? '投稿中' : '絵を投稿する'}

@@ -1,7 +1,6 @@
 import { FaBrush, FaPaintBrush, FaPenNib } from 'react-icons/fa';
-import { useRecoilState } from 'recoil';
-import type { StrokeWidth } from '../atoms';
-import { strokeWidthState, widths } from '../atoms';
+import type { StrokeWidth } from '../DrawingContext';
+import { useDrawingContext, widths } from '../DrawingContext';
 import styles from './Brushes.module.css';
 
 const icons = [
@@ -11,7 +10,8 @@ const icons = [
 ];
 
 export default function Brushes() {
-  const [strokeWidth, setStrokeWidth] = useRecoilState(strokeWidthState);
+  const { state, dispatch } = useDrawingContext();
+  const strokeWidth = state.width;
 
   return (
     <ul className={styles.container}>
@@ -31,7 +31,7 @@ export default function Brushes() {
               value={width}
               checked={width === strokeWidth}
               onChange={(e) => {
-                setStrokeWidth(+e.target.value as StrokeWidth);
+                dispatch({ type: 'SET_WIDTH', width: +e.target.value as StrokeWidth });
               }}
             />
           </label>
