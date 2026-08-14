@@ -1,33 +1,39 @@
 {
-  "name": "siritorase",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "react-router build",
-    "cf-typegen": "wrangler types",
-    "deploy": "npm run build && wrangler deploy",
-    "dev": "react-router dev",
-    "postinstall": "npm run cf-typegen",
-    "preview": "npm run build && vite preview",
-    "typecheck": "npm run cf-typegen && react-router typegen && tsc -b"
-  },
-  "dependencies": {
-    "isbot": "^5.1.31",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "react-router": "^7.10.0"
-  },
-  "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.13.5",
-    "@react-router/dev": "^7.10.0",
-    "@tailwindcss/vite": "^4.1.13",
-    "@types/node": "^22.19.18",
-    "@types/react": "^19.1.13",
-    "@types/react-dom": "^19.1.9",
-    "tailwindcss": "^4.1.13",
-    "typescript": "^5.9.2",
-    "vite": "^7.1.7",
-    "vite-tsconfig-paths": "^5.1.4",
-    "wrangler": "^4.90.0"
-  }
+	"name": "siritorase",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "react-router build",
+		"cf-typegen": "wrangler types",
+		"deploy": "npm run build && wrangler deploy",
+		"dev": "react-router dev",
+		"postinstall": "npm run cf-typegen",
+		"preview": "npm run build && vite preview",
+		"typecheck": "npm run cf-typegen && react-router typegen && tsc -b",
+		"format": "@biomejs/biome check --write"
+	},
+	"engines": {
+		"node": "^26.1.0",
+		"npm": "^11.13.0"
+	},
+	"dependencies": {
+		"hono": "^4.12.18",
+		"isbot": "^5.1.40",
+		"react": "^19.2.6",
+		"react-dom": "^19.2.6",
+		"react-router": "^7.15.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.4.14",
+		"@cloudflare/vite-plugin": "^1.36.3",
+		"@react-router/dev": "^7.15.0",
+		"@tailwindcss/vite": "^4.2.4",
+		"@types/node": "^25.6.2",
+		"@types/react": "^19.2.14",
+		"@types/react-dom": "^19.2.3",
+		"tailwindcss": "^4.2.4",
+		"typescript": "^6.0.3",
+		"vite": "^8.0.11",
+		"wrangler": "^4.90.0"
+	}
 }

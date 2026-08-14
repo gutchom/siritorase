@@ -1,23 +1,19 @@
+import { Hono } from "hono";
 import { createRequestHandler } from "react-router";
 
-declare module "react-router" {
-  export interface AppLoadContext {
-    cloudflare: {
-      env: Env;
-      ctx: ExecutionContext;
-    };
-  }
-}
+const app = new Hono();
 
-const requestHandler = createRequestHandler(
-  () => import("virtual:react-router/server-build"),
-  import.meta.env.MODE
-);
+// Add more routes here
 
-export default {
-  async fetch(request, env, ctx) {
-    return requestHandler(request, {
-      cloudflare: { env, ctx },
-    });
-  },
-} satisfies ExportedHandler<Env>;
+app.get("*", (c) => {
+	const requestHandler = createRequestHandler(
+		() => import("virtual:react-router/server-build"),
+		import.meta.env.MODE,
+	);
+
+	return requestHandler(c.req.raw, {
+		cloudflare: { env: c.env, ctx: c.executionCtx },
+	});
+});
+
+export default app;

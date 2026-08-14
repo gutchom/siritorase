@@ -1,0 +1,12 @@
+.tools {
+  display: flex;
+  justify-content: space-around;
+}
+
+.pallet {
+  margin: 12px auto;
+}
+
+.buttons {
+  margin: auto;
+}
