@@ -1,9 +1,9 @@
-import Editor from 'features/Tweet/Editor';
+import Editor from './Editor';
 import { useState } from 'react';
 import { BsTwitter } from 'react-icons/bs';
 import Twitter from 'twitter-text';
 import useAuth from 'lib/useAuth';
-import Modal from 'features/Modal';
+import Modal from '../Modal';
 import styles from './index.module.css';
 
 type Props = {
@@ -113,7 +113,10 @@ async function tweet(
     body,
   });
   if (response.ok) {
-    const { tweetId, tweetUserId } = await response.json();
+    const { tweetId, tweetUserId } = (await response.json()) as {
+      tweetId: string;
+      tweetUserId: string;
+    };
     return [tweetId, tweetUserId];
   } else {
     throw new Error('Failed to tweet.');

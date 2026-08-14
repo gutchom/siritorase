@@ -1,5 +1,3 @@
-import type { Timestamp } from '@firebase/firestore';
-
 export type Point = { x: number; y: number };
 
 export type PictureType = {
@@ -7,15 +5,6 @@ export type PictureType = {
   src: string;
   title: string;
   created: Date;
-};
-
-export type PictureDoc = {
-  title: string;
-  ancestors: PictureType[];
-  childrenCount: number;
-  created: Timestamp;
-  tweetId: string;
-  userId: string;
 };
 
 export type PictureNode = PictureType & {

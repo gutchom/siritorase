@@ -1,6 +1,6 @@
 import type { RefCallback } from 'react';
 import { useCallback } from 'react';
-import type { PictureType } from 'features/Drawing/types';
+import type { PictureType } from '../Drawing/types';
 import styles from './index.module.css';
 
 type Props = {

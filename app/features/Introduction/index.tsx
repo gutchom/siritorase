@@ -1,4 +1,4 @@
-import Modal from 'features/Modal';
+import Modal from '../Modal';
 import useAuth from 'lib/useAuth';
 import styles from './index.module.css';
 

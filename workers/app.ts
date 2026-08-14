@@ -1,7 +1,16 @@
 import { Hono } from "hono";
 import { createRequestHandler } from "react-router";
 
-const app = new Hono();
+declare module "react-router" {
+	export interface AppLoadContext {
+		cloudflare: {
+			env: Env;
+			ctx: ExecutionContext;
+		};
+	}
+}
+
+const app = new Hono<{ Bindings: Env }>();
 
 // Add more routes here
 

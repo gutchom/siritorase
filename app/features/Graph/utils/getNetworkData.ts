@@ -1,6 +1,6 @@
 import { DataSet } from 'vis-data';
 import type { Edge, Node } from 'vis-network';
-import type { PictureNode } from 'features/Drawing/types';
+import type { PictureNode } from '../../Drawing/types';
 
 function getIsLeaf(edges: Edge[]): (node: Node) => boolean {
   const parents = new Set(edges.map(({ from }) => from));

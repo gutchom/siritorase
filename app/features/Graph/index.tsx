@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { useRouter } from 'next/router';
+import { useNavigate } from 'react-router';
 import { Network } from 'vis-network';
-import type { PictureNode } from 'features/Drawing/types';
+import type { IdType } from 'vis-network';
+import type { PictureNode } from '../Drawing/types';
 import { options } from './utils/options';
 import getNetworkData from './utils/getNetworkData';
 import getAncestorsSelection from './utils/getAncestorsSelection';
@@ -14,7 +15,7 @@ type Props = {
 
 export default function Graph(props: Props) {
   const { pictures, targetId } = props;
-  const router = useRouter();
+  const navigate = useNavigate();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -22,17 +23,17 @@ export default function Graph(props: Props) {
       const data = getNetworkData(pictures);
       const network = new Network(ref.current, data, options);
 
-      network.on('click', ({ nodes }) => {
+      network.on('click', ({ nodes }: { nodes: IdType[] }) => {
         const [id] = nodes;
         if (id) {
           const selection = getAncestorsSelection(id, data.edges.get());
           network.setSelection(selection, { highlightEdges: false });
         }
       });
-      network.on('doubleClick', async ({ nodes }) => {
+      network.on('doubleClick', ({ nodes }: { nodes: IdType[] }) => {
         const [id] = nodes;
         if (id) {
-          await router.push(`/${id}/draw`);
+          navigate(`/reply/${id}`);
         }
       });
 
