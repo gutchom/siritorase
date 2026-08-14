@@ -35,6 +35,22 @@ export async function getAllPictures(db: D1Database): Promise<PictureRow[]> {
 	return results;
 }
 
+export async function getPicture(db: D1Database, id: string): Promise<PictureRow | null> {
+	return db.prepare('SELECT * FROM pictures WHERE id = ?1').bind(id).first<PictureRow>();
+}
+
+export async function setPictureTweet(
+	db: D1Database,
+	id: string,
+	tweetId: string,
+	tweetUserId: string,
+): Promise<void> {
+	await db
+		.prepare('UPDATE pictures SET tweet_id = ?1, tweet_user_id = ?2 WHERE id = ?3')
+		.bind(tweetId, tweetUserId, id)
+		.run();
+}
+
 export async function createPicture(
 	db: D1Database,
 	input: {

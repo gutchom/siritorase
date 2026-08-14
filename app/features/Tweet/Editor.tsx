@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import parse from 'html-react-parser';
 import styles from './Editor.module.css';
 
 type Props = {
@@ -10,7 +9,7 @@ export default function Editor(props: Props) {
   const { base } = props;
   const editor = useRef<HTMLDivElement>(null);
   const [observer, setObserver] = useState<MutationObserver>();
-  const [html, setHtml] = useState(base);
+  const [, setHtml] = useState(base);
 
   useEffect(() => {
     setObserver(new MutationObserver(observe));
@@ -19,18 +18,21 @@ export default function Editor(props: Props) {
 
   useEffect(() => {
     if (observer && editor.current) {
-      observer.observe(editor.current);
+      observer.observe(editor.current, { childList: true, characterData: true, subtree: true });
     }
   }, [editor]);
 
-  function observe(list: MutationRecord[]) {
-    console.log(list);
-    setHtml(editor.current?.innerHTML ?? html);
+  function observe() {
+    setHtml(editor.current?.innerHTML ?? base);
   }
 
   return (
-    <div contentEditable ref={editor} className={styles.container}>
-      {parse(html)}
-    </div>
+    // biome-ignore lint/security/noDangerouslySetInnerHtml: baseはtwitter-textのautoLinkで生成した信頼できるHTML
+    <div
+      contentEditable
+      ref={editor}
+      className={styles.container}
+      dangerouslySetInnerHTML={{ __html: base }}
+    />
   );
 }

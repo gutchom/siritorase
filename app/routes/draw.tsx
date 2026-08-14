@@ -1,10 +1,13 @@
 import { useCallback, useRef, useState } from 'react';
+import { useRouteLoaderData } from 'react-router';
 import { nanoid } from 'nanoid';
 import Ancestors from '../features/Ancestors';
 import Drawing from '../features/Drawing';
+import Tweet from '../features/Tweet';
 import type { PictureType } from '../features/Drawing/types';
 import { createPicture, getAncestors } from '../lib/db/pictures.server';
 import { imageUrl } from '../lib/imageUrl';
+import type { loader as rootLoader } from '../root';
 import type { Route } from './+types/draw';
 
 export async function loader({ params, context }: Route.LoaderArgs) {
@@ -17,6 +20,8 @@ export async function loader({ params, context }: Route.LoaderArgs) {
 		src: imageUrl(row.image_key),
 		title: row.title,
 		created: new Date(row.created_at),
+		tweetId: row.tweet_id ?? undefined,
+		tweetUserId: row.tweet_user_id ?? undefined,
 	}));
 
 	return { ancestors };
@@ -61,8 +66,10 @@ export async function action({ request, context }: Route.ActionArgs) {
 
 export default function Draw({ loaderData }: Route.ComponentProps) {
 	const { ancestors } = loaderData;
+	const rootData = useRouteLoaderData<typeof rootLoader>('root');
+	const user = rootData?.user ?? null;
 	const imagesRef = useRef<HTMLImageElement[]>([]);
-	const [completedId, setCompletedId] = useState<string | null>(null);
+	const [completed, setCompleted] = useState<{ id: string; tweetId: string; tweetUserId: string } | null>(null);
 
 	const imageRef = useCallback((img: HTMLImageElement | null) => {
 		if (img) {
@@ -70,14 +77,32 @@ export default function Draw({ loaderData }: Route.ComponentProps) {
 		}
 	}, []);
 
-	if (completedId) {
-		return <div>投稿しました！（続きはPhase 5でツイート導線に接続予定: id={completedId}）</div>;
+	if (completed) {
+		const parent = ancestors.slice(-1)[0];
+		const history = [...ancestors.map((ancestor) => ancestor.title)].join(' → ');
+
+		return (
+			<Tweet
+				user={user}
+				pictureId={completed.id}
+				history={history}
+				tweetId={completed.tweetId || parent?.tweetId || ''}
+				tweetUserId={completed.tweetUserId || parent?.tweetUserId || ''}
+				onTweet={(tweetId, tweetUserId) => {
+					setCompleted({ ...completed, tweetId, tweetUserId });
+				}}
+			/>
+		);
 	}
 
 	return (
 		<>
 			<Ancestors ancestors={ancestors} imageRef={imageRef} />
-			<Drawing ancestors={ancestors} images={imagesRef.current} onComplete={setCompletedId} />
+			<Drawing
+				ancestors={ancestors}
+				images={imagesRef.current}
+				onComplete={(id) => setCompleted({ id, tweetId: '', tweetUserId: '' })}
+			/>
 		</>
 	);
 }
