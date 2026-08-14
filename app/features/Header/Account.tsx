@@ -20,9 +20,9 @@ export default function Account({ user }: Props) {
         <img
           className={styles.icon}
           alt="アカウント"
-          src={user.profileImageUrl ?? '/img/default_icon.jpg'}
+          src={user.profileImageUrl ?? '/img/default_icon.png'}
           onError={(e) => {
-            e.currentTarget.src = '/img/default_icon.jpg';
+            e.currentTarget.src = '/img/default_icon.png';
           }}
         />
       </button>
