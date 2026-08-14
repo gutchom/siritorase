@@ -1,119 +1,94 @@
 # しりとらせ (siritorase) — プロジェクト概要
 
 > このドキュメントは、後続のエージェント/開発者がこのリポジトリの状況を素早く把握できるようにするための引き継ぎメモです。
-> 作成日: 2026-08-14 時点のリポジトリ状態を元に記述。
+> 作成日: 2026-08-14。Cloudflareネイティブ移行(Phase 0〜5)完了時点の状態を記述。
 
 ## 1. プロダクトの概要
 
 「しりとらせ」は Twitter（X）上でお絵描きしりとりをするサービス。
 
 - ユーザーは直前の絵（末尾のお題）を見ながら、その続きとなる絵を描いて投稿する。
-- 投稿は「祖先（ancestors）」を辿れる木構造になっており、`Graph` 機能で家系図的なネットワーク図として全体像を閲覧できる。
-- 投稿すると OGP 画像（直前の絵＋今回の絵を合成したもの）が生成され、Twitter にツイートできる。
-- 旧実装は `https://siritorase.vercel.app/` で稼働していた（コード中に URL 参照が残っている）。
+- 投稿は「祖先（ancestors）」を辿れる木構造になっており、`/graph` で家系図的なネットワーク図として全体像を閲覧できる。
+- 投稿すると OGP 画像（直前の絵＋今回の絵を合成したもの）が生成され、X にログイン後ツイートできる。
 
-## 2. 現在の状態（最重要）
+## 2. 現在の状態
 
-**このリポジトリは「動作しない未完成の移行途中」の状態です。** git 上ではまだ 1 コミット (`Initialize web application via create-cloudflare CLI`) のみで、それ以降の変更（＝旧実装からの機能移植）はすべて未コミットの `git status` 上の Add (`A`) 差分として存在しています。
+**Cloudflareネイティブ構成への書き換えが完了し、ローカル環境(`wrangler dev`/`npm run build && npm run preview`)では一連のフローが動作する状態です。** ただし以下の2点は実クレデンシャルが無いため未検証です。
 
-構造は大きく2層に分かれています。
+1. **Cloudflareの実リソース**: D1データベース・R2バケットはローカル(`--local`)でのみ動作確認済み。本番デプロイには実アカウントでの `wrangler login` → `wrangler d1 create` / `wrangler r2 bucket create` が必要（詳細は 5節）。
+2. **X (Twitter) OAuth**: `TWITTER_CLIENT_ID` / `TWITTER_CLIENT_SECRET` が未設定（`.dev.vars` はプレースホルダー空文字）のため、ログイン以降のフロー(トークン交換・ツイート投稿)は実際のXアプリ登録後でないと検証できない。特にメディアアップロード(OGP画像添付)がOAuth2ユーザーコンテキストで通るかは未確認のリスクとして残っている（`workers/lib/twitterTweet.ts` にコメントあり）。
 
-1. **土台（新規）**: `create-cloudflare` CLI で生成した React Router v7 (framework mode) + Cloudflare Workers のテンプレート。これはビルド・デプロイ可能な状態。
-2. **機能コード（移植中）**: `app/features/*` 以下に、旧 Next.js + Firebase 実装からほぼそのままコピーしてきたと見られる UI コンポーネント群。**土台側の依存関係やルーティングに全く配線されておらず、このままでは型チェックもビルドも通りません。**
+それ以外（投稿保存、画像アップロード/配信、祖先ツリー表示、Graph表示、ログイン導線のUI/リダイレクト、`/api/tweet` の認証ゲート）はローカルで実地確認済み。
 
-### 既知の不整合・壊れている箇所
-
-| 箇所 | 問題 |
-|---|---|
-| `app/features/**` 内の多数のファイル | `next/router`, `@firebase/firestore`, `@firebase/storage`, `recoil`, `vis-network`, `vis-data`, `twitter-text`, `react-icons` を import しているが、`package.json` にはこれらの依存が一切無い（現行 deps は `hono`, `isbot`, `react`, `react-dom`, `react-router` のみ）。 |
-| `lib/browser/firebase`, `lib/useAuth` | `app/features/Drawing/utils/post.ts`, `app/features/Header/Account.tsx`, `app/features/Introduction/index.tsx`, `app/features/Tweet/index.tsx` などが参照しているが、`lib/` ディレクトリ自体がリポジトリに存在しない。 |
-| `app/features/Graph/index.tsx` | `next/router` の `useRouter` を使用（React Router v7 ではなく Next.js の API）。ページ遷移も `/${id}/draw` と旧ルーティング規約のまま。 |
-| `app/routes.ts` | 2行目に `・`（不可視ではない全角中黒）という不要な文字が単独で残っており、パースエラーの原因になり得る。 |
-| `app/routes/draw.tsx` | ファイルが**空**。`app/routes.ts` では `route("reply/:postId", "./routes/draw.tsx")` として登録されているため、このルートは現状何もレンダリングしない。 |
-| `app/routes/home.tsx` | `create-cloudflare` テンプレートのデフォルト（`Welcome` コンポーネント表示のみ）のまま。`Header` / `Introduction` / `Drawing` / `Graph` などの実機能には未接続。 |
-| `/api/tweet` | `Tweet/index.tsx` が `fetch('/api/tweet')` を呼んでいるが、`workers/app.ts`（Hono）側には `app.get("*", ...)` の catch-all しかなく、この API は未実装。 |
-| Twitter/X ログイン・投稿 | 旧実装は Firebase Auth（Twitter プロバイダ）＋ Twitter API 経由。Cloudflare Workers 上でどう認証・投稿するかの方針は未決定（後述）。 |
-
-### 前提として押さえておくべきこと
-
-- `npm run typecheck` や `npm run build` は、上記の未接続コードがある限り**失敗する見込みが高い**（未検証だが、存在しないモジュールへの import があるため）。
-- `app/features/*` のコードは「参考実装・移植元の資産」として存在しているだけで、**そのまま活かすか、Cloudflare 向けに設計し直すかはまだ意思決定されていない。**
-
-## 3. アーキテクチャ方針（Cloudflare を前提とする）
-
-このプロジェクトは Cloudflare Workers 上で完結させる方向で土台が作られている（`create-cloudflare` CLI 使用）。今後インフラを構築する際は以下を踏まえること。
-
-### 現在の構成
+## 3. アーキテクチャ
 
 - **ランタイム**: Cloudflare Workers（`wrangler.jsonc` の `main` は `./workers/app.ts`）
-- **フレームワーク**: React Router v7（framework mode、SSR）+ Vite（`@cloudflare/vite-plugin` でローカル開発時から Workers ランタイムをエミュレート）
-- **サーバー側の薄いレイヤー**: Hono（`workers/app.ts`）。現状は React Router の SSR ハンドラに丸投げする catch-all ルートのみ。API エンドポイント（例: `/api/tweet`）を追加する場合はここに Hono のルートとして生やす想定と思われる。
-- **バインディング**: `wrangler.jsonc` に KV Namespace (`KV_BINDING`, id: `6c3ee052b02c47ef90c2cfc48fbc6434`) が定義済みだが、コード側で未使用。
-- **静的アセット**: `wrangler.jsonc` 内に `assets` 設定はコメントアウトされたまま（`public/` 配信の設定は未確定）。
-- **Observability**: `observability.enabled: true`、`upload_source_maps: true` は有効化済み。
-- **Node 互換**: `compatibility_flags: ["nodejs_compat"]` 有効。
+- **フレームワーク**: React Router v7 (framework mode, SSR) + Vite（`@cloudflare/vite-plugin`）
+- **サーバー**: Hono（`workers/app.ts`）。SSR以外のAPI/認証/画像配信を担当し、`app.all("*", ...)` でReact RouterのSSRハンドラに委譲（POSTも通す必要があるため `get` ではなく `all` にしている点に注意）。
+- **データ**: D1(`DB`バインディング, `users`/`pictures`テーブル) + R2(`PICTURES_BUCKET`バインディング, 絵/OGP画像) + KV(`KV_BINDING`, OAuth state・セッション)
+- **認証**: X OAuth 2.0 + PKCEをWorkers上に自前実装（外部ライブラリ不使用、Web Crypto使用）
+- **静的アセット**: `wrangler.jsonc` の `assets` バインディングで `public/` を配信
 
-### 旧実装（Firebase/Vercel）からの移行で決めるべきこと
+### ルーティング
 
-旧実装は Firebase（Firestore + Storage + Auth）と Vercel に依存していた。Cloudflare ベースで作り直す場合、代替候補は以下の通り（**未決定・要意思決定**）。
-
-| 用途 | 旧実装 | Cloudflare での代替候補 |
+| パス | ファイル | 役割 |
 |---|---|---|
-| 投稿データ（絵のメタ情報・祖先関係のツリー構造） | Firestore | D1（SQL）または KV（現状バインディング済みだが、木構造クエリには D1 の方が向く可能性が高い） |
-| 画像ストレージ（描いた絵・OGP画像） | Firebase Storage | R2 |
-| 認証（Twitterログイン） | Firebase Auth (Twitter provider) | Workers 上で Twitter/X OAuth を自前実装し、セッションを KV or D1 で管理する必要がある |
-| ツイート投稿（サーバーサイドAPI呼び出し） | 不明な実装（`/api/tweet` の中身は旧リポジトリ側？未確認） | Workers Secrets（`wrangler secret`）で X API のトークンを保持し、Hono ルートとして実装 |
-| 状態管理（Recoil） | Recoil | React Router v7 は loader/action でサーバー状態を扱えるため、クライアント状態管理は必要最小限（描画中のストローク管理など）に留める方針も検討可 |
+| `/` | `app/routes/home.tsx` | 入口画面（Introductionモーダル、/draw・/graphへの導線） |
+| `/draw` | `app/routes/draw.tsx` (`id: draw-new`) | 新規にしりとりを始める（親なし投稿） |
+| `/reply/:postId` | `app/routes/draw.tsx` (`id: draw-reply`) | 指定投稿の続きを描く（祖先チェーン表示） |
+| `/graph` | `app/routes/graph.tsx` | 投稿ツリー全体の可視化(vis-network) |
+| `GET/POST /auth/twitter/*`, `POST /auth/logout` | `workers/routes/auth.ts` | OAuthログイン/コールバック/ログアウト |
+| `POST /api/tweet` | `workers/routes/api.ts` | ツイート投稿(OGP画像添付) |
+| `GET /images/:type/:filename` | `workers/routes/images.ts` | R2から絵/OGP画像を配信 |
 
-**この意思決定（D1 vs KV、Firebase を一部残すか完全に置き換えるか等）はまだされていない。** 実装を進める前に、プロダクトオーナー（このリポジトリのユーザー）に確認することを推奨する。
+### データモデル（D1、`migrations/0001_init.sql`）
 
-## 4. ディレクトリ構成
+- `pictures`: id, parent_id, title, image_key, ogp_key, tweet_id, tweet_user_id, user_id, children_count, created_at
+- `users`: id(X user id), username, name, profile_image_url, access_token, refresh_token, token_expires_at
 
-```
-app/
-  routes.ts             # ルーティング定義（"・" という不要文字あり、要確認）
-  root.tsx              # React Router のレイアウトルート
-  routes/
-    home.tsx            # "/" ルート。create-cloudflareテンプレートのデフォルトのまま未接続
-    draw.tsx             # "reply/:postId" ルート。空ファイル（未実装）
-  features/              # 旧実装からの移植コード（土台に未接続、依存関係欠落あり）
-    Ancestors/            # 祖先の絵一覧表示
-    Drawing/               # お絵描きキャンバス本体（ツール、Undo/Redo、投稿処理、OGP生成）
-    Graph/                 # vis-network を使った投稿ツリーの可視化
-    Header/                # ヘッダー・アカウント（ログイン/ログアウトUI）
-    Introduction/          # サービス説明モーダル
-    Modal/                 # 汎用モーダル
-    Tweet/                 # ツイート投稿モーダル
-workers/
-  app.ts                 # Hono アプリ。現状は React Router SSR への catch-all のみ
-wrangler.jsonc            # Cloudflare Workers 設定（KV_BINDING 定義済み、assets/services は未設定）
-vite.config.ts             # Cloudflare + React Router + Tailwind の Vite 設定
-biome.json, mise.toml       # 新規追加。Biome（lint/format）、mise（Node 26 管理）
-```
+祖先チェーンは非正規化コピーを持たず、`app/lib/db/pictures.server.ts` の `getAncestors()` が再帰CTEで都度組み立てる。
 
-## 5. 開発コマンド
+## 4. `app/features/*` の現状
+
+旧 Next.js + Firebase実装から移植したUIコンポーネント群。Cloudflareネイティブ化の過程で以下のように整理済み。
+
+| 状態 | 対象 |
+|---|---|
+| Firebase/Recoil/Next.js依存を除去し書き換え済み | `Drawing/*`(Recoil→`DrawingContext`のuseReducerに置換), `Graph/index.tsx`(`next/router`→`useNavigate`), `Header/Account.tsx`・`Introduction`・`Tweet/index.tsx`(`lib/useAuth`→propsで受け取る`AuthUser`とOAuthリンクに置換) |
+| Cloudflare非互換のため差し替え済み | `Tweet/Editor.tsx`: `html-react-parser` が Workers ランタイムで `TypeError: require_node is not a function` となり動作しなかったため、`dangerouslySetInnerHTML` によるプレビュー表示に変更 |
+| そのまま流用 | `Ancestors`, `Modal`, `Drawing/utils/OGP/*`, `Graph/utils/*` |
+
+## 5. 本番デプロイ前にユーザーが行う必要がある作業
+
+エージェント側では実行できない（アカウント権限が必要な）作業です。
+
+1. **Cloudflareアカウント認証**: `wrangler login`（未認証の場合、`wrangler whoami` で確認可能）
+2. **D1データベースの作成**: `npx wrangler d1 create siritorase-db` → 出力される `database_id` を `wrangler.jsonc` の `d1_databases[0].database_id`（現在プレースホルダー `00000000-0000-0000-0000-000000000000`）に反映し、`npx wrangler d1 migrations apply siritorase-db --remote` を実行
+3. **R2バケットの作成**: `npx wrangler r2 bucket create siritorase-pictures`
+4. **X Developer Portalでのアプリ登録**: OAuth 2.0 (PKCE対応) のクライアントを作成し、`TWITTER_CLIENT_ID`/`TWITTER_CLIENT_SECRET` を取得。コールバックURL（ローカル: `http://localhost:5173/auth/twitter/callback`、本番: 実際のデプロイ先ドメイン）を登録
+5. **Secretsの設定**:
+   - ローカル: `.dev.vars`（`.dev.vars.example` をコピーして値を埋める。gitignore対象）
+   - 本番: `npx wrangler secret put TWITTER_CLIENT_ID` / `npx wrangler secret put TWITTER_CLIENT_SECRET`、`TWITTER_REDIRECT_URI` は `wrangler.jsonc` の `vars` または環境別設定に本番ドメインで追加
+6. **ツイートメディアアップロードの実地検証**: `workers/lib/twitterTweet.ts` の `uploadMedia()` はOAuth2ユーザーコンテキストでの `v1.1 media/upload` 呼び出しを前提にしているが、X API仕様の変遷により失敗する可能性がある。失敗する場合はOAuth1.0a署名の実装が別途必要（要調査）。
+
+## 6. 開発コマンド
 
 ```bash
-npm install          # 依存インストール（postinstall で wrangler types 実行）
-npm run dev           # ローカル開発サーバー（Vite + Cloudflare エミュレーション）
-npm run typecheck     # cf-typegen + react-router typegen + tsc -b
-npm run build         # react-router build
-npm run deploy        # ビルド後 wrangler deploy で本番デプロイ
-npm run format        # biome check --write
+npm install                                        # 依存インストール(postinstallでwrangler types実行)
+npm run dev                                         # ローカル開発サーバー(D1/R2/KVはMiniflareで自動ローカルバインディング)
+npm run typecheck                                   # cf-typegen + react-router typegen + tsc -b
+npm run build                                        # react-router build
+npm run preview                                      # build + vite preview(本番相当のローカル確認)
+npm run deploy                                       # build + wrangler deploy(本番デプロイ。5節の準備が必要)
+npm run format                                       # biome check --write
+
+npx wrangler d1 migrations apply siritorase-db --local   # ローカルD1にマイグレーション適用
+npx wrangler d1 execute siritorase-db --local --command "SELECT * FROM pictures;"  # ローカルD1確認
+npx wrangler kv key list --binding KV_BINDING --local     # ローカルKV確認(OAuth state/セッション)
 ```
 
-> `npm run typecheck` / `npm run build` は、現状の `app/features/*` の未接続コードにより失敗する可能性が高いです（未検証）。着手前に一度実行して現状のエラーを確認することを推奨します。
+## 7. 既知の未対応事項
 
-## 6. 次のエージェントへの推奨タスク
-
-優先度が高いと思われる順に記載（あくまで推奨であり、着手前にユーザーに方針を確認すること）。
-
-1. `npm run typecheck` / `npm run build` を実行し、実際に何が壊れているかを確定させる。
-2. データ層の方針を決定する（D1 / KV / R2 の使い分け、Firebase を残すか完全撤去するか）。ユーザーへの確認が必要。
-3. 認証・ツイート投稿（Twitter/X API 連携）の実装方針を決定する。Secrets 管理は `wrangler secret` を使う想定。
-4. `app/routes.ts` の不要文字 `・` を削除する。
-5. `app/routes/draw.tsx` を実装し、`Drawing` / `Ancestors` / `Tweet` 等の機能コンポーネントを接続する。
-6. `app/routes/home.tsx` にテンプレートの `Welcome` ではなく `Header` / `Introduction` / `Graph` 等の実機能を接続する。
-7. `app/features/Graph` 内の `next/router` 依存を React Router v7 の API（`useNavigate` 等）に置き換える。
-8. 上記の意思決定に基づき、`package.json` の依存関係（recoil, firebase, vis-network, vis-data, twitter-text, react-icons 等）を追加または不要化する。
-9. `wrangler.jsonc` の `assets` 設定（`public/` 配信）を確定させる。
+- `Tweet/createTweetIntentURL.ts`: 自動投稿API採用に伴い使われなくなった可能性があるファイル。削除するか、自動投稿失敗時のフォールバック導線として活かすかは未検討。
+- `vis-network` を含むチャンク(`graph`)が527KB(gzip後161KB)とやや大きい。`npm run build` で警告が出るが、動的importでの分割は未実施。
+- OGP背景画像(`public/img/ogp_background.png`)・デフォルトアイコン(`public/img/default_icon.png`)はプレースホルダー（単色PNG）。実際のデザインアセットへの差し替えは別タスク。
