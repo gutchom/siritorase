@@ -1,4 +1,5 @@
-import { buildOAuth1AuthorizationHeader, type OAuth1Credentials } from './oauth1';
+import crypto from 'node:crypto';
+import OAuth from 'oauth-1.0a';
 
 export type TwitterUser = {
 	id: string;
@@ -7,25 +8,27 @@ export type TwitterUser = {
 	profileImageUrl: string | null;
 };
 
-function credentials(env: Env, token?: string, tokenSecret?: string): OAuth1Credentials {
-	return {
-		consumerKey: env.TWITTER_API_KEY,
-		consumerSecret: env.TWITTER_API_KEY_SECRET,
-		token,
-		tokenSecret,
-	};
+function createClient(env: Env): OAuth {
+	return new OAuth({
+		consumer: { key: env.TWITTER_API_KEY, secret: env.TWITTER_API_KEY_SECRET },
+		signature_method: 'HMAC-SHA1',
+		hash_function(baseString, key) {
+			return crypto.createHmac('sha1', key).update(baseString).digest('base64');
+		},
+	});
 }
 
 export async function getRequestToken(
 	env: Env,
 	callbackUrl: string,
 ): Promise<{ oauthToken: string; oauthTokenSecret: string }> {
+	const client = createClient(env);
 	const url = 'https://api.twitter.com/oauth/request_token';
-	const authHeader = await buildOAuth1AuthorizationHeader('POST', url, credentials(env), {
-		oauth_callback: callbackUrl,
-	});
+	const authHeader = client.toHeader(
+		client.authorize({ url, method: 'POST', data: { oauth_callback: callbackUrl } }),
+	);
 
-	const response = await fetch(url, { method: 'POST', headers: { Authorization: authHeader } });
+	const response = await fetch(url, { method: 'POST', headers: { ...authHeader } });
 	if (!response.ok) {
 		throw new Error(`Failed to get request token: ${response.status} ${await response.text()}`);
 	}
@@ -52,15 +55,16 @@ export async function getAccessToken(
 	oauthTokenSecret: string,
 	oauthVerifier: string,
 ): Promise<TwitterUser> {
+	const client = createClient(env);
 	const url = 'https://api.twitter.com/oauth/access_token';
-	const authHeader = await buildOAuth1AuthorizationHeader(
-		'POST',
-		url,
-		credentials(env, oauthToken, oauthTokenSecret),
-		{ oauth_verifier: oauthVerifier },
+	const authHeader = client.toHeader(
+		client.authorize(
+			{ url, method: 'POST', data: { oauth_verifier: oauthVerifier } },
+			{ key: oauthToken, secret: oauthTokenSecret },
+		),
 	);
 
-	const response = await fetch(url, { method: 'POST', headers: { Authorization: authHeader } });
+	const response = await fetch(url, { method: 'POST', headers: { ...authHeader } });
 	if (!response.ok) {
 		throw new Error(`Failed to get access token: ${response.status} ${await response.text()}`);
 	}
@@ -92,13 +96,12 @@ async function tryFetchProfile(
 	accessTokenSecret: string,
 ): Promise<{ name: string; profileImageUrl: string | null } | null> {
 	try {
+		const client = createClient(env);
 		const url = 'https://api.twitter.com/1.1/account/verify_credentials.json';
-		const authHeader = await buildOAuth1AuthorizationHeader(
-			'GET',
-			url,
-			credentials(env, accessToken, accessTokenSecret),
+		const authHeader = client.toHeader(
+			client.authorize({ url, method: 'GET' }, { key: accessToken, secret: accessTokenSecret }),
 		);
-		const response = await fetch(url, { headers: { Authorization: authHeader } });
+		const response = await fetch(url, { headers: { ...authHeader } });
 		if (!response.ok) {
 			return null;
 		}
