@@ -66,7 +66,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 export default function Draw({ loaderData }: Route.ComponentProps) {
 	const { ancestors } = loaderData;
 	const imagesRef = useRef<HTMLImageElement[]>([]);
-	const [completedId, setCompletedId] = useState<string | null>(null);
+	const [completed, setCompleted] = useState<{ id: string; title: string } | null>(null);
 
 	const imageRef = useCallback((img: HTMLImageElement | null) => {
 		if (img) {
@@ -74,16 +74,20 @@ export default function Draw({ loaderData }: Route.ComponentProps) {
 		}
 	}, []);
 
-	if (completedId) {
-		const history = ancestors.map((ancestor) => ancestor.title).join(' → ');
+	if (completed) {
+		const history = [...ancestors.map((ancestor) => ancestor.title), completed.title].join(' → ');
 
-		return <Tweet pictureId={completedId} history={history} />;
+		return <Tweet pictureId={completed.id} history={history} />;
 	}
 
 	return (
 		<>
 			<Ancestors ancestors={ancestors} imageRef={imageRef} />
-			<Drawing ancestors={ancestors} images={imagesRef.current} onComplete={setCompletedId} />
+			<Drawing
+				ancestors={ancestors}
+				images={imagesRef.current}
+				onComplete={(id, title) => setCompleted({ id, title })}
+			/>
 		</>
 	);
 }

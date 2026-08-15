@@ -10,7 +10,7 @@ import styles from './index.module.css';
 type Props = {
   ancestors: PictureType[];
   images: HTMLImageElement[];
-  onComplete(id: string): void;
+  onComplete(id: string, title: string): void;
 };
 
 export default function Drawing(props: Props) {
@@ -33,9 +33,9 @@ function DrawingCanvas(props: Props) {
 
   useEffect(() => {
     if (fetcher.data?.id) {
-      onComplete(fetcher.data.id);
+      onComplete(fetcher.data.id, title);
     }
-  }, [fetcher.data, onComplete]);
+  }, [fetcher.data, onComplete, title]);
 
   return (
     <div className={styles.container}>
