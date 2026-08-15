@@ -5,4 +5,6 @@ export default [
 	route("draw", "./routes/draw.tsx", { id: "draw-new" }),
 	route("reply/:postId", "./routes/draw.tsx", { id: "draw-reply" }),
 	route("graph", "./routes/graph.tsx"),
+	route("terms", "./routes/terms.tsx"),
+	route("privacy", "./routes/privacy.tsx"),
 ] satisfies RouteConfig;
