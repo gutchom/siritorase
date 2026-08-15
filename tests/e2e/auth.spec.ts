@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { SUPABASE_URL } from "./supabase";
 
-test("ログインリンクはSupabaseの認可URLへ users.read スコープのみでリダイレクトする", async ({
+test("ログインリンクはSupabaseの認可URLへ読み取り専用スコープでリダイレクトする", async ({
 	page,
 }) => {
 	const response = await page.request.get("/auth/twitter/login", {
@@ -16,7 +16,8 @@ test("ログインリンクはSupabaseの認可URLへ users.read スコープの
 	expect(url.origin).toBe(new URL(SUPABASE_URL).origin);
 	expect(url.pathname).toBe("/auth/v1/authorize");
 	expect(url.searchParams.get("provider")).toBe("x");
-	expect(url.searchParams.get("scopes")).toBe("users.read");
+	expect(url.searchParams.get("scopes")).toBe("users.read tweet.read");
+	expect(url.searchParams.get("scopes")).not.toContain("write");
 	expect(url.searchParams.get("redirect_to")).toContain("/auth/twitter/callback");
 	expect(url.searchParams.get("code_challenge")).toBeTruthy();
 

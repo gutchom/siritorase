@@ -28,8 +28,10 @@ app.get('/twitter/login', async (c) => {
 		provider: 'x',
 		options: {
 			redirectTo,
-			// ツイート投稿はtweet intent URLで行うため、身元確認用のusers.readのみで足りる
-			scopes: 'users.read',
+			// ツイート投稿はtweet intent URLで行うため書き込みスコープ(tweet.write/offline.access)は不要。
+			// ただしX API v2の /2/users/me (Supabaseがプロフィール取得に使う) は users.read 単体だと
+			// 403になり、tweet.read も合わせて要求する必要がある(いずれも読み取り専用スコープ)。
+			scopes: 'users.read tweet.read',
 		},
 	});
 
@@ -41,9 +43,15 @@ app.get('/twitter/login', async (c) => {
 });
 
 app.get('/twitter/callback', async (c) => {
+	const oauthError = c.req.query('error');
+	const oauthErrorDescription = c.req.query('error_description');
+	if (oauthError) {
+		return c.text(`OAuth error: ${oauthError} - ${oauthErrorDescription ?? '(no description)'}`, 400);
+	}
+
 	const code = c.req.query('code');
 	if (!code) {
-		return c.text('Missing code', 400);
+		return c.text(`Missing code. Full query: ${new URL(c.req.url).search}`, 400);
 	}
 
 	const supabase = createSupabaseClient(c.env, c.req.raw, (name, value, options) => {
