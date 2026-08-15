@@ -23,7 +23,9 @@ app.get('/twitter/login', async (c) => {
 	const redirectTo = new URL('/auth/twitter/callback', c.req.url).toString();
 
 	const { data, error } = await supabase.auth.signInWithOAuth({
-		provider: 'twitter',
+		// Supabaseは 'twitter'(旧OAuth1.0a) と 'x'(新OAuth2.0) を別プロバイダとして扱う。
+		// ダッシュボードで有効化したのは「X / Twitter (OAuth 2.0)」なので 'x' を指定する。
+		provider: 'x',
 		options: {
 			redirectTo,
 			// ツイート投稿はtweet intent URLで行うため、身元確認用のusers.readのみで足りる
