@@ -1,48 +1,38 @@
 import { Hono } from 'hono';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
-import { generateCodeChallenge, generateCodeVerifier, generateState } from '../lib/pkce';
-import { consumeOAuthState, createSession, destroySession, putOAuthState } from '../lib/session';
-import { buildAuthorizeUrl, exchangeCodeForToken, fetchTwitterUser } from '../lib/twitterOAuth';
+import { consumeOAuth1RequestSecret, createSession, destroySession, putOAuth1RequestSecret } from '../lib/session';
+import { buildAuthorizeUrl, getAccessToken, getRequestToken } from '../lib/twitterOAuth1';
 
 const SESSION_COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30日
 
 const app = new Hono<{ Bindings: Env }>();
 
-function callbackUrl(requestUrl: string): string {
-	return new URL('/auth/twitter/callback', requestUrl).toString();
-}
-
 app.get('/twitter/login', async (c) => {
-	const state = generateState();
-	const codeVerifier = generateCodeVerifier();
-	const codeChallenge = await generateCodeChallenge(codeVerifier);
+	const callbackUrl = new URL('/auth/twitter/callback', c.req.url).toString();
 
-	await putOAuthState(c.env, state, codeVerifier);
+	const { oauthToken, oauthTokenSecret } = await getRequestToken(c.env, callbackUrl);
+	await putOAuth1RequestSecret(c.env, oauthToken, oauthTokenSecret);
 
-	return c.redirect(
-		buildAuthorizeUrl(c.env, callbackUrl(c.req.url), state, codeChallenge),
-	);
+	return c.redirect(buildAuthorizeUrl(oauthToken));
 });
 
 app.get('/twitter/callback', async (c) => {
-	const oauthError = c.req.query('error');
-	if (oauthError) {
-		return c.text(`OAuth error: ${oauthError} - ${c.req.query('error_description') ?? '(no description)'}`, 400);
+	if (c.req.query('denied')) {
+		return c.redirect('/');
 	}
 
-	const code = c.req.query('code');
-	const state = c.req.query('state');
-	if (!code || !state) {
-		return c.text('Missing code or state', 400);
+	const oauthToken = c.req.query('oauth_token');
+	const oauthVerifier = c.req.query('oauth_verifier');
+	if (!oauthToken || !oauthVerifier) {
+		return c.text('Missing oauth_token or oauth_verifier', 400);
 	}
 
-	const codeVerifier = await consumeOAuthState(c.env, state);
-	if (!codeVerifier) {
-		return c.text('Invalid or expired state', 400);
+	const oauthTokenSecret = await consumeOAuth1RequestSecret(c.env, oauthToken);
+	if (!oauthTokenSecret) {
+		return c.text('Invalid or expired request token', 400);
 	}
 
-	const accessToken = await exchangeCodeForToken(c.env, code, codeVerifier, callbackUrl(c.req.url));
-	const twitterUser = await fetchTwitterUser(accessToken);
+	const twitterUser = await getAccessToken(c.env, oauthToken, oauthTokenSecret, oauthVerifier);
 	const sessionId = await createSession(c.env, twitterUser);
 
 	setCookie(c, 'session_id', sessionId, {
