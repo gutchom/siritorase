@@ -15,7 +15,12 @@
 	},
 	"upload_source_maps": true,
 	"compatibility_flags": ["nodejs_compat"],
-	// TODO: `wrangler r2 bucket create siritorase-pictures` の実行が必要
+	"kv_namespaces": [
+		{
+			"binding": "KV_BINDING",
+			"id": "6c3ee052b02c47ef90c2cfc48fbc6434"
+		}
+	],
 	"r2_buckets": [
 		{
 			"binding": "PICTURES_BUCKET",
