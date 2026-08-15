@@ -5,8 +5,7 @@ import { imageUrl } from '../lib/imageUrl';
 import type { Route } from './+types/graph';
 
 export async function loader({ request, context }: Route.LoaderArgs) {
-	const db = context.cloudflare.env.DB;
-	const rows = await getAllPictures(db);
+	const rows = await getAllPictures(context.cloudflare.env);
 
 	const pictures: PictureNode[] = rows.map((row) => ({
 		id: row.id,
@@ -14,8 +13,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 		src: imageUrl(row.image_key),
 		title: row.title,
 		created: new Date(row.created_at),
-		tweetId: row.tweet_id ?? '',
-		userId: row.user_id ?? '',
+		userId: row.user_id,
 	}));
 
 	const targetId = new URL(request.url).searchParams.get('target') ?? undefined;
