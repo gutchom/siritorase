@@ -1,6 +1,11 @@
 .vis {
   width: 100%;
-  height: 100%;
+  /*
+   * heightをpercentageで指定してもhtml/bodyに明示的な高さが無く0になり、
+   * vis-networkがcanvasを正しく初期化できなかったため、
+   * ビューポート高からヘッダー分を引いた実高さを明示指定する。
+   */
+  height: calc(100dvh - var(--header-height));
   margin: auto;
   background: #fff;
 }
