@@ -19,7 +19,8 @@ export default function drawPictureWithCaption(
   ctx.fillRect(captionX, captionY, captionWidth, captionHeight);
 
   ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
+  ctx.textBaseline = 'middle';
   ctx.fillStyle = '#222';
-  ctx.fillText(title, captionX, captionY, captionWidth);
+  ctx.font = `${Math.round(captionHeight * 0.6)}px "Hiragino Sans", "Noto Sans JP", sans-serif`;
+  ctx.fillText(title, captionX + 4, captionY + captionHeight / 2, captionWidth - 8);
 }
