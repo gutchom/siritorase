@@ -9,6 +9,8 @@ export type PictureRow = {
 	user_id: string | null;
 	children_count: number;
 	created_at: string;
+	tweet_id: string | null;
+	tweet_screen_name: string | null;
 };
 
 export async function getAncestors(env: Env, id: string): Promise<PictureRow[]> {
@@ -60,5 +62,21 @@ export async function createPicture(
 	});
 	if (error) {
 		throw new Error(`Failed to create picture: ${error.message}`);
+	}
+}
+
+export async function setPictureTweetInfo(
+	env: Env,
+	id: string,
+	tweetId: string,
+	tweetScreenName: string,
+): Promise<void> {
+	const supabase = createSupabaseAdminClient(env);
+	const { error } = await supabase
+		.from('pictures')
+		.update({ tweet_id: tweetId, tweet_screen_name: tweetScreenName })
+		.eq('id', id);
+	if (error) {
+		throw new Error(`Failed to set picture tweet info: ${error.message}`);
 	}
 }

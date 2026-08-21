@@ -5,6 +5,8 @@ export type PictureType = {
   src: string;
   title: string;
   created: Date;
+  tweetId?: string | null;
+  tweetScreenName?: string | null;
 };
 
 export type PictureNode = PictureType & {

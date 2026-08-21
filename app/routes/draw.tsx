@@ -19,6 +19,8 @@ export async function loader({ params, context }: Route.LoaderArgs) {
 		src: imageUrl(row.image_key),
 		title: row.title,
 		created: new Date(row.created_at),
+		tweetId: row.tweet_id,
+		tweetScreenName: row.tweet_screen_name,
 	}));
 
 	return { ancestors };
@@ -76,8 +78,16 @@ export default function Draw({ loaderData }: Route.ComponentProps) {
 
 	if (completed) {
 		const history = [...ancestors.map((ancestor) => ancestor.title), completed.title].join(' → ');
+		const parent = ancestors[ancestors.length - 1];
 
-		return <Tweet pictureId={completed.id} history={history} />;
+		return (
+			<Tweet
+				pictureId={completed.id}
+				history={history}
+				parentTweetId={parent?.tweetId}
+				parentTweetScreenName={parent?.tweetScreenName}
+			/>
+		);
 	}
 
 	return (
