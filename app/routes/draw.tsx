@@ -9,7 +9,7 @@ import { getCurrentUser } from '../lib/auth.server';
 import { imageUrl } from '../lib/imageUrl';
 import type { Route } from './+types/draw';
 
-export async function loader({ params, context }: Route.LoaderArgs) {
+export async function loader({ params, request, context }: Route.LoaderArgs) {
 	const postId = 'postId' in params ? params.postId : undefined;
 	const env = context.cloudflare.env;
 	const rows = postId ? await getAncestors(env, postId) : [];
@@ -23,7 +23,45 @@ export async function loader({ params, context }: Route.LoaderArgs) {
 		tweetScreenName: row.tweet_screen_name,
 	}));
 
-	return { ancestors };
+	// 共有されるURL(/reply/:postId)がツイートのOGPカードとして展開されるよう、
+	// 対象の絵(postId自身。ancestorsの末尾要素)のタイトルとOGP画像を伝える。
+	const target = postId ? rows[rows.length - 1] : undefined;
+	const share = target
+		? {
+				title: target.title,
+				imageUrl: new URL(imageUrl(target.ogp_key), request.url).href,
+				pageUrl: new URL(`/reply/${postId}`, request.url).href,
+			}
+		: null;
+
+	return { ancestors, share };
+}
+
+export function meta({ data }: Route.MetaArgs) {
+	if (!data?.share) {
+		return [
+			{ title: 'しりとらせ' },
+			{ name: 'description', content: 'Twitterでお絵描きしりとりができるサービス「しりとらせ」' },
+		];
+	}
+
+	const { title, imageUrl: ogImageUrl, pageUrl } = data.share;
+	const pageTitle = `${title} | しりとらせ`;
+	const description = '絵しりとりの続きを描いてツイートしよう！';
+
+	return [
+		{ title: pageTitle },
+		{ name: 'description', content: description },
+		{ property: 'og:type', content: 'website' },
+		{ property: 'og:title', content: pageTitle },
+		{ property: 'og:description', content: description },
+		{ property: 'og:image', content: ogImageUrl },
+		{ property: 'og:url', content: pageUrl },
+		{ name: 'twitter:card', content: 'summary_large_image' },
+		{ name: 'twitter:title', content: pageTitle },
+		{ name: 'twitter:description', content: description },
+		{ name: 'twitter:image', content: ogImageUrl },
+	];
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
