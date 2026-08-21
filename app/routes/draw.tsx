@@ -1,13 +1,16 @@
-import { useCallback, useRef, useState } from 'react';
 import { nanoid } from 'nanoid';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useFetcher } from 'react-router';
 import Ancestors from '../features/Ancestors';
 import Drawing from '../features/Drawing';
+import type { PictureNode, PictureType } from '../features/Drawing/types';
+import Graph from '../features/Graph';
 import Tweet from '../features/Tweet';
-import type { PictureType } from '../features/Drawing/types';
-import { createPicture, getAncestors } from '../lib/db/pictures.server';
 import { getCurrentUser } from '../lib/auth.server';
+import { createPicture, getAncestors } from '../lib/db/pictures.server';
 import { imageUrl } from '../lib/imageUrl';
 import type { Route } from './+types/draw';
+import styles from './draw.module.css';
 
 export async function loader({ params, request, context }: Route.LoaderArgs) {
 	const postId = 'postId' in params ? params.postId : undefined;
@@ -107,6 +110,7 @@ export default function Draw({ loaderData }: Route.ComponentProps) {
 	const { ancestors } = loaderData;
 	const imagesRef = useRef<HTMLImageElement[]>([]);
 	const [completed, setCompleted] = useState<{ id: string; title: string } | null>(null);
+	const graphFetcher = useFetcher<{ pictures: PictureNode[] }>();
 
 	const imageRef = useCallback((img: HTMLImageElement | null) => {
 		if (img) {
@@ -114,17 +118,31 @@ export default function Draw({ loaderData }: Route.ComponentProps) {
 		}
 	}, []);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: graphFetcherは投稿完了時に一度だけ読み込めばよい
+	useEffect(() => {
+		if (completed && graphFetcher.state === 'idle' && !graphFetcher.data) {
+			graphFetcher.load('/graph');
+		}
+	}, [completed]);
+
 	if (completed) {
 		const history = [...ancestors.map((ancestor) => ancestor.title), completed.title].join(' → ');
 		const parent = ancestors[ancestors.length - 1];
 
 		return (
-			<Tweet
-				pictureId={completed.id}
-				history={history}
-				parentTweetId={parent?.tweetId}
-				parentTweetScreenName={parent?.tweetScreenName}
-			/>
+			<div className={styles.completeContainer}>
+				{graphFetcher.data && (
+					<Graph pictures={graphFetcher.data.pictures} targetId={completed.id} />
+				)}
+				<div className={styles.tweetOverlay}>
+					<Tweet
+						pictureId={completed.id}
+						history={history}
+						parentTweetId={parent?.tweetId}
+						parentTweetScreenName={parent?.tweetScreenName}
+					/>
+				</div>
+			</div>
 		);
 	}
 

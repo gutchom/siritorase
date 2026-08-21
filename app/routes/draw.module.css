@@ -1,0 +1,13 @@
+.completeContainer {
+	position: relative;
+}
+
+.tweetOverlay {
+	position: fixed;
+	right: 0;
+	bottom: 24px;
+	left: 0;
+	z-index: 10;
+	display: flex;
+	justify-content: center;
+}
