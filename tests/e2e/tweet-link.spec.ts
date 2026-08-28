@@ -2,7 +2,9 @@ import { expect, test } from "@playwright/test";
 import { deletePictureByTitle, getPictureByTitle, getPictureTweetInfoByTitle } from "./supabase";
 
 async function drawScribble(page: import("@playwright/test").Page) {
-	const canvas = page.locator("canvas");
+	// /reply/:postIdはしりとりマップ(vis-networkのcanvas)も併せて表示するため、
+	// お絵描き用のcanvasはDOM上で最後に現れる方を対象にする。
+	const canvas = page.locator("canvas").last();
 	const box = await canvas.boundingBox();
 	if (!box) throw new Error("canvas bounding box not found");
 
@@ -49,6 +51,12 @@ test.describe("ツイートの手動リンクによる返信スレッド化", ()
 		await page.getByPlaceholder("なに描いた？").fill(childTitle);
 		await page.getByRole("button", { name: "絵を投稿する" }).click();
 
+		// /reply/:postIdは常にその投稿自身のしりとりマップ+ツイート導線を表示するため、
+		// 投稿直後は「今まさに開いていた親のページのツイート導線」がまだ画面に残っている。
+		// 投稿完了後の遷移(/reply/:newId への302リダイレクト)を待ってから、
+		// 新しく生成された子の投稿ページのツイート導線を待つ必要がある。
+		await page.waitForURL((url) => url.pathname !== `/reply/${parent.id}` && url.pathname.startsWith("/reply/"));
+
 		const tweetTrigger = page.getByRole("button", { name: "結果をツイートする" });
 		await expect(tweetTrigger).toBeVisible({ timeout: 15_000 });
 		await tweetTrigger.click();
@@ -75,6 +83,8 @@ test.describe("ツイートの手動リンクによる返信スレッド化", ()
 		await drawScribble(page);
 		await page.getByPlaceholder("なに描いた？").fill(grandchildTitle);
 		await page.getByRole("button", { name: "絵を投稿する" }).click();
+
+		await page.waitForURL((url) => url.pathname !== `/reply/${child.id}` && url.pathname.startsWith("/reply/"));
 
 		const grandchildTweetTrigger = page.getByRole("button", { name: "結果をツイートする" });
 		await expect(grandchildTweetTrigger).toBeVisible({ timeout: 15_000 });

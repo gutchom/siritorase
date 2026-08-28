@@ -1,13 +1,12 @@
 import { nanoid } from 'nanoid';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useFetcher } from 'react-router';
+import { useCallback, useRef, useState } from 'react';
 import Ancestors from '../features/Ancestors';
 import Drawing from '../features/Drawing';
 import type { PictureNode, PictureType } from '../features/Drawing/types';
 import Graph from '../features/Graph';
 import Tweet from '../features/Tweet';
 import { getCurrentUser } from '../lib/auth.server';
-import { createPicture, getAncestors } from '../lib/db/pictures.server';
+import { createPicture, getAllPictures, getAncestors } from '../lib/db/pictures.server';
 import { imageUrl } from '../lib/imageUrl';
 import type { Route } from './+types/draw';
 import styles from './draw.module.css';
@@ -17,6 +16,7 @@ export async function loader({ params, request, context }: Route.LoaderArgs) {
 	const env = context.cloudflare.env;
 	const rows = postId ? await getAncestors(env, postId) : [];
 
+	// getAncestorsはpostId自身(depth 0)も含めてroot→postIdの順で返す。
 	const ancestors: PictureType[] = rows.map((row) => ({
 		id: row.id,
 		src: imageUrl(row.image_key),
@@ -25,6 +25,20 @@ export async function loader({ params, request, context }: Route.LoaderArgs) {
 		tweetId: row.tweet_id,
 		tweetScreenName: row.tweet_screen_name,
 	}));
+
+	// /reply/:postIdはツイートで共有されるURLでもあるため、その絵単体の
+	// 描画キャンバスではなく、しりとり全体の中でのこの絵の位置(しりとりマップ)を
+	// 常に表示する。マップの描画にはpictures全件が要る。
+	const mapPictures: PictureNode[] | null = postId
+		? (await getAllPictures(env)).map((row) => ({
+				id: row.id,
+				parentId: row.parent_id ?? '',
+				src: imageUrl(row.image_key),
+				title: row.title,
+				created: new Date(row.created_at),
+				userId: row.user_id,
+			}))
+		: null;
 
 	// 共有されるURL(/reply/:postId)がツイートのOGPカードとして展開されるよう、
 	// 対象の絵(postId自身。ancestorsの末尾要素)のタイトルとOGP画像を伝える。
@@ -37,7 +51,7 @@ export async function loader({ params, request, context }: Route.LoaderArgs) {
 			}
 		: null;
 
-	return { ancestors, share };
+	return { ancestors, mapPictures, share };
 }
 
 export function meta({ data }: Route.MetaArgs) {
@@ -106,12 +120,36 @@ export async function action({ request, context }: Route.ActionArgs) {
 	return { id };
 }
 
-export default function Draw({ loaderData }: Route.ComponentProps) {
-	const { ancestors } = loaderData;
-	const imagesRef = useRef<HTMLImageElement[]>([]);
-	const [completed, setCompleted] = useState<{ id: string; title: string } | null>(null);
+function PostMap(props: {
+	pictures: PictureNode[];
+	targetId: string;
+	history: string;
+	parentTweetId?: string | null;
+	parentTweetScreenName?: string | null;
+}) {
+	const { pictures, targetId, history, parentTweetId, parentTweetScreenName } = props;
 	const [graphReady, setGraphReady] = useState(false);
-	const graphFetcher = useFetcher<{ pictures: PictureNode[] }>();
+
+	return (
+		<div className={styles.mapSection}>
+			<Graph pictures={pictures} targetId={targetId} onReady={() => setGraphReady(true)} />
+			{graphReady && (
+				<div className={styles.tweetOverlay}>
+					<Tweet
+						pictureId={targetId}
+						history={history}
+						parentTweetId={parentTweetId}
+						parentTweetScreenName={parentTweetScreenName}
+					/>
+				</div>
+			)}
+		</div>
+	);
+}
+
+export default function Draw({ loaderData }: Route.ComponentProps) {
+	const { ancestors, mapPictures } = loaderData;
+	const imagesRef = useRef<HTMLImageElement[]>([]);
 
 	const imageRef = useCallback((img: HTMLImageElement | null) => {
 		if (img) {
@@ -119,47 +157,34 @@ export default function Draw({ loaderData }: Route.ComponentProps) {
 		}
 	}, []);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: graphFetcherは投稿完了時に一度だけ読み込めばよい
-	useEffect(() => {
-		if (completed && graphFetcher.state === 'idle' && !graphFetcher.data) {
-			graphFetcher.load('/graph');
-		}
-	}, [completed]);
-
-	if (completed) {
-		const history = [...ancestors.map((ancestor) => ancestor.title), completed.title].join(' → ');
-		const parent = ancestors[ancestors.length - 1];
-
-		return (
-			<div className={styles.completeContainer}>
-				{graphFetcher.data && (
-					<Graph
-						pictures={graphFetcher.data.pictures}
-						targetId={completed.id}
-						onReady={() => setGraphReady(true)}
-					/>
-				)}
-				{graphReady && (
-					<div className={styles.tweetOverlay}>
-						<Tweet
-							pictureId={completed.id}
-							history={history}
-							parentTweetId={parent?.tweetId}
-							parentTweetScreenName={parent?.tweetScreenName}
-						/>
-					</div>
-				)}
-			</div>
-		);
-	}
+	const target = ancestors[ancestors.length - 1];
+	const parent = ancestors[ancestors.length - 2];
 
 	return (
 		<>
+			{mapPictures && target && (
+				<PostMap
+					pictures={mapPictures}
+					targetId={target.id}
+					history={ancestors.map((ancestor) => ancestor.title).join(' → ')}
+					parentTweetId={parent?.tweetId}
+					parentTweetScreenName={parent?.tweetScreenName}
+				/>
+			)}
 			<Ancestors ancestors={ancestors} imageRef={imageRef} />
 			<Drawing
 				ancestors={ancestors}
 				images={imagesRef.current}
-				onComplete={(id, title) => setCompleted({ id, title })}
+				// 投稿完了後は/reply/:newId(=投稿した絵自身の恒久リンク)へ遷移し、
+				// そのページのしりとりマップをそのまま見せる。react-routerの
+				// useNavigate()によるクライアント遷移では、/draw と /reply/:postId が
+				// 別ルートid(draw-new/draw-reply)でありながら同一コンポーネントを
+				// 共有しているためか、URLだけ変わってloaderの再取得が完了しない
+				// 不具合が確認できたため、確実に新しいSSRページとして読み込まれる
+				// フルページ遷移にしている。
+				onComplete={(id) => {
+					window.location.href = `/reply/${id}`;
+				}}
 			/>
 		</>
 	);

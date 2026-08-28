@@ -1,9 +1,9 @@
-.completeContainer {
+.mapSection {
 	position: relative;
 }
 
 .tweetOverlay {
-	position: fixed;
+	position: absolute;
 	right: 0;
 	bottom: 24px;
 	left: 0;
