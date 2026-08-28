@@ -54,8 +54,11 @@ export default function Graph(props: Props) {
             network.setSelection(selection, { highlightEdges: false });
           });
           network.once('afterDrawing', () => {
+            // nodesを指定しない(全ノード対象)ことで、投稿した絵にフォーカスした状態から
+            // しりとり全体の木構造へズームアウトする演出にする。祖先チェーンの
+            // ハイライト(setSelection)はズームアウト後も残るため、木構造全体の中で
+            // 今回投稿した絵に至る経路がわかるようになっている。
             network.fit({
-              nodes: selection.nodes,
               maxZoomLevel: 0.75,
               animation: {
                 duration: 5000,
