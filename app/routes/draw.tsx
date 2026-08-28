@@ -110,6 +110,7 @@ export default function Draw({ loaderData }: Route.ComponentProps) {
 	const { ancestors } = loaderData;
 	const imagesRef = useRef<HTMLImageElement[]>([]);
 	const [completed, setCompleted] = useState<{ id: string; title: string } | null>(null);
+	const [graphReady, setGraphReady] = useState(false);
 	const graphFetcher = useFetcher<{ pictures: PictureNode[] }>();
 
 	const imageRef = useCallback((img: HTMLImageElement | null) => {
@@ -132,16 +133,22 @@ export default function Draw({ loaderData }: Route.ComponentProps) {
 		return (
 			<div className={styles.completeContainer}>
 				{graphFetcher.data && (
-					<Graph pictures={graphFetcher.data.pictures} targetId={completed.id} />
-				)}
-				<div className={styles.tweetOverlay}>
-					<Tweet
-						pictureId={completed.id}
-						history={history}
-						parentTweetId={parent?.tweetId}
-						parentTweetScreenName={parent?.tweetScreenName}
+					<Graph
+						pictures={graphFetcher.data.pictures}
+						targetId={completed.id}
+						onReady={() => setGraphReady(true)}
 					/>
-				</div>
+				)}
+				{graphReady && (
+					<div className={styles.tweetOverlay}>
+						<Tweet
+							pictureId={completed.id}
+							history={history}
+							parentTweetId={parent?.tweetId}
+							parentTweetScreenName={parent?.tweetScreenName}
+						/>
+					</div>
+				)}
 			</div>
 		);
 	}

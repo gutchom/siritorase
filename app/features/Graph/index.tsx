@@ -9,10 +9,11 @@ import styles from './index.module.css';
 type Props = {
   pictures: PictureNode[];
   targetId?: string;
+  onReady?: () => void;
 };
 
 export default function Graph(props: Props) {
-  const { pictures, targetId } = props;
+  const { pictures, targetId, onReady } = props;
   const navigate = useNavigate();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -32,6 +33,7 @@ export default function Graph(props: Props) {
 
         const data = getNetworkData(pictures);
         const network = new Network(ref.current, data, options);
+        onReady?.();
 
         network.on('click', ({ nodes }: { nodes: IdType[] }) => {
           const [id] = nodes;
