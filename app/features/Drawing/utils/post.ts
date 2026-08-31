@@ -10,7 +10,9 @@ export default async function buildPostFormData(
 ): Promise<FormData> {
 	const [pictureBlob, ogpBlob] = await Promise.all([
 		canvasToBlob(picture),
-		generateOGP(title, picture, ancestors, ancestorImages).then(canvasToBlob),
+		// OGP画像に写る「今回投稿した絵」のキャプションは答えそのものなので、
+		// 実タイトルではなく？？？を表示して伏せる(DBに保存するtitleは実タイトルのまま)。
+		generateOGP('？？？', picture, ancestors, ancestorImages).then(canvasToBlob),
 	]);
 
 	const formData = new FormData();

@@ -41,11 +41,11 @@ export async function loader({ params, request, context }: Route.LoaderArgs) {
 		: null;
 
 	// 共有されるURL(/reply/:postId)がツイートのOGPカードとして展開されるよう、
-	// 対象の絵(postId自身。ancestorsの末尾要素)のタイトルとOGP画像を伝える。
+	// 対象の絵(postId自身。ancestorsの末尾要素)のOGP画像を伝える。タイトルは
+	// 答えそのものなので伝えず、meta()側で？？？に伏せて表示する。
 	const target = postId ? rows[rows.length - 1] : undefined;
 	const share = target
 		? {
-				title: target.title,
 				imageUrl: new URL(imageUrl(target.ogp_key), request.url).href,
 				pageUrl: new URL(`/reply/${postId}`, request.url).href,
 			}
@@ -62,8 +62,9 @@ export function meta({ data }: Route.MetaArgs) {
 		];
 	}
 
-	const { title, imageUrl: ogImageUrl, pageUrl } = data.share;
-	const pageTitle = `${title} | しりとらせ`;
+	const { imageUrl: ogImageUrl, pageUrl } = data.share;
+	// 共有される絵のタイトルは答えそのものなので、OGP上では伏せて？？？にする。
+	const pageTitle = '？？？ | しりとらせ';
 	const description = '絵しりとりの続きを描いてツイートしよう！';
 
 	return [
@@ -166,7 +167,10 @@ export default function Draw({ loaderData }: Route.ComponentProps) {
 				<PostMap
 					pictures={mapPictures}
 					targetId={target.id}
-					history={ancestors.map((ancestor) => ancestor.title).join(' → ')}
+					// 末尾(=target自身)のタイトルは答えなので、ツイート文言では？？？に伏せる。
+					history={ancestors
+						.map((ancestor, index) => (index === ancestors.length - 1 ? '？？？' : ancestor.title))
+						.join(' → ')}
 					parentTweetId={parent?.tweetId}
 					parentTweetScreenName={parent?.tweetScreenName}
 				/>
