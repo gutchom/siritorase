@@ -71,6 +71,9 @@
   width: 100%;
   padding: 0.5rem 0.75rem;
   font-size: 0.95rem;
+  color-scheme: light;
+  color: #222;
+  background: #fff;
   border: 1px solid #ccc;
   border-radius: 8px;
 }

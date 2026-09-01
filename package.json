@@ -11,6 +11,7 @@
 		"preview": "npm run build && vite preview",
 		"typecheck": "npm run cf-typegen && react-router typegen && tsc -b",
 		"format": "@biomejs/biome check --write",
+		"test:unit": "vitest run",
 		"test:e2e": "playwright test"
 	},
 	"engines": {
@@ -42,9 +43,11 @@
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
 		"@types/twitter-text": "^3.1.10",
+		"postcss": "^8.5.26",
 		"tailwindcss": "^4.2.4",
 		"typescript": "^6.0.3",
 		"vite": "^8.0.11",
+		"vitest": "^4.1.11",
 		"wrangler": "^4.90.0"
 	}
 }
