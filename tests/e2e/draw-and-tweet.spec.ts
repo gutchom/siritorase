@@ -48,7 +48,9 @@ test.describe("新規投稿→ツイート導線", () => {
 		const intentUrl = new URL(href!);
 		expect(intentUrl.hostname).toBe("twitter.com");
 		expect(intentUrl.pathname).toBe("/intent/tweet");
-		expect(intentUrl.searchParams.get("text")).toContain(title);
+		// 投稿した絵自身(=しりとりの答え)のタイトルは、ツイート文言では？？？に伏せられる
+		expect(intentUrl.searchParams.get("text")).toContain("？？？");
+		expect(intentUrl.searchParams.get("text")).not.toContain(title);
 		expect(intentUrl.searchParams.get("url")).toContain(saved!.id);
 		expect(intentUrl.searchParams.get("hashtags")).toBe("しりとり,絵しりとり");
 	});
