@@ -31,6 +31,8 @@
   bottom: 30%;
   left: var(--modal-padding);
   margin: auto;
+  color-scheme: light;
+  color: #222;
   background: #fff;
   border-radius: var(--radius-large);
   box-shadow: 0 0 10px 0 #333;

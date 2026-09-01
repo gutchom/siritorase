@@ -12,6 +12,12 @@
   color: #664;
 }
 
+@media (prefers-color-scheme: dark) {
+  .lead {
+    color: #c7c4a3;
+  }
+}
+
 .nav {
   display: flex;
   flex-wrap: wrap;
