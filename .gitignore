@@ -21,3 +21,9 @@ worker-configuration.d.ts
 /test-results/
 /playwright-report/
 /blob-report/
+
+# IDE
+/.idea/
+
+# 動画等の作業用ローカルアセット
+docs/siritorase_posted.mp4
