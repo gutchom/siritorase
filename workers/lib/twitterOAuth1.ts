@@ -23,7 +23,7 @@ export async function getRequestToken(
 	callbackUrl: string,
 ): Promise<{ oauthToken: string; oauthTokenSecret: string }> {
 	const client = createClient(env);
-	const url = 'https://api.twitter.com/oauth/request_token';
+	const url = 'https://api.x.com/oauth/request_token';
 	const authHeader = client.toHeader(
 		client.authorize({ url, method: 'POST', data: { oauth_callback: callbackUrl } }),
 	);
@@ -44,7 +44,7 @@ export async function getRequestToken(
 }
 
 export function buildAuthorizeUrl(oauthToken: string): string {
-	const url = new URL('https://api.twitter.com/oauth/authorize');
+	const url = new URL('https://api.x.com/oauth/authorize');
 	url.searchParams.set('oauth_token', oauthToken);
 	return url.toString();
 }
@@ -56,7 +56,7 @@ export async function getAccessToken(
 	oauthVerifier: string,
 ): Promise<TwitterUser> {
 	const client = createClient(env);
-	const url = 'https://api.twitter.com/oauth/access_token';
+	const url = 'https://api.x.com/oauth/access_token';
 	const authHeader = client.toHeader(
 		client.authorize(
 			{ url, method: 'POST', data: { oauth_verifier: oauthVerifier } },
@@ -97,7 +97,7 @@ async function tryFetchProfile(
 ): Promise<{ name: string; profileImageUrl: string | null } | null> {
 	try {
 		const client = createClient(env);
-		const url = 'https://api.twitter.com/1.1/account/verify_credentials.json';
+		const url = 'https://api.x.com/1.1/account/verify_credentials.json';
 		const authHeader = client.toHeader(
 			client.authorize({ url, method: 'GET' }, { key: accessToken, secret: accessTokenSecret }),
 		);

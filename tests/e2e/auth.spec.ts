@@ -12,7 +12,7 @@ test("ログインリンクはOAuth 1.0aのリクエストトークン取得を�
 	expect(location).toBeTruthy();
 
 	const url = new URL(location!);
-	expect(url.hostname).toBe("api.twitter.com");
+	expect(url.hostname).toBe("api.x.com");
 	expect(url.pathname).toBe("/oauth/authorize");
 	expect(url.searchParams.get("oauth_token")).toBeTruthy();
 });
