@@ -8,6 +8,17 @@ export type TwitterUser = {
 	profileImageUrl: string | null;
 };
 
+// Cloudflare Workersのfetch()はデフォルトでUser-Agent等を送らず、X側のWAFに
+// データセンター/ボット由来のトラフィックとして扱われ、access_token交換だけが
+// 500(Xの汎用エラーページ)でブロックされる事象を確認した。ブラウザに近い
+// ヘッダーを付与することでこれを回避できないか試すためのもの。
+const BROWSER_LIKE_HEADERS: Record<string, string> = {
+	'User-Agent':
+		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+	Accept: 'application/json, text/plain, */*',
+	'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8',
+};
+
 function createClient(env: Env): OAuth {
 	return new OAuth({
 		consumer: { key: env.TWITTER_API_KEY, secret: env.TWITTER_API_KEY_SECRET },
@@ -28,7 +39,10 @@ export async function getRequestToken(
 		client.authorize({ url, method: 'POST', data: { oauth_callback: callbackUrl } }),
 	);
 
-	const response = await fetch(url, { method: 'POST', headers: { ...authHeader } });
+	const response = await fetch(url, {
+		method: 'POST',
+		headers: { ...BROWSER_LIKE_HEADERS, ...authHeader },
+	});
 	if (!response.ok) {
 		throw new Error(`Failed to get request token: ${response.status} ${await response.text()}`);
 	}
@@ -64,7 +78,10 @@ export async function getAccessToken(
 		),
 	);
 
-	const response = await fetch(url, { method: 'POST', headers: { ...authHeader } });
+	const response = await fetch(url, {
+		method: 'POST',
+		headers: { ...BROWSER_LIKE_HEADERS, ...authHeader },
+	});
 	if (!response.ok) {
 		throw new Error(`Failed to get access token: ${response.status} ${await response.text()}`);
 	}
@@ -101,7 +118,7 @@ async function tryFetchProfile(
 		const authHeader = client.toHeader(
 			client.authorize({ url, method: 'GET' }, { key: accessToken, secret: accessTokenSecret }),
 		);
-		const response = await fetch(url, { headers: { ...authHeader } });
+		const response = await fetch(url, { headers: { ...BROWSER_LIKE_HEADERS, ...authHeader } });
 		if (!response.ok) {
 			return null;
 		}
